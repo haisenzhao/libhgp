@@ -19,7 +19,19 @@
 #include <sstream>
 #include <math.h>
 #include <fstream>
-#include "math.hpp"
+
+#include <glm/glm.hpp>
+#include <random>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/norm.hpp>
+#include <glm/gtx/transform.hpp>
+
+
+typedef glm::highp_dvec2 Vector2d;
+typedef glm::highp_dvec3 Vector3d;
+
 
 using namespace std;
 

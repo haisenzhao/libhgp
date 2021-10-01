@@ -42,12 +42,13 @@ set(GlmIncludeDir ${source_dir})
 
 
 add_library(${PROJECT_NAME} SHARED geom.h twoD.cpp threeD.cpp mesh.cpp clipper/clipper.cpp io.cpp)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+#target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Export interface symbols and hide internal implementation
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR} PRIVATE ${GlmIncludeDir} ${PglIncludeDir})
+add_library(sub::pglib ALIAS ${PROJECT_NAME})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_BINARY_DIR} PRIVATE ${GlmIncludeDir} ${PglIncludeDir})
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 add_dependencies(${PROJECT_NAME} glm)
 add_dependencies(${PROJECT_NAME} pgl)
