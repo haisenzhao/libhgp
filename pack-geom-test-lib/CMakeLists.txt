@@ -10,6 +10,11 @@ include(ExternalProject)
 ExternalProject_Get_Property(glm source_dir)
 set(GlmIncludeDir ${source_dir})
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_BINARY_DIR} PRIVATE ${GlmIncludeDir})
+ExternalProject_Get_Property(pgl source_dir)
+set(PglIncludeDir ${source_dir})
+
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_BINARY_DIR} PRIVATE ${GlmIncludeDir} ${PglIncludeDir})
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 add_dependencies(${PROJECT_NAME} glm)
+add_dependencies(${PROJECT_NAME} pgl)
