@@ -1,4 +1,5 @@
- This repository provides a set of fundemental geometric process functions with the output of a dynamic link library file, "carpentry_geom.dll".
+This repository is developed by Haisen Zhao for his research projects. A set of fundemental geometric process functions are well organized based on some third-party library. 
+Besides that, a set of common used functions are included. Currently, we release a dynamic link library file of "carpentry_geom.dll". An example of using this library is pack-geom-test-lib. 
 
 # Dependency
 
