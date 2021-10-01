@@ -16,6 +16,11 @@ Point_2 VectorPoint2d(Vector2d p) {
     return Point_2(p[0], p[1]);
 }
 
+extern "C" CARPENTRY_GEOM_EXPORT void Test_PGL(Vector3d n) 
+{
+    Functs::MAssert("Test PGL ...");
+}
+
 extern "C" CARPENTRY_GEOM_EXPORT void CGAL_Vector_Base(Vector3d n, Vector3d &result) {
     Plane_3 plane(Point_3(0.0, 0.0, 0.0), Vector_3(n[0], n[1], n[2]));
     Vector_3 v = plane.base1();

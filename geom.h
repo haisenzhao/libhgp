@@ -10,8 +10,11 @@
 #include <list>
 #include <carpentry_geom_export.h>
 #include <math.hpp>
-
 using namespace Math;
+
+#include "pgl_functs.hpp"
+
+using namespace PGL;
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
@@ -143,6 +146,11 @@ Point_3 VectorPoint3d(Vector3d p);
 Vector2d PointVector2d(Point_2 p);
 
 Point_2 VectorPoint2d(Vector2d p);
+
+
+
+extern "C" CARPENTRY_GEOM_EXPORT void Test_PGL(Vector3d n);
+
 
 //implementation in "io.cpp"
 //####################################################################################
