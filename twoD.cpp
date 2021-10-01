@@ -165,8 +165,8 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Intersection_Ray_Segment_Ignore_En
     if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
         // TODO: Major change: if intersected point is one of the end-points of segment, then ignore it
         // TODO: Finished on 08-12-2019
-        if (IsAlmostZero((Point_2(s_1_e[0], s_1_e[1]) - *ipoint).squared_length()) ||
-            IsAlmostZero((Point_2(s_1_e[0], s_1_e[1]) - *ipoint).squared_length())) {
+        if (Functs::IsAlmostZero((Point_2(s_1_e[0], s_1_e[1]) - *ipoint).squared_length()) ||
+            Functs::IsAlmostZero((Point_2(s_1_e[0], s_1_e[1]) - *ipoint).squared_length())) {
             return false;
         }
 
@@ -397,9 +397,9 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_NotExtend(
         if (CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints(s, dir, pop1, pop2, inter1)) {
             //const Vector2d intDir(inter1 - s);
             //if (glm::abs(glm::dot(intDir, dir)) < 0.99)
-            if (!IsAlmostZero(length(inter1 - s)) &&
-                !IsAlmostZero(length(inter1 - pop1)) &&
-                !IsAlmostZero(length(inter1 - pop2))) {
+            if (!Functs::IsAlmostZero(length(inter1 - s)) &&
+                !Functs::IsAlmostZero(length(inter1 - pop1)) &&
+                !Functs::IsAlmostZero(length(inter1 - pop2))) {
                 //std::cerr << "intersected at " << inter1[0] << " " << inter1[1] << std::endl;
                 return false;
             }
@@ -423,7 +423,7 @@ void OutputRectangle(std::string path, const std::vector<std::vector<Vector2d> >
     for (int i = 0; i < points.size(); i++) {
         file << "f ";
         for (int j = 0; j < points[i].size(); j++) {
-            file << IntString(nb) << " ";
+            file << Functs::IntString(nb) << " ";
             nb++;
         }
         file << "" << std::endl;
@@ -472,7 +472,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_Extend(
     isoutside2 = CGAL_2D_Is_Point_OutCGALPolygon(e, cgalPoly);
     //std::cerr << "inside1 = " << inside1 << " inside2 = " << inside2 << std::endl;
 
-    if (IsAlmostZero(pd1)) {
+    if (Functs::IsAlmostZero(pd1)) {
     } else if (isoutside1) {
         std::vector<Vector2d> raySnap;
         for (int i = 0; i < polySize; i++) {
@@ -539,7 +539,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_Extend(
         }
     }
 
-    if (IsAlmostZero(pd2)) {
+    if (Functs::IsAlmostZero(pd2)) {
     } else if (isoutside2) {
         std::vector<Vector2d> raySnap;
         Vector2d inter;
@@ -632,7 +632,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
     const auto pd2 = CGAL_2D_Distance_Point_Polygon(e, polygon);
     bool isoutside1 = false, isoutside2 = false;
 
-    if (!IsAlmostZero(pd1)) {
+    if (!Functs::IsAlmostZero(pd1)) {
         isoutside1 = CGAL_2D_Is_Point_OutPolygon(s, polygon);
         //std::cerr << "inside1 = " << inside1 << " inside2 = " << inside2 << std::endl;
         if (isoutside1) {
@@ -657,7 +657,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
         }
     }
 
-    if (!IsAlmostZero(pd2)) {
+    if (!Functs::IsAlmostZero(pd2)) {
         isoutside2 = CGAL_2D_Is_Point_OutPolygon(e, polygon);
         if (isoutside2) {
             std::vector<Vector2d> raySnap;
@@ -690,7 +690,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
     }
 
     //std::cerr << "pd1 = " << pd1 << " pd2 = " << pd2 << std::endl;
-    if (!IsAlmostZero(pd1)) {
+    if (!Functs::IsAlmostZero(pd1)) {
         for (int i = 0; i < polySize; i++) {
             Vector2d inter1, inter2;
             if (CGAL_2D_Intersection_Ray_Segment(ts + eps * cutDir, -cutDir, polygon[i],
@@ -714,7 +714,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
         }
     }
 
-    if (!IsAlmostZero(pd2)) {
+    if (!Functs::IsAlmostZero(pd2)) {
         for (int i = 0; i < polySize; i++) {
             Vector2d inter1, inter2;
 

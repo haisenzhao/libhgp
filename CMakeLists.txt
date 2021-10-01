@@ -26,14 +26,28 @@ ExternalProject_Get_Property(pgl source_dir)
 
 set(PglIncludeDir ${source_dir})
 
+ExternalProject_Add(
+    glm
+    PREFIX ${CMAKE_BINARY_DIR}/glm
+    GIT_REPOSITORY https://github.com/g-truc/glm.git
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    LOG_DOWNLOAD ON
+    )
+ExternalProject_Get_Property(glm source_dir)
+
+set(GlmIncludeDir ${source_dir})
 
 
-add_library(${PROJECT_NAME} SHARED geom.h twoD.cpp threeD.cpp mesh.cpp math.hpp clipper/clipper.cpp io.cpp)
+
+add_library(${PROJECT_NAME} SHARED geom.h twoD.cpp threeD.cpp mesh.cpp clipper/clipper.cpp io.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Export interface symbols and hide internal implementation
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR} PRIVATE ${PglIncludeDir})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR} PRIVATE ${GlmIncludeDir} ${PglIncludeDir})
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+add_dependencies(${PROJECT_NAME} glm)
 add_dependencies(${PROJECT_NAME} pgl)

@@ -9,8 +9,6 @@
 #include <algorithm>
 #include <list>
 #include <carpentry_geom_export.h>
-#include <math.hpp>
-using namespace Math;
 
 #include "pgl_functs.hpp"
 

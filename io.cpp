@@ -48,8 +48,8 @@ extern "C" CARPENTRY_GEOM_EXPORT void CGAL_Export_Path_Segment(std::ofstream &ex
 
     std::vector<Vector3d> vecs;
     for (int i = 0; i < 4; i++) {
-        double angle = i * 2 * Math::Math_PI / 4;
-        Vector3d v = Math::RotationAxis(normal + base_1, angle, normal);
+        double angle = i * 2 * Math_PI / 4;
+        Vector3d v = Functs::RotationAxis(normal + base_1, angle, normal);
         vecs.push_back(v + start);
     }
     for (int i = 0; i < 4; i++) {
