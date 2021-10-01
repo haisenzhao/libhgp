@@ -29,8 +29,10 @@
 #include <glm/gtx/transform.hpp>
 
 
-typedef glm::highp_dvec2 Vector2d;
-typedef glm::highp_dvec3 Vector3d;
+#include "pgl_functs.hpp"
+
+//typedef glm::highp_dvec2 Vector2d;
+//typedef glm::highp_dvec3 Vector3d;
 
 
 using namespace std;
