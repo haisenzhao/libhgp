@@ -3,7 +3,7 @@ Besides that, a set of common used functions are included. Currently, we release
 
 # Dependency
 
-You should install [CGAL](https://github.com/CGAL/cgal) before compiling this project.
+You should install [CGAL](https://github.com/CGAL/cgal) before compiling this project. For windows, recommend to use vcpkg to install CGAL. 
 Our project also depends on [glm](https://github.com/g-truc/glm.git) and [Clipper](http://www.angusj.com/delphi/clipper.php), but you don't need to install them explicitly.
 
 # Usage
