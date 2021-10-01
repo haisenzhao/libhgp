@@ -21,7 +21,6 @@ using namespace PGL;
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
-
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
@@ -144,7 +143,6 @@ Point_3 VectorPoint3d(Vector3d p);
 Vector2d PointVector2d(Point_2 p);
 
 Point_2 VectorPoint2d(Vector2d p);
-
 
 
 extern "C" CARPENTRY_GEOM_EXPORT void Test_PGL(Vector3d n);
