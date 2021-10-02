@@ -36,6 +36,7 @@
 
 
 using namespace std;
+using namespace PGL;
 
 //Some necessary CGAL functions encapsulated in the dll (mydll.dll)
 typedef void(*CGAL_Vector_Base)(Vector3d n, Vector3d& result);

@@ -29,15 +29,8 @@ using namespace std;
 
 int main()
 {
-	HMODULE hModule = LoadLibrary(_T("carpentry_geom.dll"));
-	if (!hModule) {
-		DWORD dw = GetLastError(); // returns 0xc1 (193)
-		std::cerr << "LoadLibrary failed with error code " + std::to_string(dw);
-	}
-	else
-		std::cerr << "LoadLibrary success\n";
 
-	std::cout << "Hello World!\n";
+	HMODULE hModule = Functs::LoadHMODULE("carpentry_geom.dll");
 
 	auto read_mesh = (CGAL_Vector_Base)GetProcAddress(hModule, "CGAL_Vector_Base");
 	Vector3d result;
