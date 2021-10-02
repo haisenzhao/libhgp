@@ -1,5 +1,6 @@
-#ifndef mydll_hpp
-#define mydll_hpp
+#ifndef geom_hpp
+#define geom_hpp
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -147,6 +148,9 @@ Point_2 VectorPoint2d(Vector2d p);
 
 extern "C" CARPENTRY_GEOM_EXPORT void Test_PGL(Vector3d n);
 
+/*
+
+*/
 
 //implementation in "io.cpp"
 //####################################################################################
