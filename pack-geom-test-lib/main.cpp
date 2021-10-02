@@ -3,6 +3,7 @@
 
 using namespace std;
 
+
 int main()
 {
 #ifdef CGAL_ONCE
