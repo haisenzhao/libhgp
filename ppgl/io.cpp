@@ -16,7 +16,7 @@ Point_2 VectorPoint2d(Vector2d p) {
     return Point_2(p[0], p[1]);
 }
 
-extern "C" PPGL_EXPORT void Test_PGL(Vector3d n) 
+extern "C" PPGL_EXPORT void CGAL_Test_PGL(Vector3d n) 
 {
     Functs::MAssert("Test PGL ...");
 }

@@ -435,7 +435,7 @@ void OutputRectangle(std::string path, const Vector2d2  &points) {
     file.close();
 }
 
-extern "C" PPGL_EXPORT double GetAngleKerfOffsetTan(const Vector2d &a, const Vector2d &b) {
+extern "C" PPGL_EXPORT double CGAL_Get_Angle_Kerf_Offset_Tan(const Vector2d &a, const Vector2d &b) {
     auto na = normalize(a);
     auto nb = normalize(b);
     return glm::tan(glm::acos(glm::abs(dot(na, nb))));
@@ -488,7 +488,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
                 raySnap.push_back(pop2);
             }
             if (CGAL_2D_Intersection_Ray_Segment(s - eps * cutDir, cutDir, pop1, pop2, inter)) {
-                auto tanAngle = GetAngleKerfOffsetTan(segDir, cutDir);
+                auto tanAngle = CGAL_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
                 inter -= (1.5875 / tanAngle * cutDir);
                 //std::cerr << "ray snap 1 angle" << tanAngle << std::endl;
                 //std::cerr << "inter = " << inter[0] << " " << inter[1] << std::endl;
@@ -519,7 +519,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
             Vector2d segDir = normalize(pop1 - pop2);
 
             if (CGAL_2D_Intersection_Ray_Segment(s + eps * cutDir, -cutDir, pop1, pop2, inter)) {
-                auto tanAngle = GetAngleKerfOffsetTan(segDir, cutDir);
+                auto tanAngle = CGAL_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
                 //std::cerr << "rayd1int" << tanAngle << std::endl;
                 inter -= (1.5875 / tanAngle * cutDir);
                 rayD1Int.push_back(inter);
@@ -554,7 +554,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
                 raySnap.push_back(pop1);
                 raySnap.push_back(pop2);
             } else if (CGAL_2D_Intersection_Ray_Segment(e + eps * cutDir, -cutDir, pop1, pop2, inter)) {
-                auto tanAngle = GetAngleKerfOffsetTan(segDir, cutDir);
+                auto tanAngle = CGAL_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
                 inter += (1.5875 / tanAngle * cutDir);
                 raySnap.push_back(inter);
             }
@@ -590,7 +590,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
             const auto &pop2 = polygon[(i + 1) % polySize];
             if (CGAL_2D_Intersection_Ray_Segment(e - eps * cutDir, cutDir, pop1, pop2, inter)) {
                 Vector2d segDir = normalize(pop1 - pop2);
-                auto tanAngle = GetAngleKerfOffsetTan(segDir, cutDir);
+                auto tanAngle = CGAL_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
                 //std::cerr << "angle = " << tanAngle << std::endl;
                 inter += (1.5875 / tanAngle * cutDir);
                 rayD2Int.push_back(inter);

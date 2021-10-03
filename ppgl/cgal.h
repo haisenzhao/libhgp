@@ -35,7 +35,7 @@ using namespace std;
 using namespace PGL;
 
 
-typedef void (*Test_PGL)(Vector3d n);
+typedef void (*CGAL_Test_PGL)(Vector3d n);
 
 
 //implementation in "io.cpp"
@@ -72,7 +72,7 @@ typedef bool (*CGAL_Identify_Polycut)(const Vector2d1& polygon, const Vector2d1&
 typedef void (*CGAL_2D_Polygon_One_Offsets)(Vector2d1& poly, double d, Vector2d2& offset_polys);
 typedef bool (*CGAL_Construct_InOutSide_Polygon)(const Vector2d1& py, const Vector2d& p, const Vector2d& q, bool& isPInside, bool& isQInside);
 typedef bool (*CGAL_2D_Intersection_Ray_Segment)(const Vector2d& s_0_s, const Vector2d& s_0_e, const Vector2d& s_1_s, const Vector2d& s_1_e, Vector2d& inter);
-typedef double (*GetAngleKerfOffsetTan)(const Vector2d& a, const Vector2d& b);
+typedef double (*CGAL_Get_Angle_Kerf_Offset_Tan)(const Vector2d& a, const Vector2d& b);
 
 
 //implementation in "threeD.cpp"

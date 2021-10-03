@@ -26,7 +26,7 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const Vector3d1& vecs, cons
 void  Construct_Polyhedron(Polyhedron_3& polyhedron, std::string path);
 void  Construct_Polyhedron(Polyhedron_3& polyhedron, std::string path, Vector3d1& vecs, Vector1i1& face_id_0, Vector1i1& face_id_1, Vector1i1& face_id_2);
 
-extern "C" PPGL_EXPORT void Test_PGL(Vector3d n);
+extern "C" PPGL_EXPORT void CGAL_Test_PGL(Vector3d n);
 
 
 //implementation in "io.cpp"
@@ -59,7 +59,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon, cons
 extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(Vector2d1 &poly, double d,Vector2d2  &offset_polys);
 extern "C" PPGL_EXPORT bool CGAL_Construct_InOutSide_Polygon(const Vector2d1 &py, const Vector2d &p, const Vector2d &q, bool &isPInside,bool &isQInside);
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Segment(const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s,const Vector2d &s_1_e, Vector2d &inter);
-extern "C" PPGL_EXPORT double GetAngleKerfOffsetTan(const Vector2d &a, const Vector2d &b);
+extern "C" PPGL_EXPORT double CGAL_Get_Angle_Kerf_Offset_Tan(const Vector2d &a, const Vector2d &b);
 
 
 //implementation in "threeD.cpp"
