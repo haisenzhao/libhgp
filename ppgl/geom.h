@@ -32,10 +32,8 @@ extern "C" PPGL_EXPORT void CGAL_Test_PGL(Vector3d n);
 //implementation in "io.cpp"
 //####################################################################################
 extern "C" PPGL_EXPORT void CGAL_Vector_Base(Vector3d n, Vector3d &);
-extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_output, int &export_index,
-                       std::string s_name, double r, double g, double b,Vector3d &start,Vector3d &end, double radius);
-extern "C" PPGL_EXPORT void CGAL_Export_Path_Point(std::ofstream &export_file_output, int &export_index,
-                       std::string s_name, double r, double g, double b, Vector3d point, double radius);
+extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_output, int &export_index,std::string s_name, double r, double g, double b,Vector3d &start,Vector3d &end, double radius);
+extern "C" PPGL_EXPORT void CGAL_Export_Path_Point(std::ofstream &export_file_output, int &export_index,std::string s_name, double r, double g, double b, Vector3d point, double radius);
 
 //implementation in "twoD.cpp"
 //####################################################################################
@@ -81,17 +79,10 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys
 //implementation in "mesh.cpp"
 //####################################################################################
 
-extern "C" PPGL_EXPORT void CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature,
-                        const Vector1i1 &face_ids, const Vector3d1 &vecs, const Vector1i1 &face_id_0,
-                        const Vector1i1 &face_id_1,const Vector1i1 &face_id_2, Vector1i1 &igl_cutting_0_edges,
-                        Vector1i1 &igl_cutting_1_edges, Vector3d1 &igl_cutting_points,Vector1i2 &cutting_faces);
-
-extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, Vector3d1 &vecs,
-                       Vector1i1 &face_id_0, Vector1i1 &face_id_1, Vector1i1 &face_id_2);
+extern "C" PPGL_EXPORT void CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature,const Vector1i1 &face_ids, const Vector3d1 &vecs, const Vector1i1 &face_id_0,const Vector1i1 &face_id_1,const Vector1i1 &face_id_2, Vector1i1 &igl_cutting_0_edges,Vector1i1 &igl_cutting_1_edges, Vector3d1 &igl_cutting_points,Vector1i2 &cutting_faces);
+extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, Vector3d1 &vecs,Vector1i1 &face_id_0, Vector1i1 &face_id_1, Vector1i1 &face_id_2);
 extern "C" PPGL_EXPORT void CGAL_Mesh_Edges(std::string path);
-
-extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(double, double, double, double,
-	double, double, double, double, double, double, std::vector<double>&, std::vector<double>&, std::vector<double>&);
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(double, double, double, double, double, double, double, double, double, double, std::vector<double>&, std::vector<double>&, std::vector<double>&);
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Triangle(Vector3d p, Vector3d n, Vector3d p0, Vector3d p1, Vector3d p2);
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(Vector3d p, Vector3d n, std::string path);
 extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1& inters);
