@@ -1,7 +1,7 @@
-project(pack-geom-test-lib)
+project(test)
 
 # Create the executable
-add_executable(${PROJECT_NAME} main.cpp cgal.h)
+add_executable(${PROJECT_NAME} main.cpp)
 
 target_link_libraries(${PROJECT_NAME} sub::pglib)
 

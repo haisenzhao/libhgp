@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(carpentry_geom)
+project(ppgl)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -41,7 +41,7 @@ set(GlmIncludeDir ${source_dir})
 
 
 
-add_library(${PROJECT_NAME} SHARED geom.h twoD.cpp threeD.cpp mesh.cpp clipper/clipper.cpp io.cpp)
+add_library(${PROJECT_NAME} SHARED geom.h twoD.cpp threeD.cpp mesh.cpp clipper/clipper.cpp io.cpp cgal.h)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Export interface symbols and hide internal implementation
@@ -55,8 +55,8 @@ add_dependencies(${PROJECT_NAME} pgl)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_BINARY_DIR}/Release/carpentry_geom.dll
+        ${PROJECT_BINARY_DIR}/Release/ppgl.dll
         ${CMAKE_CURRENT_SOURCE_DIR}/dll/
 )
 
-#@echo xxxxxxxxxxx if $(PlatformTarget)==x64 (xcopy "$(ProjectDir)\Release\carpentry_geom.dll" "$(ProjectDir)\..\..\pack-geom-lib\dll\" /y ) )
+#@echo xxxxxxxxxxx if $(PlatformTarget)==x64 (xcopy "$(ProjectDir)\Release\ppgl.dll" "$(ProjectDir)\..\..\pack-geom-lib\dll\" /y ) )
