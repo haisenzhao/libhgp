@@ -52,3 +52,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 add_dependencies(${PROJECT_NAME} glm)
 add_dependencies(${PROJECT_NAME} pgl)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_BINARY_DIR}/Release/library1lib.dll
+        ${CMAKE_CURRENT_SOURCE_DIR}/dll/
+)
+
+#@echo xxxxxxxxxxx if $(PlatformTarget)==x64 (xcopy "$(ProjectDir)\Release\carpentry_geom.dll" "$(ProjectDir)\..\..\pack-geom-lib\dll\" /y ) )
