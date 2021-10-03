@@ -24,8 +24,11 @@ void Test_CGAL_GEOM()
 
 void PostProcess() 
 {
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
+	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
+	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
+
+	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\RelWithDebInfo\\");
+	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\RelWithDebInfo\\");
 
 	//read
 	VectorStr1 funct_titles;
@@ -36,6 +39,7 @@ void PostProcess()
 	{
 		if (Functs::StringContain(line, "CGAL"))
 		{
+			auto value = line.substr(line.find("PPGL_EXPORT"), line.find("CGAL") - line.find("PPGL_EXPORT"));
 			auto title = line.substr(line.find("CGAL"), line.find("(") - line.find("CGAL"));
 			auto para = line.substr(line.find("("));
 			funct_titles.push_back(title);
@@ -61,6 +65,24 @@ void PostProcess()
 		auto para = funct_paras[i];
 		cgal_file << "typedef void (*" << title << ")" << para << std::endl;
 	}
+
+	//	auto ReadMesh = (CGAL_3D_Read_Triangle_Mesh)GetProcAddress(CompilerConfig::Instance().GetHModule(), "CGAL_3D_Read_Triangle_Mesh");
+
+	cgal_file << "class" << std::endl;
+	cgal_file << "{" << std::endl;
+	cgal_file << "public:" << std::endl;
+	cgal_file << "HMODULE hModule;" << std::endl;
+
+	for (int i = 0; i < funct_titles.size(); i++)
+	{
+		auto title = funct_titles[i];
+		auto para = funct_paras[i];
+
+
+	}
+
+
+	cgal_file << "}" << std::endl;
 
 
 	cgal_file << "#endif" << std::endl;

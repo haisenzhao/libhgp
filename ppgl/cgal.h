@@ -48,4 +48,9 @@ typedef void (*CGAL_3D_Intersection_Sphere_Ray)(double, double, double, double, 
 typedef void (*CGAL_3D_Intersection_Ray_Triangle)(Vector3d p, Vector3d n, Vector3d p0, Vector3d p1, Vector3d p2);
 typedef void (*CGAL_3D_Intersection_Ray_Mesh)(Vector3d p, Vector3d n, std::string path);
 typedef void (*CGAL_3D_Intersection_Rays_Mesh)(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1& inters);
+class
+{
+public:
+HMODULE hModule;
+}
 #endif
