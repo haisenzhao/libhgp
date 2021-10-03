@@ -55,8 +55,27 @@ add_dependencies(${PROJECT_NAME} pgl)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_BINARY_DIR}/Release/mpir.dll
+        ${CMAKE_CURRENT_SOURCE_DIR}/dll/
+)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
         ${PROJECT_BINARY_DIR}/Release/ppgl.dll
         ${CMAKE_CURRENT_SOURCE_DIR}/dll/
 )
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_BINARY_DIR}/Release/mpir.dll
+        ${PROJECT_BINARY_DIR}/../test/Release/
+)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_BINARY_DIR}/Release/ppgl.dll
+        ${PROJECT_BINARY_DIR}/../test/Release/
+)
+
 
 #@echo xxxxxxxxxxx if $(PlatformTarget)==x64 (xcopy "$(ProjectDir)\Release\ppgl.dll" "$(ProjectDir)\..\..\pack-geom-lib\dll\" /y ) )

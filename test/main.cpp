@@ -8,7 +8,7 @@ int main()
 {
 #ifdef CGAL_ONCE
 
-	HMODULE hModule = Functs::LoadHMODULE("carpentry_geom.dll");
+	HMODULE hModule = Functs::LoadHMODULE("ppgl.dll");
 	auto read_mesh = (CGAL_Vector_Base)GetProcAddress(hModule, "CGAL_Vector_Base");
 	Vector3d result;
 	read_mesh(Vector3d(1.0, 323.0, 0.0), result);
