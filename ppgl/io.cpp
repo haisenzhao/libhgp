@@ -56,7 +56,7 @@ extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_
         vecs.push_back(vecs[i] - normal);
     }
 
-    std::vector<std::vector<int>> faces;
+    Vector1i2 faces;
 
     int face_index_0[4] = {0, 1, 2, 3};
     int face_index_1[4] = {5, 1, 0, 4};
@@ -105,7 +105,7 @@ extern "C" PPGL_EXPORT void CGAL_Export_Path_Point(std::ofstream &export_file_ou
     vecs.push_back(Vector3d(-0.5, -0.5, -0.5));
     vecs.push_back(Vector3d(0.5, -0.5, -0.5));
 
-    std::vector<std::vector<int>> faces;
+    Vector1i2 faces;
 
     int face_index_0[4] = {0, 1, 2, 3};
     int face_index_1[4] = {5, 1, 0, 4};

@@ -93,11 +93,12 @@ extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(Vector3d &plane_p, Vec
         points_3d.push_back(PointVector3d(plane.to_3d(VectorPoint2d(points_2d[i]))));
 }
 
-extern "C" PPGL_EXPORT double
-CGAL_3D_Distance_Point_Point(double p_0_x, double p_0_y, double p_0_z, double p_1_x,
-                             double p_1_y, double p_1_z) {
-    return sqrt((double) CGAL::squared_distance(Point_3(p_0_x, p_0_y, p_0_z), Point_3(p_1_x, p_1_y, p_1_z)));
+extern "C" PPGL_EXPORT
+double CGAL_3D_Distance_Point_Point(const Vector3d& v0, const Vector3d& v1)
+{
+	return sqrt((double)CGAL::squared_distance(Point_3(v0[0], v0[1], v0[2]), Point_3(v1[0], v1[1], v1[2])));
 }
+
 
 extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e) {
     Line_3 l(VectorPoint3d(s_s), VectorPoint3d(s_e));
@@ -145,7 +146,6 @@ void insert_polygon(CDT& cdt, const Polygon_2& polygon,Vector1i1 &indexInt){
 		v_prev = vh;
 	}
 }
-
 
 void
 mark_domains(CDT& ct,
@@ -199,7 +199,7 @@ mark_domains(CDT& cdt)
 }
 
 extern "C" PPGL_EXPORT
-void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys, std::vector<std::vector<int>> &faces)
+void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys, Vector1i2 &faces)
 {
 	int nb = 0;
 	CDT cdt;
@@ -309,6 +309,3 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, Vector3
     }
 }
 
-
-extern "C" PPGL_EXPORT void CGAL_Mesh_Edges(std::string path) {
-}

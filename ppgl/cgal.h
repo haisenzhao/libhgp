@@ -135,7 +135,7 @@ typedef double
 typedef double
 (*CGAL_3D_Distance_Point_Polygon)(const Vector3d1& py, const Vector3d& p);
 
-typedef void (*CGAL_2D_Polygon_Triangulation)(const Vector2d2& polys, std::vector<std::vector<int>>& faces);
+typedef void (*CGAL_2D_Polygon_Triangulation)(const Vector2d2& polys, Vector1i2& faces);
 
 //implementation in "mesh.cpp"
 //####################################################################################

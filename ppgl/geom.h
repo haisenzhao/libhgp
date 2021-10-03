@@ -35,6 +35,56 @@ using namespace PGL;
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Triangulation_2.h>
 
+
+#include <CGAL/subdivision_method_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/bounding_box.h>
+#include <CGAL/barycenter.h>
+#include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/squared_distance_2.h>
+#include <CGAL/intersections.h>
+#include <CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
+#include <CGAL/Segment_Delaunay_graph_2.h>
+#include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Triangulation_2.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/AABB_halfedge_graph_segment_primitive.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/Polygon_mesh_slicer.h>
+#include <CGAL/mesh_segmentation.h>
+#include <CGAL/property_map.h>
+#include <cstdlib>
+#include <iterator>
+#include <CGAL/Random.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Surface_mesh_shortest_path.h>
+#include <CGAL/algorithm.h>
+#include <CGAL/convex_hull_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/Side_of_triangle_mesh.h>
+#include <CGAL/Polygon_set_2.h>
+
+
+
+typedef CGAL::Simple_cartesian<double> KC;
+typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<KC> Gt;
+typedef CGAL::Segment_Delaunay_graph_2<Gt>  SDG2;
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Line_2 Line_2;
 typedef K::Point_2 Point_2;
@@ -64,6 +114,28 @@ typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron_3> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits_poly;
 typedef CGAL::AABB_tree<Traits_poly> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
+typedef boost::optional< Tree::Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection;
+
+typedef CGAL::Surface_mesh<K::Point_3> Mesh;
+typedef std::vector<K::Point_3> Polyline_type;
+typedef std::list< Polyline_type > Polylines;
+typedef CGAL::AABB_halfedge_graph_segment_primitive<Mesh> HGSP;
+typedef CGAL::AABB_traits<K, HGSP>    AABB_traits;
+typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
+
+
+typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Mesh_Primitive;
+typedef CGAL::AABB_traits<K, Mesh_Primitive> Mesh_Traits;
+typedef CGAL::AABB_tree<Mesh_Traits> Mesh_Tree;
+typedef boost::optional<Mesh_Tree::Intersection_and_primitive_id<Ray_3>::Type> Mesh_Ray_intersection;
+
+
+typedef KC::Triangle_3 Triangle_3;
+typedef std::list<Triangle_3>::iterator Iterator_3;
+typedef CGAL::AABB_triangle_primitive<KC, Iterator_3> Primitive_3;
+typedef CGAL::AABB_traits<KC, Primitive_3> AABB_triangle_traits_3;
+typedef CGAL::AABB_tree<AABB_triangle_traits_3> Tree_3;
+
 
 
 struct FaceInfo2
@@ -142,6 +214,9 @@ Point_3 VectorPoint3d(Vector3d p);
 Vector2d PointVector2d(Point_2 p);
 Point_2 VectorPoint2d(Vector2d p);
 
+void  Construct_Polyhedron(Polyhedron_3& polyhedron, const Vector3d1& vecs, const Vector1i1& face_id_0, const Vector1i1& face_id_1, const Vector1i1& face_id_2);
+void  Construct_Polyhedron(Polyhedron_3& polyhedron, std::string path);
+void  Construct_Polyhedron(Polyhedron_3& polyhedron, std::string path, Vector3d1& vecs, Vector1i1& face_id_0, Vector1i1& face_id_1, Vector1i1& face_id_2);
 
 extern "C" PPGL_EXPORT void Test_PGL(Vector3d n);
 
@@ -194,9 +269,10 @@ extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Point(Vector3d &plane_p, Vect
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(Vector3d &plane_p, Vector3d &plane_n, Vector3d1 &points_3d,Vector2d1 &points_2d);
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(Vector3d &plane_p, Vector3d &plane_n, Vector2d1 &points_2d,Vector3d1 &points_3d);
 extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e);
-extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Point(double p_0_x, double p_0_y, double p_0_z, double p_1_x,  double p_1_y, double p_1_z);
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Point(const Vector3d & v0, const Vector3d & v1);
 extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Polygon(const Vector3d1 &py, const Vector3d &p);
-extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys, std::vector<std::vector<int>> &faces);
+extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys, Vector1i2 &faces);
+
 
 //implementation in "mesh.cpp"
 //####################################################################################
@@ -217,5 +293,8 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, Vector3
                                                                 Vector1i1 &face_id_1,
                                                                 Vector1i1 &face_id_2);
 extern "C" PPGL_EXPORT void CGAL_Mesh_Edges(std::string path);
+
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(Vector3d p, Vector3d n, std::string path);
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1& inters);
 
 #endif
