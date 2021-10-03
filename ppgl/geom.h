@@ -148,9 +148,6 @@ Point_2 VectorPoint2d(Vector2d p);
 
 extern "C" PPGL_EXPORT void Test_PGL(Vector3d n);
 
-/*
-
-*/
 
 //implementation in "io.cpp"
 //####################################################################################
@@ -171,10 +168,10 @@ extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Line(Vector2d v, Vector2d l
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Segment(Vector2d v, Vector2d s_0, Vector2d s_1);
 extern "C" PPGL_EXPORT double
 CGAL_2D_Distance_Segment_Segment(Vector2d s_0, Vector2d s_1, Vector2d e_0, Vector2d e_1);
-extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(Vector2d p, std::vector<Vector2d> py);
-extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const std::vector<Vector2d> &ps,
-                                                                      const std::vector<Vector2d> &py);
-extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(Vector2d p, std::vector<Vector2d> py);
+extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(Vector2d p, Vector2d1 py);
+extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &ps,
+                                                                      const Vector2d1 &py);
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(Vector2d p, Vector2d1 py);
 
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Segment
         (Vector2d s_0_s, Vector2d s_0_e, Vector2d s_1_s, Vector2d s_1_e, Vector2d &inter);
@@ -183,38 +180,40 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Line_Line
         (const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter);
 
 extern "C" PPGL_EXPORT bool
-CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, Vector2d s_e, std::vector<Vector2d> &p);
-extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(std::vector<Vector2d> &ps);
+CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, Vector2d s_e, Vector2d1 &p);
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(Vector2d1 &ps);
 extern "C" PPGL_EXPORT double
-CGAL_2D_Two_Polygons_Union(std::vector<Vector2d> poly_0, std::vector<Vector2d> poly_1,
-                           std::vector<std::vector<Vector2d> > &inter_polygons);
+CGAL_2D_Two_Polygons_Union(Vector2d1 poly_0, Vector2d1 poly_1,
+                           std::vector<Vector2d1 > &inter_polygons);
 
-extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const std::vector<Vector2d> &poly_0,
-                                                                          const std::vector<Vector2d> &poly_1);
+extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d1 &poly_0,
+                                                                          const Vector2d1 &poly_1);
 
 extern "C" PPGL_EXPORT std::vector<int>
-CGAL_Decompose_Polyline(std::vector<Vector2d> &polyline, double threshold);
+CGAL_Decompose_Polyline(Vector2d1 &polyline, double threshold);
 extern "C" PPGL_EXPORT bool
-CGAL_Identify_Polycut_Extend(const std::vector<Vector2d> &polygon, const Vector2d &s,
+CGAL_Identify_Polycut_Extend(const Vector2d1 &polygon, const Vector2d &s,
                              const Vector2d &e, Vector2d &ns, Vector2d &ne);
 extern "C" PPGL_EXPORT bool
-CGAL_Identify_Polycut_NotExtend(const std::vector<Vector2d> &polygon, const Vector2d &s,
+CGAL_Identify_Polycut_NotExtend(const Vector2d1 &polygon, const Vector2d &s,
                                 const Vector2d &e);
-extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const std::vector<Vector2d> &polygon,
-                                                            const std::vector<Vector2d> &cutLine,
+extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon,
+                                                            const Vector2d1 &cutLine,
                                                             std::vector<std::pair<bool, bool> > &result);
 
-extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(std::vector<Vector2d> &poly,
+extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(Vector2d1 &poly,
                                                                   double d,
-                                                                  std::vector<std::vector<Vector2d> > &offset_polys);
+                                                                  std::vector<Vector2d1 > &offset_polys);
 
 extern "C" PPGL_EXPORT bool
-CGAL_Construct_InOutSide_Polygon(const std::vector<Vector2d> &py, const Vector2d &p, const Vector2d &q, bool &isPInside,
+CGAL_Construct_InOutSide_Polygon(const Vector2d1 &py, const Vector2d &p, const Vector2d &q, bool &isPInside,
                                  bool &isQInside);
 extern "C" PPGL_EXPORT bool
 CGAL_2D_Intersection_Ray_Segment(const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s,
                                  const Vector2d &s_1_e, Vector2d &inter);
 extern "C" PPGL_EXPORT double GetAngleKerfOffsetTan(const Vector2d &a, const Vector2d &b);
+
+
 //implementation in "threeD.cpp"
 //####################################################################################
 extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e);
@@ -235,9 +234,9 @@ CGAL_3D_Plane_2D_to_3D_Point(Vector3d &plane_p, Vector3d &plane_n, Vector2d &poi
 
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(Vector3d &plane_p, Vector3d &plane_n,
                                                                     std::vector<Vector3d> &points_3d,
-                                                                    std::vector<Vector2d> &points_2d);
+                                                                    Vector2d1 &points_2d);
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(Vector3d &plane_p, Vector3d &plane_n,
-                                                                    std::vector<Vector2d> &points_2d,
+                                                                    Vector2d1 &points_2d,
                                                                     std::vector<Vector3d> &points_3d);
 
 extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e);
@@ -248,7 +247,7 @@ extern "C" PPGL_EXPORT double
 CGAL_3D_Distance_Point_Polygon(const std::vector<Vector3d> &py, const Vector3d &p);
 
 
-extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Triangulation(const std::vector<std::vector<Vector2d>> &polys, std::vector<std::vector<int>> &faces);
+extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys, std::vector<std::vector<int>> &faces);
 
 //implementation in "mesh.cpp"
 //####################################################################################

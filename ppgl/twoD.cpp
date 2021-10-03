@@ -28,7 +28,7 @@ extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Line(Vector2d v, Vector2d l
                                                 Line_2(Point_2(l_0[0], l_0[1]), Point_2(l_1[0], l_1[1]))));
 }
 
-extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(Vector2d p, std::vector<Vector2d> py) {
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(Vector2d p, Vector2d1 py) {
     double distance = 1000000000000.0;
     for (int i = 0; i < py.size(); i++)
         distance = std::min(distance, CGAL_2D_Distance_Point_Segment(p, py[i], py[(i + 1) % py.size()]));
@@ -39,7 +39,7 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Is_Point_OutCGALPolygon(const Vector2d &p, c
     return py.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_UNBOUNDED_SIDE;
 }
 
-extern "C" PPGL_EXPORT bool CGAL_Construct_Polygon(const std::vector<Vector2d> &py, Polygon_2 &poly) {
+extern "C" PPGL_EXPORT bool CGAL_Construct_Polygon(const Vector2d1 &py, Polygon_2 &poly) {
     poly.clear();
     for (auto i : py)
         poly.push_back(Point_2(i[0], i[1]));
@@ -47,7 +47,7 @@ extern "C" PPGL_EXPORT bool CGAL_Construct_Polygon(const std::vector<Vector2d> &
 }
 
 extern "C" PPGL_EXPORT bool
-CGAL_Construct_InOutSide_Polygon(const std::vector<Vector2d> &py, const Vector2d &p, const Vector2d &q, bool &isPInside,
+CGAL_Construct_InOutSide_Polygon(const Vector2d1 &py, const Vector2d &p, const Vector2d &q, bool &isPInside,
                                  bool &isQInside) {
     Polygon_2 poly;
     poly.clear();
@@ -60,7 +60,7 @@ CGAL_Construct_InOutSide_Polygon(const std::vector<Vector2d> &py, const Vector2d
     return true;
 }
 
-extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(Vector2d p, std::vector<Vector2d> py) {
+extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(Vector2d p, Vector2d1 py) {
     Polygon_2 poly;
     for (int i = 0; i < py.size(); i++)
         poly.push_back(Point_2(py[i][0], py[i][1]));
@@ -68,7 +68,7 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(Vector2d p, std::vect
     return poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_BOUNDED_SIDE;
 }
 
-extern "C" PPGL_EXPORT bool CGAL_2D_Is_Point_OutPolygon(Vector2d p, std::vector<Vector2d> py) {
+extern "C" PPGL_EXPORT bool CGAL_2D_Is_Point_OutPolygon(Vector2d p, Vector2d1 py) {
     Polygon_2 poly;
     for (int i = 0; i < py.size(); i++)
         poly.push_back(Point_2(py[i][0], py[i][1]));
@@ -77,8 +77,8 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Is_Point_OutPolygon(Vector2d p, std::vector<
 }
 
 
-extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const std::vector<Vector2d> &ps,
-                                                                      const std::vector<Vector2d> &py) {
+extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &ps,
+                                                                      const Vector2d1 &py) {
     Polygon_2 poly;
     for (int i = 0; i < py.size(); i++)
         poly.push_back(Point_2(py[i][0], py[i][1]));
@@ -181,7 +181,7 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Polygon(
         const Vector2d &r_s,
         const Vector2d &r_d,
-        const std::vector<Vector2d> &poly,
+        const Vector2d1 &poly,
         Vector2d &pnt) {
     int nIntersect = 0;
     for (int i = 0; i < poly.size(); i++) {
@@ -209,7 +209,7 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Line_Line
 }
 
 extern "C" PPGL_EXPORT bool
-CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, Vector2d s_e, std::vector<Vector2d> &p) {
+CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, Vector2d s_e, Vector2d1 &p) {
     for (int i = 0; i < p.size(); i++) {
         Vector2d inter;
         if (CGAL_2D_Intersection_Segment_Segment(s_s, s_e, p[i], p[(i + 1) % p.size()], inter)) {
@@ -219,7 +219,7 @@ CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, Vector2d s_e, std::vector<Vec
     return false;
 }
 
-extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(std::vector<Vector2d> &ps) {
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(Vector2d1 &ps) {
     Polygon_2 poly;
     for (int i = 0; i < ps.size(); i++)
         poly.push_back(Point_2(ps[i][0], ps[i][1]));
@@ -227,8 +227,8 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(std::vector<Ve
     return poly.is_clockwise_oriented();
 }
 
-extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const std::vector<Vector2d> &poly_0,
-                                                                          const std::vector<Vector2d> &poly_1) {
+extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d1 &poly_0,
+                                                                          const Vector2d1 &poly_1) {
     double scale = 1000000.0;
 
     ClipperLib::Paths subj(1);
@@ -259,8 +259,8 @@ extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const std::vecto
 }
 
 extern "C" PPGL_EXPORT double
-CGAL_2D_Two_Polygons_Union(std::vector<Vector2d> poly_0, std::vector<Vector2d> poly_1,
-                           std::vector<std::vector<Vector2d> > &inter_polygons) {
+CGAL_2D_Two_Polygons_Union(Vector2d1 poly_0, Vector2d1 poly_1,
+                           std::vector<Vector2d1 > &inter_polygons) {
     double scale = 1000000.0;
 
     ClipperLib::Paths subj(1);
@@ -285,7 +285,7 @@ CGAL_2D_Two_Polygons_Union(std::vector<Vector2d> poly_0, std::vector<Vector2d> p
         std::vector<double> xs;
         std::vector<double> ys;
 
-        std::vector<Vector2d> polygon;
+        Vector2d1 polygon;
 
         for (int j = 0; j < solution[i].size(); j++) {
             poly_2.push_back(Point_2(((double) solution[i][j].X) / scale, ((double) solution[i][j].Y) / scale));
@@ -302,7 +302,7 @@ CGAL_2D_Two_Polygons_Union(std::vector<Vector2d> poly_0, std::vector<Vector2d> p
 }
 
 
-static void RemoveClosePoints(std::vector<Vector2d> &poly) {
+static void RemoveClosePoints(Vector2d1 &poly) {
     std::vector<int> remove_int;
 
     if (poly.size() > 2) {
@@ -317,9 +317,9 @@ static void RemoveClosePoints(std::vector<Vector2d> &poly) {
     }
 }
 
-extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(std::vector<Vector2d> &poly,
+extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(Vector2d1 &poly,
                                                                   double d,
-                                                                  std::vector<std::vector<Vector2d> > &offset_polys) {
+                                                                  std::vector<Vector2d1 > &offset_polys) {
     if (!(poly.size() > 0)) return;
 
     double scale = 1000000.0;
@@ -344,7 +344,7 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(std::vector<Vector2d> &p
 
     //output
     for (int i = 0; i < solution.size(); i++) {
-        std::vector<Vector2d> one_offset;
+        Vector2d1 one_offset;
 
         Polygon_2 poly_2;
         for (int j = 0; j < solution[i].size(); j++) {
@@ -361,12 +361,12 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(std::vector<Vector2d> &p
         //remove closed points
         RemoveClosePoints(one_offset);
         offset_polys.push_back(one_offset);
-        std::vector<Vector2d>().swap(one_offset);
+        Vector2d1().swap(one_offset);
     }
 }
 
 extern "C" PPGL_EXPORT std::vector<int>
-CGAL_Decompose_Polyline(std::vector<Vector2d> &polyline, double threshold) {
+CGAL_Decompose_Polyline(Vector2d1 &polyline, double threshold) {
     std::vector<int> result;
     for (auto &p : polyline) {
     }
@@ -375,7 +375,7 @@ CGAL_Decompose_Polyline(std::vector<Vector2d> &polyline, double threshold) {
 
 // This one is used to intersect a polygon with a segment
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_NotExtend(
-        const std::vector<Vector2d> &polygon,
+        const Vector2d1 &polygon,
         const Vector2d &s, const Vector2d &e) {
     const Vector2d dir = normalize(e - s);
     const int polySize = polygon.size();
@@ -409,7 +409,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_NotExtend(
     return true;
 }
 
-void OutputRectangle(std::string path, const std::vector<std::vector<Vector2d> > &points) {
+void OutputRectangle(std::string path, const std::vector<Vector2d1 > &points) {
     std::ofstream file(path);
 
     for (int i = 0; i < points.size(); i++) {
@@ -442,7 +442,7 @@ extern "C" PPGL_EXPORT double GetAngleKerfOffsetTan(const Vector2d &a, const Vec
 
 // This one is used to intersect a polygon with a line
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
-        const std::vector<Vector2d> &polygon,
+        const Vector2d1 &polygon,
         const Vector2d &s, const Vector2d &e,
         Vector2d &ns, Vector2d &ne) {
     const double eps = 0.1;
@@ -453,7 +453,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
     //std::cerr << "input cut = " << cutDir[0] << " " << cutDir[1] << std::endl;
     ns = s, ne = e;
     const int polySize = polygon.size();
-    std::vector<Vector2d> rayD1Int, rayD2Int;
+    Vector2d1 rayD1Int, rayD2Int;
 
     const auto pd1 = CGAL_2D_Distance_Point_Polygon(s, polygon);
     const auto pd2 = CGAL_2D_Distance_Point_Polygon(e, polygon);
@@ -474,7 +474,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
 
     if (Functs::IsAlmostZero(pd1)) {
     } else if (isoutside1) {
-        std::vector<Vector2d> raySnap;
+        Vector2d1 raySnap;
         for (int i = 0; i < polySize; i++) {
             Vector2d inter;
             const auto &pop1 = polygon[i];
@@ -541,7 +541,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
 
     if (Functs::IsAlmostZero(pd2)) {
     } else if (isoutside2) {
-        std::vector<Vector2d> raySnap;
+        Vector2d1 raySnap;
         Vector2d inter;
         for (int i = 0; i < polySize; i++) {
             const auto &pop1 = polygon[i];
@@ -575,7 +575,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
             std::cerr << "raysnap2 % 2 != 0" << " size = " << raySnap.size() << std::endl;
             //std::string filename = "D:\\cgaldebug\\" + std::to_string(rand()).append(".obj");
             //std::cerr << "raysnap2 % 2 != 0 and see " << filename << std::endl;
-            // 			std::vector<std::vector<Vector2d> > poly = { polygon };
+            // 			std::vector<Vector2d1 > poly = { polygon };
             // 			OutputRectangle(filename, poly);
             // 			auto fromS = e + eps * cutDir;
             // 			auto toE = -cutDir;
@@ -618,7 +618,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
 
 // This one is used to intersect a polygon with a line
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
-        const std::vector<Vector2d> &polygon,
+        const Vector2d1 &polygon,
         const Vector2d &s, const Vector2d &e,
         Vector2d &ns, Vector2d &ne) {
     const double eps = 1e-4;
@@ -626,7 +626,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
     ns = s, ne = e;
     Vector2d ts = s, te = e;
     const int polySize = polygon.size();
-    std::vector<Vector2d> rayD1Int, rayD2Int;
+    Vector2d1 rayD1Int, rayD2Int;
 
     const auto pd1 = CGAL_2D_Distance_Point_Polygon(s, polygon);
     const auto pd2 = CGAL_2D_Distance_Point_Polygon(e, polygon);
@@ -636,7 +636,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
         isoutside1 = CGAL_2D_Is_Point_OutPolygon(s, polygon);
         //std::cerr << "inside1 = " << inside1 << " inside2 = " << inside2 << std::endl;
         if (isoutside1) {
-            std::vector<Vector2d> raySnap;
+            Vector2d1 raySnap;
             Vector2d inter;
             for (int i = 0; i < polySize; i++) {
                 if (CGAL_2D_Intersection_Ray_Segment(s - eps * cutDir, cutDir, polygon[i],
@@ -660,7 +660,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
     if (!Functs::IsAlmostZero(pd2)) {
         isoutside2 = CGAL_2D_Is_Point_OutPolygon(e, polygon);
         if (isoutside2) {
-            std::vector<Vector2d> raySnap;
+            Vector2d1 raySnap;
             Vector2d inter;
             for (int i = 0; i < polySize; i++) {
                 if (CGAL_2D_Intersection_Ray_Segment(e + eps * cutDir, -cutDir, polygon[i],
@@ -699,7 +699,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
         }
         //std::cerr << "rayd1int = " << rayD1Int.size() << std::endl;
         if (rayD1Int.empty()) {
-            // 			std::vector<std::vector<Vector2d> > debug = { polygon };
+            // 			std::vector<Vector2d1 > debug = { polygon };
             // 			OutputRectangle("D:\\final.obj", debug);
             return false;
         }
@@ -740,8 +740,8 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
 
 
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(
-        const std::vector<Vector2d> &polygon,
-        const std::vector<Vector2d> &cutLine,
+        const Vector2d1 &polygon,
+        const Vector2d1 &cutLine,
         std::vector<std::pair<bool, bool> > &result) {
     // N-1 edges, default 0 -> cant be fabricated
     result = std::vector<std::pair<bool, bool> >(cutLine.size() - 1, std::make_pair<bool, bool>(false, false));

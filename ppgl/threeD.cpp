@@ -80,14 +80,14 @@ CGAL_3D_Plane_2D_to_3D_Point(Vector3d &plane_p, Vector3d &plane_n, Vector2d &poi
 
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(Vector3d &plane_p, Vector3d &plane_n,
                                                                     std::vector<Vector3d> &points_3d,
-                                                                    std::vector<Vector2d> &points_2d) {
+                                                                    Vector2d1 &points_2d) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     for (int i = 0; i < points_3d.size(); i++)
         points_2d.push_back(PointVector2d(plane.to_2d(VectorPoint3d(points_3d[i]))));
 }
 
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(Vector3d &plane_p, Vector3d &plane_n,
-                                                                    std::vector<Vector2d> &points_2d,
+                                                                    Vector2d1 &points_2d,
                                                                     std::vector<Vector3d> &points_3d) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     for (int i = 0; i < points_2d.size(); i++)
@@ -200,7 +200,7 @@ mark_domains(CDT& cdt)
 }
 
 extern "C" PPGL_EXPORT
-void CGAL_2D_Polygon_Triangulation(const std::vector<std::vector<Vector2d>> &polys, std::vector<std::vector<int>> &faces)
+void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys, std::vector<std::vector<int>> &faces)
 {
 	int nb = 0;
 	CDT cdt;
