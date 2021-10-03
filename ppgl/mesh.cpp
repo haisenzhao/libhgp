@@ -1,6 +1,6 @@
 #include "geom.h"
 
-//extern "C" CARPENTRY_GEOM_EXPORT
+//extern "C" PPGL_EXPORT
 void Construct_Polyhedron(Polyhedron_3 &polyhedron,
                           const std::vector<Vector3d> &vecs,
                           const std::vector<int> &face_id_0, const std::vector<int> &face_id_1,
@@ -119,7 +119,7 @@ bool Intersection(Halfedge_handle &hh, int nb, Vector3d inside, Vector3d outside
     return false;
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT  void
+extern "C" PPGL_EXPORT  void
 CGAL_Remesh_Surface_by_Adding_Feature(const std::vector<Vector3d> &feature, const std::vector<int> &face_ids,
                                       const std::vector<Vector3d> &vecs,
                                       const std::vector<int> &face_id_0, const std::vector<int> &face_id_1,

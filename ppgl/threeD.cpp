@@ -21,11 +21,11 @@ Point_2 point_to_2d(const Point_3 &p, Plane_3 &pl) {
     return Point_2(ter * basis[0], ter * basis[1]);
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_3D_Distance_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e) {
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e) {
     return sqrt((double) CGAL::squared_distance(VectorPoint3d(p), Segment_3(VectorPoint3d(s_s), VectorPoint3d(s_e))));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT void
+extern "C" PPGL_EXPORT void
 CGAL_3D_Plane_Fitting(std::vector<Vector3d> &points, Vector3d &plane_p, Vector3d &plane_n) {
     // centroid of 3D points
     std::vector<Point_3> points_3;
@@ -50,13 +50,13 @@ CGAL_3D_Plane_Fitting(std::vector<Vector3d> &points, Vector3d &plane_p, Vector3d
     plane_n[2] = plane.orthogonal_vector().z();
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Plane_Point_Projection(Vector3d &plane_p, Vector3d &plane_n, Vector3d &p,
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_Point_Projection(Vector3d &plane_p, Vector3d &plane_n, Vector3d &p,
                                                                      Vector3d &result) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     result = PointVector3d(plane.projection(VectorPoint3d(p)));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Plane_Points_Projection(Vector3d &plane_p, Vector3d &plane_n,
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_Points_Projection(Vector3d &plane_p, Vector3d &plane_n,
                                                                       std::vector<Vector3d> &points,
                                                                       std::vector<Vector3d> &project_points) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
@@ -64,21 +64,21 @@ extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Plane_Points_Projection(Vector3d &
         project_points.push_back(PointVector3d(plane.projection(VectorPoint3d(points[i]))));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT void
+extern "C" PPGL_EXPORT void
 CGAL_3D_Plane_3D_to_2D_Point(Vector3d &plane_p, Vector3d &plane_n, Vector3d &point_3d,
                              Vector2d &result) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     result = PointVector2d(point_to_2d(VectorPoint3d(point_3d), plane));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT void
+extern "C" PPGL_EXPORT void
 CGAL_3D_Plane_2D_to_3D_Point(Vector3d &plane_p, Vector3d &plane_n, Vector2d &points_2d,
                              Vector3d &result) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     result = PointVector3d(point_to_3d(VectorPoint2d(points_2d), plane));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(Vector3d &plane_p, Vector3d &plane_n,
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(Vector3d &plane_p, Vector3d &plane_n,
                                                                     std::vector<Vector3d> &points_3d,
                                                                     std::vector<Vector2d> &points_2d) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
@@ -86,7 +86,7 @@ extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(Vector3d &pl
         points_2d.push_back(PointVector2d(plane.to_2d(VectorPoint3d(points_3d[i]))));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(Vector3d &plane_p, Vector3d &plane_n,
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(Vector3d &plane_p, Vector3d &plane_n,
                                                                     std::vector<Vector2d> &points_2d,
                                                                     std::vector<Vector3d> &points_3d) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
@@ -94,13 +94,13 @@ extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(Vector3d &pl
         points_3d.push_back(PointVector3d(plane.to_3d(VectorPoint2d(points_2d[i]))));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT double
+extern "C" PPGL_EXPORT double
 CGAL_3D_Distance_Point_Point(double p_0_x, double p_0_y, double p_0_z, double p_1_x,
                              double p_1_y, double p_1_z) {
     return sqrt((double) CGAL::squared_distance(Point_3(p_0_x, p_0_y, p_0_z), Point_3(p_1_x, p_1_y, p_1_z)));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e) {
+extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e) {
     Line_3 l(VectorPoint3d(s_s), VectorPoint3d(s_e));
     Point_3 m_p = l.projection(VectorPoint3d(p));
     double d_m_s = CGAL_3D_Distance_Point_Point(m_p[0], m_p[1], m_p[2], s_s[0], s_s[1], s_s[2]);
@@ -114,14 +114,14 @@ extern "C" CARPENTRY_GEOM_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(Vecto
     return PointVector3d(m_p);
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_3D_Distance_Point_Segment_Ref(const Vector3d &v, const Vector3d &s_0,
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment_Ref(const Vector3d &v, const Vector3d &s_0,
                                                                            const Vector3d &s_1) {
     return sqrt((double) CGAL::squared_distance(Point_3(v[0], v[1], v[2]),
                                                 Segment_3(Point_3(s_0[0], s_0[1], s_0[2]),
                                                           Point_3(s_1[0], s_1[1], s_1[2]))));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT double
+extern "C" PPGL_EXPORT double
 CGAL_3D_Distance_Point_Polygon(const std::vector<Vector3d> &py, const Vector3d &p) {
     double distance = 1000000000000.0;
     for (int i = 0; i < py.size(); i++)
@@ -199,7 +199,7 @@ mark_domains(CDT& cdt)
 	}
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT
+extern "C" PPGL_EXPORT
 void CGAL_2D_Polygon_Triangulation(const std::vector<std::vector<Vector2d>> &polys, std::vector<std::vector<int>> &faces)
 {
 	int nb = 0;
@@ -261,7 +261,7 @@ void CGAL_Load_Obj(std::string path, std::vector<double> &coords, std::vector<in
     fclose(fp);
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, std::vector<Vector3d> &vecs,
+extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, std::vector<Vector3d> &vecs,
                                                                  std::vector<int> &face_id_0,
                                                                  std::vector<int> &face_id_1,
                                                                  std::vector<int> &face_id_2) {
@@ -311,5 +311,5 @@ extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string pat
 }
 
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_Mesh_Edges(std::string path) {
+extern "C" PPGL_EXPORT void CGAL_Mesh_Edges(std::string path) {
 }

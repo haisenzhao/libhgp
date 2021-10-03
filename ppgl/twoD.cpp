@@ -1,16 +1,16 @@
 #include "geom.h"
 #include "clipper/clipper.hpp"
 
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_2D_Distance_Point_Point(Vector2d p_0, Vector2d p_1) {
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Point(Vector2d p_0, Vector2d p_1) {
     return sqrt(pow((p_0[0] - p_1[0]), 2.0) + pow((p_0[1] - p_1[1]), 2.0));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_2D_Distance_Point_Segment(Vector2d v, Vector2d s_0, Vector2d s_1) {
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Segment(Vector2d v, Vector2d s_0, Vector2d s_1) {
     return sqrt((double) CGAL::squared_distance(Point_2(v[0], v[1]),
                                                 Segment_2(Point_2(s_0[0], s_0[1]), Point_2(s_1[0], s_1[1]))));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT double
+extern "C" PPGL_EXPORT double
 CGAL_2D_Distance_Segment_Segment(Vector2d s_0, Vector2d s_1, Vector2d e_0, Vector2d e_1) {
     double d0 = CGAL_2D_Distance_Point_Segment(s_0, e_0, e_1);
     double d1 = CGAL_2D_Distance_Point_Segment(s_1, e_0, e_1);
@@ -23,30 +23,30 @@ CGAL_2D_Distance_Segment_Segment(Vector2d s_0, Vector2d s_1, Vector2d e_0, Vecto
     return min_d;
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_2D_Distance_Point_Line(Vector2d v, Vector2d l_0, Vector2d l_1) {
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Line(Vector2d v, Vector2d l_0, Vector2d l_1) {
     return sqrt((double) CGAL::squared_distance(Point_2(v[0], v[1]),
                                                 Line_2(Point_2(l_0[0], l_0[1]), Point_2(l_1[0], l_1[1]))));
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_2D_Distance_Point_Polygon(Vector2d p, std::vector<Vector2d> py) {
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(Vector2d p, std::vector<Vector2d> py) {
     double distance = 1000000000000.0;
     for (int i = 0; i < py.size(); i++)
         distance = std::min(distance, CGAL_2D_Distance_Point_Segment(p, py[i], py[(i + 1) % py.size()]));
     return distance;
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Is_Point_OutCGALPolygon(const Vector2d &p, const Polygon_2 &py) {
+extern "C" PPGL_EXPORT bool CGAL_2D_Is_Point_OutCGALPolygon(const Vector2d &p, const Polygon_2 &py) {
     return py.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_UNBOUNDED_SIDE;
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Construct_Polygon(const std::vector<Vector2d> &py, Polygon_2 &poly) {
+extern "C" PPGL_EXPORT bool CGAL_Construct_Polygon(const std::vector<Vector2d> &py, Polygon_2 &poly) {
     poly.clear();
     for (auto i : py)
         poly.push_back(Point_2(i[0], i[1]));
     return poly.is_simple();
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT bool
+extern "C" PPGL_EXPORT bool
 CGAL_Construct_InOutSide_Polygon(const std::vector<Vector2d> &py, const Vector2d &p, const Vector2d &q, bool &isPInside,
                                  bool &isQInside) {
     Polygon_2 poly;
@@ -60,7 +60,7 @@ CGAL_Construct_InOutSide_Polygon(const std::vector<Vector2d> &py, const Vector2d
     return true;
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Location_Point_Polygon(Vector2d p, std::vector<Vector2d> py) {
+extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(Vector2d p, std::vector<Vector2d> py) {
     Polygon_2 poly;
     for (int i = 0; i < py.size(); i++)
         poly.push_back(Point_2(py[i][0], py[i][1]));
@@ -68,7 +68,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Location_Point_Polygon(Vector2d p,
     return poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_BOUNDED_SIDE;
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Is_Point_OutPolygon(Vector2d p, std::vector<Vector2d> py) {
+extern "C" PPGL_EXPORT bool CGAL_2D_Is_Point_OutPolygon(Vector2d p, std::vector<Vector2d> py) {
     Polygon_2 poly;
     for (int i = 0; i < py.size(); i++)
         poly.push_back(Point_2(py[i][0], py[i][1]));
@@ -77,7 +77,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Is_Point_OutPolygon(Vector2d p, st
 }
 
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Location_Points_Polygon(const std::vector<Vector2d> &ps,
+extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const std::vector<Vector2d> &ps,
                                                                       const std::vector<Vector2d> &py) {
     Polygon_2 poly;
     for (int i = 0; i < py.size(); i++)
@@ -103,7 +103,7 @@ extern "C" bool CGAL_2D_Intersection_Segment_Segment
     return false;
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Intersection_Ray_Segment
+extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Segment
         (const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter) {
     Point_2 st(s_0_s[0], s_0_s[1]);
 
@@ -153,7 +153,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Intersection_Ray_Segment
     }*/
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints
+extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints
         (const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter) {
     Point_2 st(s_0_s[0], s_0_s[1]);
     Vector_2 dir(s_0_e[0], s_0_e[1]);
@@ -178,7 +178,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Intersection_Ray_Segment_Ignore_En
 }
 
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Intersection_Ray_Polygon(
+extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Polygon(
         const Vector2d &r_s,
         const Vector2d &r_d,
         const std::vector<Vector2d> &poly,
@@ -195,7 +195,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Intersection_Ray_Polygon(
 }
 
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Intersection_Line_Line
+extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Line_Line
         (const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter) {
     CGAL::Object result = intersection(Line_2(Point_2(s_0_s[0], s_0_s[1]), Point_2(s_0_e[0], s_0_e[1])),
                                        Line_2(Point_2(s_1_s[0], s_1_s[1]), Point_2(s_1_e[0], s_1_e[1])));
@@ -208,7 +208,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Intersection_Line_Line
     return false;
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT bool
+extern "C" PPGL_EXPORT bool
 CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, Vector2d s_e, std::vector<Vector2d> &p) {
     for (int i = 0; i < p.size(); i++) {
         Vector2d inter;
@@ -219,7 +219,7 @@ CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, Vector2d s_e, std::vector<Vec
     return false;
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(std::vector<Vector2d> &ps) {
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(std::vector<Vector2d> &ps) {
     Polygon_2 poly;
     for (int i = 0; i < ps.size(); i++)
         poly.push_back(Point_2(ps[i][0], ps[i][1]));
@@ -227,7 +227,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(std:
     return poly.is_clockwise_oriented();
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_2D_Two_Polygons_Intersection(const std::vector<Vector2d> &poly_0,
+extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const std::vector<Vector2d> &poly_0,
                                                                           const std::vector<Vector2d> &poly_1) {
     double scale = 1000000.0;
 
@@ -258,7 +258,7 @@ extern "C" CARPENTRY_GEOM_EXPORT double CGAL_2D_Two_Polygons_Intersection(const 
     return area;
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT double
+extern "C" PPGL_EXPORT double
 CGAL_2D_Two_Polygons_Union(std::vector<Vector2d> poly_0, std::vector<Vector2d> poly_1,
                            std::vector<std::vector<Vector2d> > &inter_polygons) {
     double scale = 1000000.0;
@@ -317,7 +317,7 @@ static void RemoveClosePoints(std::vector<Vector2d> &poly) {
     }
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_2D_Polygon_One_Offsets(std::vector<Vector2d> &poly,
+extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(std::vector<Vector2d> &poly,
                                                                   double d,
                                                                   std::vector<std::vector<Vector2d> > &offset_polys) {
     if (!(poly.size() > 0)) return;
@@ -365,7 +365,7 @@ extern "C" CARPENTRY_GEOM_EXPORT void CGAL_2D_Polygon_One_Offsets(std::vector<Ve
     }
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT std::vector<int>
+extern "C" PPGL_EXPORT std::vector<int>
 CGAL_Decompose_Polyline(std::vector<Vector2d> &polyline, double threshold) {
     std::vector<int> result;
     for (auto &p : polyline) {
@@ -374,7 +374,7 @@ CGAL_Decompose_Polyline(std::vector<Vector2d> &polyline, double threshold) {
 }
 
 // This one is used to intersect a polygon with a segment
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_NotExtend(
+extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_NotExtend(
         const std::vector<Vector2d> &polygon,
         const Vector2d &s, const Vector2d &e) {
     const Vector2d dir = normalize(e - s);
@@ -434,14 +434,14 @@ void OutputRectangle(std::string path, const std::vector<std::vector<Vector2d> >
     file.close();
 }
 
-extern "C" CARPENTRY_GEOM_EXPORT double GetAngleKerfOffsetTan(const Vector2d &a, const Vector2d &b) {
+extern "C" PPGL_EXPORT double GetAngleKerfOffsetTan(const Vector2d &a, const Vector2d &b) {
     auto na = normalize(a);
     auto nb = normalize(b);
     return glm::tan(glm::acos(glm::abs(dot(na, nb))));
 }
 
 // This one is used to intersect a polygon with a line
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_Extend(
+extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
         const std::vector<Vector2d> &polygon,
         const Vector2d &s, const Vector2d &e,
         Vector2d &ns, Vector2d &ne) {
@@ -617,7 +617,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_Extend(
 }
 
 // This one is used to intersect a polygon with a line
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
+extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
         const std::vector<Vector2d> &polygon,
         const Vector2d &s, const Vector2d &e,
         Vector2d &ns, Vector2d &ne) {
@@ -739,7 +739,7 @@ extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
 }
 
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut(
+extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(
         const std::vector<Vector2d> &polygon,
         const std::vector<Vector2d> &cutLine,
         std::vector<std::pair<bool, bool> > &result) {

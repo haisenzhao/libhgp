@@ -9,7 +9,7 @@
 #include <string>
 #include <algorithm>
 #include <list>
-#include <carpentry_geom_export.h>
+#include <ppgl_export.h>
 
 #include "pgl_functs.hpp"
 
@@ -146,7 +146,7 @@ Vector2d PointVector2d(Point_2 p);
 Point_2 VectorPoint2d(Vector2d p);
 
 
-extern "C" CARPENTRY_GEOM_EXPORT void Test_PGL(Vector3d n);
+extern "C" PPGL_EXPORT void Test_PGL(Vector3d n);
 
 /*
 
@@ -154,106 +154,106 @@ extern "C" CARPENTRY_GEOM_EXPORT void Test_PGL(Vector3d n);
 
 //implementation in "io.cpp"
 //####################################################################################
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_Vector_Base(Vector3d n, Vector3d &);
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_output, int &export_index,
+extern "C" PPGL_EXPORT void CGAL_Vector_Base(Vector3d n, Vector3d &);
+extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_output, int &export_index,
                                                                std::string s_name, double r, double g, double b,
                                                                Vector3d &start,
                                                                Vector3d &end, double radius);
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_Export_Path_Point(std::ofstream &export_file_output, int &export_index,
+extern "C" PPGL_EXPORT void CGAL_Export_Path_Point(std::ofstream &export_file_output, int &export_index,
                                                              std::string s_name, double r, double g, double b,
                                                              Vector3d point,
                                                              double radius);
 
 //implementation in "twoD.cpp"
 //####################################################################################
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_2D_Distance_Point_Point(Vector2d p_0, Vector2d p_1);
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_2D_Distance_Point_Line(Vector2d v, Vector2d l_0, Vector2d l_1);
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_2D_Distance_Point_Segment(Vector2d v, Vector2d s_0, Vector2d s_1);
-extern "C" CARPENTRY_GEOM_EXPORT double
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Point(Vector2d p_0, Vector2d p_1);
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Line(Vector2d v, Vector2d l_0, Vector2d l_1);
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Segment(Vector2d v, Vector2d s_0, Vector2d s_1);
+extern "C" PPGL_EXPORT double
 CGAL_2D_Distance_Segment_Segment(Vector2d s_0, Vector2d s_1, Vector2d e_0, Vector2d e_1);
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Location_Point_Polygon(Vector2d p, std::vector<Vector2d> py);
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Location_Points_Polygon(const std::vector<Vector2d> &ps,
+extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(Vector2d p, std::vector<Vector2d> py);
+extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const std::vector<Vector2d> &ps,
                                                                       const std::vector<Vector2d> &py);
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_2D_Distance_Point_Polygon(Vector2d p, std::vector<Vector2d> py);
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(Vector2d p, std::vector<Vector2d> py);
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Intersection_Segment_Segment
+extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Segment
         (Vector2d s_0_s, Vector2d s_0_e, Vector2d s_1_s, Vector2d s_1_e, Vector2d &inter);
 
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Intersection_Line_Line
+extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Line_Line
         (const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter);
 
-extern "C" CARPENTRY_GEOM_EXPORT bool
+extern "C" PPGL_EXPORT bool
 CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, Vector2d s_e, std::vector<Vector2d> &p);
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(std::vector<Vector2d> &ps);
-extern "C" CARPENTRY_GEOM_EXPORT double
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(std::vector<Vector2d> &ps);
+extern "C" PPGL_EXPORT double
 CGAL_2D_Two_Polygons_Union(std::vector<Vector2d> poly_0, std::vector<Vector2d> poly_1,
                            std::vector<std::vector<Vector2d> > &inter_polygons);
 
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_2D_Two_Polygons_Intersection(const std::vector<Vector2d> &poly_0,
+extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const std::vector<Vector2d> &poly_0,
                                                                           const std::vector<Vector2d> &poly_1);
 
-extern "C" CARPENTRY_GEOM_EXPORT std::vector<int>
+extern "C" PPGL_EXPORT std::vector<int>
 CGAL_Decompose_Polyline(std::vector<Vector2d> &polyline, double threshold);
-extern "C" CARPENTRY_GEOM_EXPORT bool
+extern "C" PPGL_EXPORT bool
 CGAL_Identify_Polycut_Extend(const std::vector<Vector2d> &polygon, const Vector2d &s,
                              const Vector2d &e, Vector2d &ns, Vector2d &ne);
-extern "C" CARPENTRY_GEOM_EXPORT bool
+extern "C" PPGL_EXPORT bool
 CGAL_Identify_Polycut_NotExtend(const std::vector<Vector2d> &polygon, const Vector2d &s,
                                 const Vector2d &e);
-extern "C" CARPENTRY_GEOM_EXPORT bool CGAL_Identify_Polycut(const std::vector<Vector2d> &polygon,
+extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const std::vector<Vector2d> &polygon,
                                                             const std::vector<Vector2d> &cutLine,
                                                             std::vector<std::pair<bool, bool> > &result);
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_2D_Polygon_One_Offsets(std::vector<Vector2d> &poly,
+extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(std::vector<Vector2d> &poly,
                                                                   double d,
                                                                   std::vector<std::vector<Vector2d> > &offset_polys);
 
-extern "C" CARPENTRY_GEOM_EXPORT bool
+extern "C" PPGL_EXPORT bool
 CGAL_Construct_InOutSide_Polygon(const std::vector<Vector2d> &py, const Vector2d &p, const Vector2d &q, bool &isPInside,
                                  bool &isQInside);
-extern "C" CARPENTRY_GEOM_EXPORT bool
+extern "C" PPGL_EXPORT bool
 CGAL_2D_Intersection_Ray_Segment(const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s,
                                  const Vector2d &s_1_e, Vector2d &inter);
-extern "C" CARPENTRY_GEOM_EXPORT double GetAngleKerfOffsetTan(const Vector2d &a, const Vector2d &b);
+extern "C" PPGL_EXPORT double GetAngleKerfOffsetTan(const Vector2d &a, const Vector2d &b);
 //implementation in "threeD.cpp"
 //####################################################################################
-extern "C" CARPENTRY_GEOM_EXPORT double CGAL_3D_Distance_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e);
-extern "C" CARPENTRY_GEOM_EXPORT void
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e);
+extern "C" PPGL_EXPORT void
 CGAL_3D_Plane_Fitting(std::vector<Vector3d> &points, Vector3d &plane_p, Vector3d &plane_n);
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Plane_Point_Projection(Vector3d &plane_p, Vector3d &plane_n, Vector3d &p,
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_Point_Projection(Vector3d &plane_p, Vector3d &plane_n, Vector3d &p,
                                                                      Vector3d &result);
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Plane_Points_Projection(Vector3d &plane_p, Vector3d &plane_n,
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_Points_Projection(Vector3d &plane_p, Vector3d &plane_n,
                                                                       std::vector<Vector3d> &points,
                                                                       std::vector<Vector3d> &project_points);
 
-extern "C" CARPENTRY_GEOM_EXPORT void
+extern "C" PPGL_EXPORT void
 CGAL_3D_Plane_3D_to_2D_Point(Vector3d &plane_p, Vector3d &plane_n, Vector3d &point_3d,
                              Vector2d &result);
-extern "C" CARPENTRY_GEOM_EXPORT void
+extern "C" PPGL_EXPORT void
 CGAL_3D_Plane_2D_to_3D_Point(Vector3d &plane_p, Vector3d &plane_n, Vector2d &points_2d,
                              Vector3d &result);
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(Vector3d &plane_p, Vector3d &plane_n,
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(Vector3d &plane_p, Vector3d &plane_n,
                                                                     std::vector<Vector3d> &points_3d,
                                                                     std::vector<Vector2d> &points_2d);
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(Vector3d &plane_p, Vector3d &plane_n,
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(Vector3d &plane_p, Vector3d &plane_n,
                                                                     std::vector<Vector2d> &points_2d,
                                                                     std::vector<Vector3d> &points_3d);
 
-extern "C" CARPENTRY_GEOM_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e);
-extern "C" CARPENTRY_GEOM_EXPORT double
+extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e);
+extern "C" PPGL_EXPORT double
 CGAL_3D_Distance_Point_Point(double p_0_x, double p_0_y, double p_0_z, double p_1_x,
                              double p_1_y, double p_1_z);
-extern "C" CARPENTRY_GEOM_EXPORT double
+extern "C" PPGL_EXPORT double
 CGAL_3D_Distance_Point_Polygon(const std::vector<Vector3d> &py, const Vector3d &p);
 
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_2D_Polygon_Triangulation(const std::vector<std::vector<Vector2d>> &polys, std::vector<std::vector<int>> &faces);
+extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Triangulation(const std::vector<std::vector<Vector2d>> &polys, std::vector<std::vector<int>> &faces);
 
 //implementation in "mesh.cpp"
 //####################################################################################
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_Remesh_Surface_by_Adding_Feature(const std::vector<Vector3d> &feature,
+extern "C" PPGL_EXPORT void CGAL_Remesh_Surface_by_Adding_Feature(const std::vector<Vector3d> &feature,
                                                                             const std::vector<int> &face_ids,
                                                                             const std::vector<Vector3d> &vecs,
                                                                             const std::vector<int> &face_id_0,
@@ -264,10 +264,10 @@ extern "C" CARPENTRY_GEOM_EXPORT void CGAL_Remesh_Surface_by_Adding_Feature(cons
                                                                             std::vector<Vector3d> &igl_cutting_points,
                                                                             std::vector<std::vector<int> > &cutting_faces);
 
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, std::vector<Vector3d> &vecs,
+extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, std::vector<Vector3d> &vecs,
                                                                  std::vector<int> &face_id_0,
                                                                  std::vector<int> &face_id_1,
                                                                  std::vector<int> &face_id_2);
-extern "C" CARPENTRY_GEOM_EXPORT void CGAL_Mesh_Edges(std::string path);
+extern "C" PPGL_EXPORT void CGAL_Mesh_Edges(std::string path);
 
 #endif
