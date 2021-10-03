@@ -102,16 +102,16 @@ double CGAL_3D_Distance_Point_Point(const Vector3d& v0, const Vector3d& v1)
 
 extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e) {
     Line_3 l(VectorPoint3d(s_s), VectorPoint3d(s_e));
-    Point_3 m_p = l.projection(VectorPoint3d(p));
-    double d_m_s = CGAL_3D_Distance_Point_Point(m_p[0], m_p[1], m_p[2], s_s[0], s_s[1], s_s[2]);
-    double d_m_e = CGAL_3D_Distance_Point_Point(m_p[0], m_p[1], m_p[2], s_e[0], s_e[1], s_e[2]);
-    double d_s_e = CGAL_3D_Distance_Point_Point(s_s[0], s_s[1], s_s[2], s_e[0], s_e[1], s_e[2]);
+    auto m_p = PointVector3d(l.projection(VectorPoint3d(p)));
+	double d_m_s = CGAL_3D_Distance_Point_Point(m_p, s_s);
+	double d_m_e = CGAL_3D_Distance_Point_Point(m_p, s_e);
+	double d_s_e = CGAL_3D_Distance_Point_Point(s_s, s_e);
 
     if (d_m_s >= d_s_e)
         return s_e;
     if (d_m_e >= d_s_e)
         return s_s;
-    return PointVector3d(m_p);
+    return m_p;
 }
 
 extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment_Ref(const Vector3d &v, const Vector3d &s_0,
