@@ -55,7 +55,7 @@ add_dependencies(${PROJECT_NAME} pgl)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_BINARY_DIR}/Release/library1lib.dll
+        ${PROJECT_BINARY_DIR}/Release/carpentry_geom.dll
         ${CMAKE_CURRENT_SOURCE_DIR}/dll/
 )
 

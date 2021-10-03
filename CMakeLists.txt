@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.5)
 
-project(personal-pack-geom-lib)
+project(ppgl)
 
 # Add sub directories
 add_subdirectory(pack-geom-lib)
