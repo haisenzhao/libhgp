@@ -46,7 +46,7 @@ extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_
     base_1[1] = base_1[1] / length_base_1 * radius;
     base_1[2] = base_1[2] / length_base_1 * radius;
 
-    std::vector<Vector3d> vecs;
+    Vector3d1 vecs;
     for (int i = 0; i < 4; i++) {
         double angle = i * 2 * Math_PI / 4;
         Vector3d v = Functs::RotationAxis(normal + base_1, angle, normal);
@@ -94,7 +94,7 @@ extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_
 extern "C" PPGL_EXPORT void CGAL_Export_Path_Point(std::ofstream &export_file_output, int &export_index,
                                                              std::string s_name, double r, double g, double b,
                                                              Vector3d point, double radius) {
-    std::vector<Vector3d> vecs;
+    Vector3d1 vecs;
     vecs.push_back(Vector3d(0.5, 0.5, 0.5));
     vecs.push_back(Vector3d(-0.5, 0.5, 0.5));
     vecs.push_back(Vector3d(-0.5, 0.5, -0.5));

@@ -260,7 +260,7 @@ extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d1 
 
 extern "C" PPGL_EXPORT double
 CGAL_2D_Two_Polygons_Union(Vector2d1 poly_0, Vector2d1 poly_1,
-                           std::vector<Vector2d1 > &inter_polygons) {
+                           Vector2d2  &inter_polygons) {
     double scale = 1000000.0;
 
     ClipperLib::Paths subj(1);
@@ -303,7 +303,7 @@ CGAL_2D_Two_Polygons_Union(Vector2d1 poly_0, Vector2d1 poly_1,
 
 
 static void RemoveClosePoints(Vector2d1 &poly) {
-    std::vector<int> remove_int;
+   Vector1i1 remove_int;
 
     if (poly.size() > 2) {
         for (int i = 0; i < poly.size() - 1; i++) {
@@ -319,7 +319,7 @@ static void RemoveClosePoints(Vector2d1 &poly) {
 
 extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(Vector2d1 &poly,
                                                                   double d,
-                                                                  std::vector<Vector2d1 > &offset_polys) {
+                                                                  Vector2d2  &offset_polys) {
     if (!(poly.size() > 0)) return;
 
     double scale = 1000000.0;
@@ -365,9 +365,9 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(Vector2d1 &poly,
     }
 }
 
-extern "C" PPGL_EXPORT std::vector<int>
+extern "C" PPGL_EXPORT Vector1i1
 CGAL_Decompose_Polyline(Vector2d1 &polyline, double threshold) {
-    std::vector<int> result;
+    Vector1i1 result;
     for (auto &p : polyline) {
     }
     return result;
@@ -409,7 +409,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_NotExtend(
     return true;
 }
 
-void OutputRectangle(std::string path, const std::vector<Vector2d1 > &points) {
+void OutputRectangle(std::string path, const Vector2d2  &points) {
     std::ofstream file(path);
 
     for (int i = 0; i < points.size(); i++) {
@@ -575,7 +575,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
             std::cerr << "raysnap2 % 2 != 0" << " size = " << raySnap.size() << std::endl;
             //std::string filename = "D:\\cgaldebug\\" + std::to_string(rand()).append(".obj");
             //std::cerr << "raysnap2 % 2 != 0 and see " << filename << std::endl;
-            // 			std::vector<Vector2d1 > poly = { polygon };
+            // 			Vector2d2  poly = { polygon };
             // 			OutputRectangle(filename, poly);
             // 			auto fromS = e + eps * cutDir;
             // 			auto toE = -cutDir;
@@ -699,7 +699,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
         }
         //std::cerr << "rayd1int = " << rayD1Int.size() << std::endl;
         if (rayD1Int.empty()) {
-            // 			std::vector<Vector2d1 > debug = { polygon };
+            // 			Vector2d2  debug = { polygon };
             // 			OutputRectangle("D:\\final.obj", debug);
             return false;
         }
@@ -739,12 +739,9 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
 }
 
 
-extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(
-        const Vector2d1 &polygon,
-        const Vector2d1 &cutLine,
-        std::vector<std::pair<bool, bool> > &result) {
+extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon,const Vector2d1 &cutLine, VectorPB1 &result) {
     // N-1 edges, default 0 -> cant be fabricated
-    result = std::vector<std::pair<bool, bool> >(cutLine.size() - 1, std::make_pair<bool, bool>(false, false));
+    result = VectorPB1(cutLine.size() - 1, std::make_pair<bool, bool>(false, false));
 
     Polygon_2 poly;
     for (auto &p : polygon)

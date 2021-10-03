@@ -25,8 +25,7 @@ extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment(Vector3d p, Vector3
     return sqrt((double) CGAL::squared_distance(VectorPoint3d(p), Segment_3(VectorPoint3d(s_s), VectorPoint3d(s_e))));
 }
 
-extern "C" PPGL_EXPORT void
-CGAL_3D_Plane_Fitting(std::vector<Vector3d> &points, Vector3d &plane_p, Vector3d &plane_n) {
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_Fitting(Vector3d1 &points, Vector3d &plane_p, Vector3d &plane_n) {
     // centroid of 3D points
     std::vector<Point_3> points_3;
     for (int i = 0; i < points.size(); i++)
@@ -57,8 +56,8 @@ extern "C" PPGL_EXPORT void CGAL_3D_Plane_Point_Projection(Vector3d &plane_p, Ve
 }
 
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_Points_Projection(Vector3d &plane_p, Vector3d &plane_n,
-                                                                      std::vector<Vector3d> &points,
-                                                                      std::vector<Vector3d> &project_points) {
+                                                                      Vector3d1 &points,
+                                                                      Vector3d1 &project_points) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     for (int i = 0; i < points.size(); i++)
         project_points.push_back(PointVector3d(plane.projection(VectorPoint3d(points[i]))));
@@ -79,7 +78,7 @@ CGAL_3D_Plane_2D_to_3D_Point(Vector3d &plane_p, Vector3d &plane_n, Vector2d &poi
 }
 
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(Vector3d &plane_p, Vector3d &plane_n,
-                                                                    std::vector<Vector3d> &points_3d,
+                                                                    Vector3d1 &points_3d,
                                                                     Vector2d1 &points_2d) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     for (int i = 0; i < points_3d.size(); i++)
@@ -88,7 +87,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(Vector3d &plane_p, Vec
 
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(Vector3d &plane_p, Vector3d &plane_n,
                                                                     Vector2d1 &points_2d,
-                                                                    std::vector<Vector3d> &points_3d) {
+                                                                    Vector3d1 &points_3d) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     for (int i = 0; i < points_2d.size(); i++)
         points_3d.push_back(PointVector3d(plane.to_3d(VectorPoint2d(points_2d[i]))));
@@ -122,7 +121,7 @@ extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment_Ref(const Vector3d 
 }
 
 extern "C" PPGL_EXPORT double
-CGAL_3D_Distance_Point_Polygon(const std::vector<Vector3d> &py, const Vector3d &p) {
+CGAL_3D_Distance_Point_Polygon(const Vector3d1 &py, const Vector3d &p) {
     double distance = 1000000000000.0;
     for (int i = 0; i < py.size(); i++)
         distance = std::min(distance, CGAL_3D_Distance_Point_Segment_Ref(p, py[i], py[(i + 1) % py.size()]));
@@ -130,7 +129,7 @@ CGAL_3D_Distance_Point_Polygon(const std::vector<Vector3d> &py, const Vector3d &
 }
 
 
-void insert_polygon(CDT& cdt, const Polygon_2& polygon, std::vector<int> &indexInt){
+void insert_polygon(CDT& cdt, const Polygon_2& polygon,Vector1i1 &indexInt){
 	if (polygon.is_empty()) return;
 	int index = 0;
 
@@ -237,7 +236,7 @@ int get_first_integer(const char *v) {
     return ival;
 }
 
-void CGAL_Load_Obj(std::string path, std::vector<double> &coords, std::vector<int> &tris) {
+void CGAL_Load_Obj(std::string path, std::vector<double> &coords,Vector1i1 &tris) {
     double x, y, z;
     char line[1024], v0[1024], v1[1024], v2[1024];
 
@@ -261,10 +260,10 @@ void CGAL_Load_Obj(std::string path, std::vector<double> &coords, std::vector<in
     fclose(fp);
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, std::vector<Vector3d> &vecs,
-                                                                 std::vector<int> &face_id_0,
-                                                                 std::vector<int> &face_id_1,
-                                                                 std::vector<int> &face_id_2) {
+extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, Vector3d1 &vecs,
+                                                                Vector1i1 &face_id_0,
+                                                                Vector1i1 &face_id_1,
+                                                                Vector1i1 &face_id_2) {
     //if (path.substr(path.size() - 3, path.size()) == "off")
     //{
     //	Polyhedron_3 polyhedron;
@@ -290,7 +289,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, std::ve
 
     if (path.substr(path.size() - 3, path.size()) == "obj") {
         std::vector<double> coords;
-        std::vector<int> tris;
+       Vector1i1 tris;
         CGAL_Load_Obj(path.c_str(), coords, tris);
         if (coords.size() == 0)
             return;

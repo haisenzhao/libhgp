@@ -74,12 +74,12 @@ typedef bool
 typedef bool (*CGAL_2D_Polygon_Is_Clockwise_Oriented)(Vector2d1& ps);
 typedef double
 (*CGAL_2D_Two_Polygons_Union)(Vector2d1 poly_0, Vector2d1 poly_1,
-	std::vector<Vector2d1 >& inter_polygons);
+	Vector2d2 & inter_polygons);
 
 typedef double (*CGAL_2D_Two_Polygons_Intersection)(const Vector2d1& poly_0,
 	const Vector2d1& poly_1);
 
-typedef std::vector<int>
+typedefVector1i1
 (*CGAL_Decompose_Polyline)(Vector2d1& polyline, double threshold);
 typedef bool
 (*CGAL_Identify_Polycut_Extend)(const Vector2d1& polygon, const Vector2d& s,
@@ -87,13 +87,11 @@ typedef bool
 typedef bool
 (*CGAL_Identify_Polycut_NotExtend)(const Vector2d1& polygon, const Vector2d& s,
 	const Vector2d& e);
-typedef bool (*CGAL_Identify_Polycut)(const Vector2d1& polygon,
-	const Vector2d1& cutLine,
-	std::vector<std::pair<bool, bool> >& result);
+typedef bool (*CGAL_Identify_Polycut)(const Vector2d1& polygon,const Vector2d1& cutLine,VectorPB1& result);
 
 typedef void (*CGAL_2D_Polygon_One_Offsets)(Vector2d1& poly,
 	double d,
-	std::vector<Vector2d1 >& offset_polys);
+	Vector2d2 & offset_polys);
 
 typedef bool
 (*CGAL_Construct_InOutSide_Polygon)(const Vector2d1& py, const Vector2d& p, const Vector2d& q, bool& isPInside,
@@ -109,12 +107,12 @@ typedef double (*GetAngleKerfOffsetTan)(const Vector2d& a, const Vector2d& b);
 //####################################################################################
 typedef double (*CGAL_3D_Distance_Point_Segment)(Vector3d p, Vector3d s_s, Vector3d s_e);
 typedef void
-(*CGAL_3D_Plane_Fitting)(std::vector<Vector3d>& points, Vector3d& plane_p, Vector3d& plane_n);
+(*CGAL_3D_Plane_Fitting)(Vector3d1& points, Vector3d& plane_p, Vector3d& plane_n);
 typedef void (*CGAL_3D_Plane_Point_Projection)(Vector3d& plane_p, Vector3d& plane_n, Vector3d& p,
 	Vector3d& result);
 typedef void (*CGAL_3D_Plane_Points_Projection)(Vector3d& plane_p, Vector3d& plane_n,
-	std::vector<Vector3d>& points,
-	std::vector<Vector3d>& project_points);
+	Vector3d1& points,
+	Vector3d1& project_points);
 
 typedef void
 (*CGAL_3D_Plane_3D_to_2D_Point)(Vector3d& plane_p, Vector3d& plane_n, Vector3d& point_3d,
@@ -124,36 +122,36 @@ typedef void
 	Vector3d& result);
 
 typedef void (*CGAL_3D_Plane_3D_to_2D_Points)(Vector3d& plane_p, Vector3d& plane_n,
-	std::vector<Vector3d>& points_3d,
+	Vector3d1& points_3d,
 	Vector2d1& points_2d);
 typedef void (*CGAL_3D_Plane_2D_to_3D_Points)(Vector3d& plane_p, Vector3d& plane_n,
 	Vector2d1& points_2d,
-	std::vector<Vector3d>& points_3d);
+	Vector3d1& points_3d);
 
 typedef Vector3d(*CGAL_3D_Projection_Point_Segment)(Vector3d p, Vector3d s_s, Vector3d s_e);
 typedef double
 (*CGAL_3D_Distance_Point_Point)(double p_0_x, double p_0_y, double p_0_z, double p_1_x,
 	double p_1_y, double p_1_z);
 typedef double
-(*CGAL_3D_Distance_Point_Polygon)(const std::vector<Vector3d>& py, const Vector3d& p);
+(*CGAL_3D_Distance_Point_Polygon)(const Vector3d1& py, const Vector3d& p);
 
 typedef void (*CGAL_2D_Polygon_Triangulation)(const Vector2d2& polys, std::vector<std::vector<int>>& faces);
 
 //implementation in "mesh.cpp"
 //####################################################################################
 
-typedef void (*CGAL_Remesh_Surface_by_Adding_Feature)(const std::vector<Vector3d>& feature,
-	const std::vector<int>& face_ids,
-	const std::vector<Vector3d>& vecs,
-	const std::vector<int>& face_id_0,
-	const std::vector<int>& face_id_1,
-	const std::vector<int>& face_id_2,
+typedef void (*CGAL_Remesh_Surface_by_Adding_Feature)(const Vector3d1& feature,
+	const Vector1i1& face_ids,
+	const Vector3d1& vecs,
+	const Vector1i1& face_id_0,
+	const Vector1i1& face_id_1,
+	const Vector1i1& face_id_2,
 	std::vector<int>& igl_cutting_0_edges,
 	std::vector<int>& igl_cutting_1_edges,
-	std::vector<Vector3d>& igl_cutting_points,
-	std::vector<std::vector<int> >& cutting_faces);
+	Vector3d1& igl_cutting_points,
+	Vector1i2& cutting_faces);
 
-typedef void (*CGAL_3D_Read_Triangle_Mesh)(std::string path, std::vector<Vector3d>& vecs,
+typedef void (*CGAL_3D_Read_Triangle_Mesh)(std::string path, Vector3d1& vecs,
 	std::vector<int>& face_id_0,
 	std::vector<int>& face_id_1,
 	std::vector<int>& face_id_2);

@@ -2,11 +2,11 @@
 
 //extern "C" PPGL_EXPORT
 void Construct_Polyhedron(Polyhedron_3 &polyhedron,
-                          const std::vector<Vector3d> &vecs,
-                          const std::vector<int> &face_id_0, const std::vector<int> &face_id_1,
-                          const std::vector<int> &face_id_2) {
+                          const Vector3d1 &vecs,
+                          const Vector1i1 &face_id_0, const Vector1i1 &face_id_1,
+                          const Vector1i1 &face_id_2) {
     std::vector<double> coords;
-    std::vector<int> tris;
+   Vector1i1 tris;
     for (int i = 0; i < vecs.size(); i++) {
         coords.push_back(vecs[i][0]);
         coords.push_back(vecs[i][1]);
@@ -29,7 +29,7 @@ void Construct_Polyhedron(Polyhedron_3 &polyhedron,
     }
 
     std::vector<double>().swap(coords);
-    std::vector<int>().swap(tris);
+   Vector1i1().swap(tris);
 }
 
 
@@ -120,13 +120,13 @@ bool Intersection(Halfedge_handle &hh, int nb, Vector3d inside, Vector3d outside
 }
 
 extern "C" PPGL_EXPORT  void
-CGAL_Remesh_Surface_by_Adding_Feature(const std::vector<Vector3d> &feature, const std::vector<int> &face_ids,
-                                      const std::vector<Vector3d> &vecs,
-                                      const std::vector<int> &face_id_0, const std::vector<int> &face_id_1,
-                                      const std::vector<int> &face_id_2,
-                                      std::vector<int> &igl_cutting_0_edges, std::vector<int> &igl_cutting_1_edges,
-                                      std::vector<Vector3d> &igl_cutting_points,
-                                      std::vector<std::vector<int> > &cutting_faces) {
+CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature, const Vector1i1 &face_ids,
+                                      const Vector3d1 &vecs,
+                                      const Vector1i1 &face_id_0, const Vector1i1 &face_id_1,
+                                      const Vector1i1 &face_id_2,
+                                     Vector1i1 &igl_cutting_0_edges,Vector1i1 &igl_cutting_1_edges,
+                                      Vector3d1 &igl_cutting_points,
+                                      Vector1i2 &cutting_faces) {
     //polyhedron
     Polyhedron_3 polyhedron;
     Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
@@ -146,7 +146,7 @@ CGAL_Remesh_Surface_by_Adding_Feature(const std::vector<Vector3d> &feature, cons
 
     /*******************************************/
     //searching for all of the cutting points on edges
-    std::vector<Vector3d> cutting_points;
+    Vector3d1 cutting_points;
     /*******************************************/
     int cur_face_id = project_faces[0]->id();
     Poly_facet_iterator cur_face = project_faces[0];
