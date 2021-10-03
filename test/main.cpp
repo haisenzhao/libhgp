@@ -31,6 +31,7 @@ void PostProcess()
 	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\RelWithDebInfo\\");
 
 	//read
+	VectorStr1 funct_values;
 	VectorStr1 funct_titles;
 	VectorStr1 funct_paras;
 	std::ifstream file("E:\\Task2\\personal-pack-geom-lib\\ppgl\\geom.h");
@@ -39,9 +40,10 @@ void PostProcess()
 	{
 		if (Functs::StringContain(line, "CGAL"))
 		{
-			auto value = line.substr(line.find("PPGL_EXPORT"), line.find("CGAL") - line.find("PPGL_EXPORT"));
+			auto value = line.substr(line.find("PPGL_EXPORT")+11, line.find("CGAL") - line.find("PPGL_EXPORT")-12);
 			auto title = line.substr(line.find("CGAL"), line.find("(") - line.find("CGAL"));
 			auto para = line.substr(line.find("("));
+			funct_values.push_back(value);
 			funct_titles.push_back(title);
 			funct_paras.push_back(para);
 			std::cerr << "Function: " << title <<" para: " <<para<< std::endl;
@@ -61,9 +63,10 @@ void PostProcess()
 	//typedef void (*CGAL_Vector_Base)(Vector3d n, Vector3d&);
 	for (int i = 0; i < funct_titles.size(); i++)
 	{
+		auto value = funct_values[i];
 		auto title = funct_titles[i];
 		auto para = funct_paras[i];
-		cgal_file << "typedef void (*" << title << ")" << para << std::endl;
+		cgal_file << "typedef "+value+" (*" << title << ")" << para << std::endl;
 	}
 
 	//	auto ReadMesh = (CGAL_3D_Read_Triangle_Mesh)GetProcAddress(CompilerConfig::Instance().GetHModule(), "CGAL_3D_Read_Triangle_Mesh");
