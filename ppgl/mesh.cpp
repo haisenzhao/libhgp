@@ -290,6 +290,51 @@ CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature, const Vector1i1 
 extern "C" PPGL_EXPORT void CGAL_Mesh_Edges(std::string path) {
 }
 
+
+
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(double center_x, double center_y, double center_z, double radius,
+	double ray_origin_x, double ray_origin_y, double ray_origin_z, double ray_direction_x, double ray_direction_y, double ray_direction_z,
+	std::vector<double>& i_x, std::vector<double>& i_y, std::vector<double>& i_z)
+{
+	//Wm5::Sphere3<double> sphere(Wm5::Vector3d(center_x, center_y, center_z), radius);
+	//Wm5::Ray3<double> ray(Wm5::Vector3d(ray_origin_x, ray_origin_y, ray_origin_z), Wm5::Vector3d(ray_direction_x, ray_direction_y, ray_direction_z));
+
+	//Wm5::IntrRay3Sphere3d intr(ray,sphere);
+
+	//intr.Test();
+	//intr.Find();
+
+	//int nb = intr.GetQuantity();
+
+	//for (int i = 0; i < nb; i++)
+	//{
+	//	Wm5::Vector3d p = intr.GetPoint(i);
+	//	i_x.push_back(p[0]);
+	//	i_y.push_back(p[1]);
+	//	i_z.push_back(p[2]);
+	//}
+
+	//return nb>0;
+
+	return false;
+}
+
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Triangle(Vector3d p, Vector3d n, Vector3d p0, Vector3d p1, Vector3d p2)
+{
+	Ray_3 ray(VectorPoint3d(p), Vector_3(n[0], n[1], n[2]));
+
+	K::Triangle_3 tri(VectorPoint3d(p0), VectorPoint3d(p1), VectorPoint3d(p2));
+	CGAL::Object result = CGAL::intersection(ray, tri);
+	if (const Point_2* ipoint = CGAL::object_cast<Point_2>(&result))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(Vector3d p, Vector3d n, std::string path)
 {
 	std::cout << "CGAL_3D_Intersection_Ray_Mesh..." << std::endl;
