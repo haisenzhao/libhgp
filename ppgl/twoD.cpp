@@ -1,7 +1,8 @@
 #include "geom.h"
 #include "clipper/clipper.hpp"
 
-extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Point(Vector2d p_0, Vector2d p_1) {
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Point(Vector2d p_0, Vector2d p_1) 
+{
     return sqrt(pow((p_0[0] - p_1[0]), 2.0) + pow((p_0[1] - p_1[1]), 2.0));
 }
 
