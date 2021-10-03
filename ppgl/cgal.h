@@ -117,4 +117,10 @@ typedef bool (*CGAL_3D_Intersection_Ray_Triangle)(Vector3d p, Vector3d n, Vector
 typedef bool (*CGAL_3D_Intersection_Ray_Mesh)(Vector3d p, Vector3d n, std::string path);
 typedef void (*CGAL_3D_Intersection_Rays_Mesh)(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1& inters);
 
+class CGAL
+{
+public:
+
+};
+
 #endif
