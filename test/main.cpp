@@ -21,7 +21,7 @@ void Test_CGAL_GEOM()
 #endif
 
 };
-/*
+
 void PostProcess() 
 {
 	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
@@ -58,7 +58,7 @@ void PostProcess()
 	for (int i = 0; i < funct_titles.size(); i++)
 	{
 		auto title = funct_titles[i];
-		auto para = funct_titles[i];
+		auto para = funct_paras[i];
 		cgal_file << "typedef void (*" << title << ")" << para << std::endl;
 	}
 
@@ -70,10 +70,10 @@ void PostProcess()
 
 };
 
-*/
+
 int main()
 {
-	//PostProcess();
+	PostProcess();
 
 	
 	system("pause");
