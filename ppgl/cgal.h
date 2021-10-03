@@ -79,7 +79,7 @@ typedef double
 typedef double (*CGAL_2D_Two_Polygons_Intersection)(const Vector2d1& poly_0,
 	const Vector2d1& poly_1);
 
-typedefVector1i1
+typedef Vector1i1
 (*CGAL_Decompose_Polyline)(Vector2d1& polyline, double threshold);
 typedef bool
 (*CGAL_Identify_Polycut_Extend)(const Vector2d1& polygon, const Vector2d& s,
