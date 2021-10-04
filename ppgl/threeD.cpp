@@ -260,10 +260,23 @@ void CGAL_Load_Obj(std::string path, std::vector<double> &coords,Vector1i1 &tris
     fclose(fp);
 }
 
+extern "C" PPGL_EXPORT void CGAL_3D_Output_Triangle_Mesh(std::string path, Vector3d1 & vecs, 
+                        Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2)
+{
+	std::ofstream file(path);
+
+	for (auto& vec : vecs)
+		file << "v " << vec[0] << " " << vec[1] << " " << vec[2] << std::endl;
+
+    for (int i = 0; i < face_id_0.size(); i++)
+        file << "f " << face_id_0[i] << " " << face_id_1[i] << " " << face_id_2[i] << std::endl;
+
+	file.clear();
+	file.close();
+}
+
 extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, Vector3d1 &vecs,
-                                                                Vector1i1 &face_id_0,
-                                                                Vector1i1 &face_id_1,
-                                                                Vector1i1 &face_id_2) 
+                        Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2)
 {
     //if (path.substr(path.size() - 3, path.size()) == "off")
     //{
