@@ -337,11 +337,10 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Triangle(Vector3d p, Vector
 
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(Vector3d p, Vector3d n, std::string path)
 {
-	std::cout << "CGAL_3D_Intersection_Ray_Mesh..." << std::endl;
+	std::cerr << "CGAL_3D_Intersection_Ray_Mesh..." << std::endl;
 
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
-
 	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
 	tree.accelerate_distance_queries();
 
@@ -353,7 +352,35 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(Vector3d p, Vector3d n
 		return false;
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1 & inters)
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Bool(Vector3d1 ps, Vector3d2 nes, std::string path, Vector1b2 & inters)
+{
+	//input validation
+	if (ps.size() != nes.size()  || !Functs::DetectExisting(path))
+	{
+		Functs::MAssert("ps.size() != nes.size() || inters.size() != 0 || !Functs::DetectExisting(path)");
+	}
+
+	//construct polyhedron
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, path);
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+	tree.accelerate_distance_queries();
+
+	//intersection
+	inters = Vector1b2(ps.size(), Vector1b1());
+	for (int i = 0; i < ps.size(); i++)
+	{
+		Functs::OutputIterInfo("CGAL_3D_Intersection_Rays_Mesh_Bool", ps.size(), i,100);
+		Point_3 p3=VectorPoint3d(ps[i]);
+		for (int j = 0; j < nes[i].size(); j++)
+		{
+			Ray_3 ray(p3, Vector_3(nes[i][j][0], nes[i][j][1], nes[i][j][2]));
+			inters[i].push_back(tree.do_intersect(ray));
+		}
+	}
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1 & inters)
 {
 	std::ifstream input(path);
 	Mesh mesh;

@@ -85,6 +85,8 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Edges(std::string path);
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(double, double, double, double, double, double, double, double, double, double, std::vector<double>&, std::vector<double>&, std::vector<double>&);
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Triangle(Vector3d p, Vector3d n, Vector3d p0, Vector3d p1, Vector3d p2);
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(Vector3d p, Vector3d n, std::string path);
-extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1& inters);
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1 & inters);
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Bool(Vector3d1 ps, Vector3d2 nes, std::string path, Vector1b2 & inters);
+
 
 #endif
