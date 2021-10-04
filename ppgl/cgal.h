@@ -48,9 +48,104 @@ typedef  bool (*CGAL_3D_Intersection_Sphere_Ray)(double, double, double, double,
 typedef  bool (*CGAL_3D_Intersection_Ray_Triangle)(Vector3d p, Vector3d n, Vector3d p0, Vector3d p1, Vector3d p2);
 typedef  bool (*CGAL_3D_Intersection_Ray_Mesh)(Vector3d p, Vector3d n, std::string path);
 typedef  void (*CGAL_3D_Intersection_Rays_Mesh)(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1& inters);
-class
+
+
+class PL
 {
-public:
-HMODULE hModule;
+	public:
+	PL()
+	{
+		hModule = Functs::LoadHMODULE("ppgl.dll");
+		CGAL_Test_PGL_C = (CGAL_Test_PGL)GetProcAddress(hModule, "CGAL_Test_PGL");
+		CGAL_Vector_Base_C = (CGAL_Vector_Base)GetProcAddress(hModule, "CGAL_Vector_Base");
+		CGAL_Export_Path_Segment_C = (CGAL_Export_Path_Segment)GetProcAddress(hModule, "CGAL_Export_Path_Segment");
+		CGAL_Export_Path_Point_C = (CGAL_Export_Path_Point)GetProcAddress(hModule, "CGAL_Export_Path_Point");
+		CGAL_2D_Distance_Point_Point_C = (CGAL_2D_Distance_Point_Point)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Point");
+		CGAL_2D_Distance_Point_Line_C = (CGAL_2D_Distance_Point_Line)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Line");
+		CGAL_2D_Distance_Point_Segment_C = (CGAL_2D_Distance_Point_Segment)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Segment");
+		CGAL_2D_Distance_Segment_Segment_C = (CGAL_2D_Distance_Segment_Segment)GetProcAddress(hModule, "CGAL_2D_Distance_Segment_Segment");
+		CGAL_2D_Location_Point_Polygon_C = (CGAL_2D_Location_Point_Polygon)GetProcAddress(hModule, "CGAL_2D_Location_Point_Polygon");
+		CGAL_2D_Location_Points_Polygon_C = (CGAL_2D_Location_Points_Polygon)GetProcAddress(hModule, "CGAL_2D_Location_Points_Polygon");
+		CGAL_2D_Distance_Point_Polygon_C = (CGAL_2D_Distance_Point_Polygon)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Polygon");
+		CGAL_2D_Intersection_Segment_Segment_C = (CGAL_2D_Intersection_Segment_Segment)GetProcAddress(hModule, "CGAL_2D_Intersection_Segment_Segment");
+		CGAL_2D_Intersection_Line_Line_C = (CGAL_2D_Intersection_Line_Line)GetProcAddress(hModule, "CGAL_2D_Intersection_Line_Line");
+		CGAL_2D_Intersection_Segment_Polygon_C = (CGAL_2D_Intersection_Segment_Polygon)GetProcAddress(hModule, "CGAL_2D_Intersection_Segment_Polygon");
+		CGAL_2D_Polygon_Is_Clockwise_Oriented_C = (CGAL_2D_Polygon_Is_Clockwise_Oriented)GetProcAddress(hModule, "CGAL_2D_Polygon_Is_Clockwise_Oriented");
+		CGAL_2D_Two_Polygons_Union_C = (CGAL_2D_Two_Polygons_Union)GetProcAddress(hModule, "CGAL_2D_Two_Polygons_Union");
+		CGAL_2D_Two_Polygons_Intersection_C = (CGAL_2D_Two_Polygons_Intersection)GetProcAddress(hModule, "CGAL_2D_Two_Polygons_Intersection");
+		CGAL_Decompose_Polyline_C = (CGAL_Decompose_Polyline)GetProcAddress(hModule, "CGAL_Decompose_Polyline");
+		CGAL_Identify_Polycut_Extend_C = (CGAL_Identify_Polycut_Extend)GetProcAddress(hModule, "CGAL_Identify_Polycut_Extend");
+		CGAL_Identify_Polycut_NotExtend_C = (CGAL_Identify_Polycut_NotExtend)GetProcAddress(hModule, "CGAL_Identify_Polycut_NotExtend");
+		CGAL_Identify_Polycut_C = (CGAL_Identify_Polycut)GetProcAddress(hModule, "CGAL_Identify_Polycut");
+		CGAL_2D_Polygon_One_Offsets_C = (CGAL_2D_Polygon_One_Offsets)GetProcAddress(hModule, "CGAL_2D_Polygon_One_Offsets");
+		CGAL_Construct_InOutSide_Polygon_C = (CGAL_Construct_InOutSide_Polygon)GetProcAddress(hModule, "CGAL_Construct_InOutSide_Polygon");
+		CGAL_2D_Intersection_Ray_Segment_C = (CGAL_2D_Intersection_Ray_Segment)GetProcAddress(hModule, "CGAL_2D_Intersection_Ray_Segment");
+		CGAL_Get_Angle_Kerf_Offset_Tan_C = (CGAL_Get_Angle_Kerf_Offset_Tan)GetProcAddress(hModule, "CGAL_Get_Angle_Kerf_Offset_Tan");
+		CGAL_3D_Distance_Point_Segment_C = (CGAL_3D_Distance_Point_Segment)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Segment");
+		CGAL_3D_Plane_Fitting_C = (CGAL_3D_Plane_Fitting)GetProcAddress(hModule, "CGAL_3D_Plane_Fitting");
+		CGAL_3D_Plane_Point_Projection_C = (CGAL_3D_Plane_Point_Projection)GetProcAddress(hModule, "CGAL_3D_Plane_Point_Projection");
+		CGAL_3D_Plane_Points_Projection_C = (CGAL_3D_Plane_Points_Projection)GetProcAddress(hModule, "CGAL_3D_Plane_Points_Projection");
+		CGAL_3D_Plane_3D_to_2D_Point_C = (CGAL_3D_Plane_3D_to_2D_Point)GetProcAddress(hModule, "CGAL_3D_Plane_3D_to_2D_Point");
+		CGAL_3D_Plane_2D_to_3D_Point_C = (CGAL_3D_Plane_2D_to_3D_Point)GetProcAddress(hModule, "CGAL_3D_Plane_2D_to_3D_Point");
+		CGAL_3D_Plane_3D_to_2D_Points_C = (CGAL_3D_Plane_3D_to_2D_Points)GetProcAddress(hModule, "CGAL_3D_Plane_3D_to_2D_Points");
+		CGAL_3D_Plane_2D_to_3D_Points_C = (CGAL_3D_Plane_2D_to_3D_Points)GetProcAddress(hModule, "CGAL_3D_Plane_2D_to_3D_Points");
+		CGAL_3D_Projection_Point_Segment_C = (CGAL_3D_Projection_Point_Segment)GetProcAddress(hModule, "CGAL_3D_Projection_Point_Segment");
+		CGAL_3D_Distance_Point_Point_C = (CGAL_3D_Distance_Point_Point)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Point");
+		CGAL_3D_Distance_Point_Polygon_C = (CGAL_3D_Distance_Point_Polygon)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Polygon");
+		CGAL_2D_Polygon_Triangulation_C = (CGAL_2D_Polygon_Triangulation)GetProcAddress(hModule, "CGAL_2D_Polygon_Triangulation");
+		CGAL_Remesh_Surface_by_Adding_Feature_C = (CGAL_Remesh_Surface_by_Adding_Feature)GetProcAddress(hModule, "CGAL_Remesh_Surface_by_Adding_Feature");
+		CGAL_3D_Read_Triangle_Mesh_C = (CGAL_3D_Read_Triangle_Mesh)GetProcAddress(hModule, "CGAL_3D_Read_Triangle_Mesh");
+		CGAL_Mesh_Edges_C = (CGAL_Mesh_Edges)GetProcAddress(hModule, "CGAL_Mesh_Edges");
+		CGAL_3D_Intersection_Sphere_Ray_C = (CGAL_3D_Intersection_Sphere_Ray)GetProcAddress(hModule, "CGAL_3D_Intersection_Sphere_Ray");
+		CGAL_3D_Intersection_Ray_Triangle_C = (CGAL_3D_Intersection_Ray_Triangle)GetProcAddress(hModule, "CGAL_3D_Intersection_Ray_Triangle");
+		CGAL_3D_Intersection_Ray_Mesh_C = (CGAL_3D_Intersection_Ray_Mesh)GetProcAddress(hModule, "CGAL_3D_Intersection_Ray_Mesh");
+		CGAL_3D_Intersection_Rays_Mesh_C = (CGAL_3D_Intersection_Rays_Mesh)GetProcAddress(hModule, "CGAL_3D_Intersection_Rays_Mesh");
+	};
+
+	HMODULE hModule;
+	CGAL_Test_PGL CGAL_Test_PGL_C;
+	CGAL_Vector_Base CGAL_Vector_Base_C;
+	CGAL_Export_Path_Segment CGAL_Export_Path_Segment_C;
+	CGAL_Export_Path_Point CGAL_Export_Path_Point_C;
+	CGAL_2D_Distance_Point_Point CGAL_2D_Distance_Point_Point_C;
+	CGAL_2D_Distance_Point_Line CGAL_2D_Distance_Point_Line_C;
+	CGAL_2D_Distance_Point_Segment CGAL_2D_Distance_Point_Segment_C;
+	CGAL_2D_Distance_Segment_Segment CGAL_2D_Distance_Segment_Segment_C;
+	CGAL_2D_Location_Point_Polygon CGAL_2D_Location_Point_Polygon_C;
+	CGAL_2D_Location_Points_Polygon CGAL_2D_Location_Points_Polygon_C;
+	CGAL_2D_Distance_Point_Polygon CGAL_2D_Distance_Point_Polygon_C;
+	CGAL_2D_Intersection_Segment_Segment CGAL_2D_Intersection_Segment_Segment_C;
+	CGAL_2D_Intersection_Line_Line CGAL_2D_Intersection_Line_Line_C;
+	CGAL_2D_Intersection_Segment_Polygon CGAL_2D_Intersection_Segment_Polygon_C;
+	CGAL_2D_Polygon_Is_Clockwise_Oriented CGAL_2D_Polygon_Is_Clockwise_Oriented_C;
+	CGAL_2D_Two_Polygons_Union CGAL_2D_Two_Polygons_Union_C;
+	CGAL_2D_Two_Polygons_Intersection CGAL_2D_Two_Polygons_Intersection_C;
+	CGAL_Decompose_Polyline CGAL_Decompose_Polyline_C;
+	CGAL_Identify_Polycut_Extend CGAL_Identify_Polycut_Extend_C;
+	CGAL_Identify_Polycut_NotExtend CGAL_Identify_Polycut_NotExtend_C;
+	CGAL_Identify_Polycut CGAL_Identify_Polycut_C;
+	CGAL_2D_Polygon_One_Offsets CGAL_2D_Polygon_One_Offsets_C;
+	CGAL_Construct_InOutSide_Polygon CGAL_Construct_InOutSide_Polygon_C;
+	CGAL_2D_Intersection_Ray_Segment CGAL_2D_Intersection_Ray_Segment_C;
+	CGAL_Get_Angle_Kerf_Offset_Tan CGAL_Get_Angle_Kerf_Offset_Tan_C;
+	CGAL_3D_Distance_Point_Segment CGAL_3D_Distance_Point_Segment_C;
+	CGAL_3D_Plane_Fitting CGAL_3D_Plane_Fitting_C;
+	CGAL_3D_Plane_Point_Projection CGAL_3D_Plane_Point_Projection_C;
+	CGAL_3D_Plane_Points_Projection CGAL_3D_Plane_Points_Projection_C;
+	CGAL_3D_Plane_3D_to_2D_Point CGAL_3D_Plane_3D_to_2D_Point_C;
+	CGAL_3D_Plane_2D_to_3D_Point CGAL_3D_Plane_2D_to_3D_Point_C;
+	CGAL_3D_Plane_3D_to_2D_Points CGAL_3D_Plane_3D_to_2D_Points_C;
+	CGAL_3D_Plane_2D_to_3D_Points CGAL_3D_Plane_2D_to_3D_Points_C;
+	CGAL_3D_Projection_Point_Segment CGAL_3D_Projection_Point_Segment_C;
+	CGAL_3D_Distance_Point_Point CGAL_3D_Distance_Point_Point_C;
+	CGAL_3D_Distance_Point_Polygon CGAL_3D_Distance_Point_Polygon_C;
+	CGAL_2D_Polygon_Triangulation CGAL_2D_Polygon_Triangulation_C;
+	CGAL_Remesh_Surface_by_Adding_Feature CGAL_Remesh_Surface_by_Adding_Feature_C;
+	CGAL_3D_Read_Triangle_Mesh CGAL_3D_Read_Triangle_Mesh_C;
+	CGAL_Mesh_Edges CGAL_Mesh_Edges_C;
+	CGAL_3D_Intersection_Sphere_Ray CGAL_3D_Intersection_Sphere_Ray_C;
+	CGAL_3D_Intersection_Ray_Triangle CGAL_3D_Intersection_Ray_Triangle_C;
+	CGAL_3D_Intersection_Ray_Mesh CGAL_3D_Intersection_Ray_Mesh_C;
+	CGAL_3D_Intersection_Rays_Mesh CGAL_3D_Intersection_Rays_Mesh_C;
 };
 #endif

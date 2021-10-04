@@ -71,19 +71,30 @@ void PostProcess()
 
 	//	auto ReadMesh = (CGAL_3D_Read_Triangle_Mesh)GetProcAddress(CompilerConfig::Instance().GetHModule(), "CGAL_3D_Read_Triangle_Mesh");
 
-	cgal_file << "class" << std::endl;
+	cgal_file << std::endl;
+	cgal_file << std::endl;
+	cgal_file << "class PL" << std::endl;
 	cgal_file << "{" << std::endl;
-	cgal_file << "public:" << std::endl;
-	cgal_file << "HMODULE hModule;" << std::endl;
+	cgal_file << "	public:" << std::endl;
+	cgal_file << "	PL()" << std::endl;
+	cgal_file << "	{" << std::endl;
+	cgal_file << "		hModule = Functs::LoadHMODULE(\"ppgl.dll\");" << std::endl;
+
+	//ReadMesh = (CGAL_2D_Distance_Point_Point)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Point");
+	for (int i = 0; i < funct_titles.size(); i++)
+	{
+		auto title = funct_titles[i];
+		cgal_file << "		" << title << "_C = ("<<title<<")GetProcAddress(hModule, \""<<title<<"\");" << std::endl;
+	}
+	cgal_file << "	};" << std::endl << std::endl;
+
+	cgal_file << "	HMODULE hModule;" << std::endl;
 
 	for (int i = 0; i < funct_titles.size(); i++)
 	{
 		auto title = funct_titles[i];
-		auto para = funct_paras[i];
-
-
+		cgal_file <<"	" << title << " " << title << "_C;" << std::endl;
 	}
-
 
 	cgal_file << "};" << std::endl;
 
