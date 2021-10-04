@@ -269,7 +269,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Output_Triangle_Mesh(std::string path, Vecto
 		file << "v " << vec[0] << " " << vec[1] << " " << vec[2] << std::endl;
 
     for (int i = 0; i < face_id_0.size(); i++)
-        file << "f " << face_id_0[i] << " " << face_id_1[i] << " " << face_id_2[i] << std::endl;
+        file << "f " << face_id_0[i]+1 << " " << face_id_1[i]+1 << " " << face_id_2[i]+1 << std::endl;
 
 	file.clear();
 	file.close();

@@ -173,8 +173,8 @@ int main()
 	system("copy E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
 	system("copy E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
 
-	PreProcess();
-	//PostProcess();
+	//PreProcess();
+	PostProcess();
 
 	
 	system("pause");
