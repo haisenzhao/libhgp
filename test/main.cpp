@@ -24,11 +24,7 @@ void Test_CGAL_GEOM()
 
 void PostProcess() 
 {
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
 
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
 
 	//read
 	VectorStr1 funct_values;
@@ -117,10 +113,72 @@ void PostProcess()
 
 };
 
+void PreProcess()
+{
+	std::string folder("E:\\Dropbox\\Mold\\microstructures");
+	auto objs = Functs::GetFilesInDirectory(folder);
 
+	//std::string path, Vector3d1 &vecs,Vector1i1 &face_id_0, Vector1i1 &face_id_1, Vector1i1 &face_id_2
+
+	for (int i = 0; i < objs.size(); i++)
+	{
+		//input
+		Vector3d1 in_vecs;
+		Vector1i1 in_face_id_0, in_face_id_1, in_face_id_2;
+
+		auto in_path = folder + "\\" + objs[i];
+		CGAL_3D_Read_Triangle_Mesh(in_path, in_vecs, in_face_id_0, in_face_id_1, in_face_id_2);
+
+		Vector3d1 vecms;
+		{
+			Vector3d minc, maxc;
+			Functs::GetBoundingBox(in_vecs, minc, maxc);
+			auto bb_size = Functs::GetMax(maxc - minc);
+			auto center = (minc + maxc) / 2.0;
+
+			std::cerr << i << " : " << objs[i] << " bb_size: " << bb_size << " center: " << Functs::VectorString(center, " ") << " minc: " << Functs::VectorString(minc, " ") << std::endl;
+
+
+			//transformation
+			auto tm = Functs::TranslationMatrix(-center);
+			auto sm = Functs::ScaleMatrix(Vector3d(100.0 / bb_size, 100.0 / bb_size, 100.0 / bb_size));
+			vecms = Functs::PosApplyM(in_vecs, sm * tm);
+		}
+
+		{
+			Vector3d minc, maxc;
+			Functs::GetBoundingBox(vecms, minc, maxc);
+			auto bb_size = Functs::GetMax(maxc - minc);
+			auto center = (minc + maxc) / 2.0;
+
+			std::cerr << i << " : " << objs[i] << " bb_size: " << bb_size << " center: " << Functs::VectorString(center, " ") << " minc: " << Functs::VectorString(minc, " ") << std::endl;
+
+		}
+
+
+		//output
+		auto out_path = folder + "\\temp\\ts_" + objs[i];
+
+
+
+		CGAL_3D_Output_Triangle_Mesh(out_path, vecms, in_face_id_0, in_face_id_1, in_face_id_2);
+
+
+
+		//Functs::OutputObj3d();
+	}
+};
 int main()
 {
-	PostProcess();
+
+	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
+	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
+
+	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
+	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
+
+	PreProcess();
+	//PostProcess();
 
 	
 	system("pause");
