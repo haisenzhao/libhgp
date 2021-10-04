@@ -88,6 +88,17 @@ void PostProcess()
 	}
 	cgal_file << "	};" << std::endl << std::endl;
 
+	cgal_file << "	static PL& Instance()" << std::endl;
+	cgal_file << "	{" << std::endl;
+	cgal_file << "		static PL instance;" << std::endl;
+	cgal_file << "		return instance;" << std::endl;
+	cgal_file << "	};" << std::endl << std::endl;
+
+
+
+	//static CompilerConfig& Instance();
+
+
 	cgal_file << "	HMODULE hModule;" << std::endl;
 
 	for (int i = 0; i < funct_titles.size(); i++)
