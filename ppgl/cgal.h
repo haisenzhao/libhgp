@@ -52,5 +52,5 @@ class
 {
 public:
 HMODULE hModule;
-}
+};
 #endif

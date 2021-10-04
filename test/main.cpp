@@ -85,7 +85,7 @@ void PostProcess()
 	}
 
 
-	cgal_file << "}" << std::endl;
+	cgal_file << "};" << std::endl;
 
 
 	cgal_file << "#endif" << std::endl;
