@@ -48,7 +48,8 @@ typedef  bool (*CGAL_3D_Intersection_Sphere_Ray)(double, double, double, double,
 typedef  bool (*CGAL_3D_Intersection_Ray_Triangle)(Vector3d p, Vector3d n, Vector3d p0, Vector3d p1, Vector3d p2);
 typedef  bool (*CGAL_3D_Intersection_Ray_Mesh)(Vector3d p, Vector3d n, std::string path);
 typedef  void (*CGAL_3D_Intersection_Rays_Mesh_Vector3d)(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1 & inters);
-typedef  void (*CGAL_3D_Intersection_Rays_Mesh_Bool)(Vector3d1 ps, Vector3d2 nes, std::string path, Vector1b2 & inters);
+typedef  void (*CGAL_3D_Intersection_Rays_Mesh_C1_Bool)(Vector3d1 ps, Vector3d2 nes, std::string path, Vector1b2 & inters);
+typedef  void (*CGAL_3D_Intersection_Rays_Mesh_C2_Bool)(Vector3d1 ps, Vector3d1 ns, std::string path, Vector1b2 & inters);
 
 
 class PL
@@ -101,7 +102,8 @@ class PL
 		CGAL_3D_Intersection_Ray_Triangle_C = (CGAL_3D_Intersection_Ray_Triangle)GetProcAddress(hModule, "CGAL_3D_Intersection_Ray_Triangle");
 		CGAL_3D_Intersection_Ray_Mesh_C = (CGAL_3D_Intersection_Ray_Mesh)GetProcAddress(hModule, "CGAL_3D_Intersection_Ray_Mesh");
 		CGAL_3D_Intersection_Rays_Mesh_Vector3d_C = (CGAL_3D_Intersection_Rays_Mesh_Vector3d)GetProcAddress(hModule, "CGAL_3D_Intersection_Rays_Mesh_Vector3d");
-		CGAL_3D_Intersection_Rays_Mesh_Bool_C = (CGAL_3D_Intersection_Rays_Mesh_Bool)GetProcAddress(hModule, "CGAL_3D_Intersection_Rays_Mesh_Bool");
+		CGAL_3D_Intersection_Rays_Mesh_C1_Bool_C = (CGAL_3D_Intersection_Rays_Mesh_C1_Bool)GetProcAddress(hModule, "CGAL_3D_Intersection_Rays_Mesh_C1_Bool");
+		CGAL_3D_Intersection_Rays_Mesh_C2_Bool_C = (CGAL_3D_Intersection_Rays_Mesh_C2_Bool)GetProcAddress(hModule, "CGAL_3D_Intersection_Rays_Mesh_C2_Bool");
 	};
 
 	static PL& Instance()
@@ -155,6 +157,7 @@ class PL
 	CGAL_3D_Intersection_Ray_Triangle CGAL_3D_Intersection_Ray_Triangle_C;
 	CGAL_3D_Intersection_Ray_Mesh CGAL_3D_Intersection_Ray_Mesh_C;
 	CGAL_3D_Intersection_Rays_Mesh_Vector3d CGAL_3D_Intersection_Rays_Mesh_Vector3d_C;
-	CGAL_3D_Intersection_Rays_Mesh_Bool CGAL_3D_Intersection_Rays_Mesh_Bool_C;
+	CGAL_3D_Intersection_Rays_Mesh_C1_Bool CGAL_3D_Intersection_Rays_Mesh_C1_Bool_C;
+	CGAL_3D_Intersection_Rays_Mesh_C2_Bool CGAL_3D_Intersection_Rays_Mesh_C2_Bool_C;
 };
 #endif
