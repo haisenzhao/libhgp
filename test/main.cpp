@@ -27,8 +27,8 @@ void PostProcess()
 	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
 	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
 
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\RelWithDebInfo\\");
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\RelWithDebInfo\\");
+	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
+	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
 
 	//read
 	VectorStr1 funct_values;

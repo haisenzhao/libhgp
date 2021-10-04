@@ -263,7 +263,8 @@ void CGAL_Load_Obj(std::string path, std::vector<double> &coords,Vector1i1 &tris
 extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, Vector3d1 &vecs,
                                                                 Vector1i1 &face_id_0,
                                                                 Vector1i1 &face_id_1,
-                                                                Vector1i1 &face_id_2) {
+                                                                Vector1i1 &face_id_2) 
+{
     //if (path.substr(path.size() - 3, path.size()) == "off")
     //{
     //	Polyhedron_3 polyhedron;
@@ -294,7 +295,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, Vector3
         if (coords.size() == 0)
             return;
 
-        std::cout << "Size: " << coords.size() / 3 << " " << tris.size() / 3 << std::endl;
+        //std::cout << "Size: " << coords.size() / 3 << " " << tris.size() / 3 << std::endl;
 
         for (int i = 0; i < (int) coords.size(); i += 3) {
             vecs.push_back(Vector3d(coords[i + 0], coords[i + 1], coords[i + 2]));
