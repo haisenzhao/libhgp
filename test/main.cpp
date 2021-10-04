@@ -170,12 +170,8 @@ void PreProcess()
 };
 int main()
 {
-
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
-
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
-	system("copy E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
+	system("copy E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
+	system("copy E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
 
 	PreProcess();
 	//PostProcess();
