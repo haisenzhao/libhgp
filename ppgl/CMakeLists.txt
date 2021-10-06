@@ -91,5 +91,9 @@ add_dependencies(${PROJECT_NAME} eigen)
 #        ${PROJECT_BINARY_DIR}/../test/Release/
 #)
 
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND start E:/Task2/personal-pack-geom-lib/build/post/Release/post.exe
+)
+
 
 #@echo xxxxxxxxxxx if $(PlatformTarget)==x64 (xcopy "$(ProjectDir)\Release\ppgl.dll" "$(ProjectDir)\..\..\pack-geom-lib\dll\" /y ) )

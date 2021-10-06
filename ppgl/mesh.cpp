@@ -34,7 +34,7 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const Vector3d1& vecs, cons
 	std::vector<int>().swap(tris);
 }
 
-void  Construct_Polyhedron(Polyhedron_3& polyhedron, std::string path)
+void  Construct_Polyhedron(Polyhedron_3& polyhedron, const std::string& path)
 {
 	if (path.substr(path.size() - 3, path.size()) == "off")
 	{
@@ -60,7 +60,7 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, std::string path)
 	}
 }
 
-void  Construct_Polyhedron(Polyhedron_3& polyhedron, std::string path, Vector3d1& vecs, Vector1i1& face_id_0, Vector1i1& face_id_1, Vector1i1& face_id_2)
+void  Construct_Polyhedron(Polyhedron_3& polyhedron, const std::string& path, Vector3d1& vecs, Vector1i1& face_id_0, Vector1i1& face_id_1, Vector1i1& face_id_2)
 {
 	if (path.substr(path.size() - 3, path.size()) == "off")
 	{
@@ -289,13 +289,13 @@ CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature, const Vector1i1 
 }
 
 
-extern "C" PPGL_EXPORT void CGAL_Mesh_Edges(std::string path) {
+extern "C" PPGL_EXPORT void CGAL_Mesh_Edges(const std::string& path) {
 }
 
 
 
-extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(double center_x, double center_y, double center_z, double radius,
-	double ray_origin_x, double ray_origin_y, double ray_origin_z, double ray_direction_x, double ray_direction_y, double ray_direction_z,
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(const double& center_x, const double& center_y, const double& center_z, const double& radius,
+	const double& ray_origin_x, const double& ray_origin_y, const double& ray_origin_z, const double& ray_direction_x, const double& ray_direction_y, const double& ray_direction_z,
 	std::vector<double>& i_x, std::vector<double>& i_y, std::vector<double>& i_z)
 {
 	//Wm5::Sphere3<double> sphere(Wm5::Vector3d(center_x, center_y, center_z), radius);
@@ -321,7 +321,7 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(double center_x, dou
 	return false;
 }
 
-extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Triangle(Vector3d p, Vector3d n, Vector3d p0, Vector3d p1, Vector3d p2)
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Triangle(const Vector3d& p, const Vector3d & n, const Vector3d & p0, const Vector3d & p1, const Vector3d & p2)
 {
 	Ray_3 ray(VectorPoint3d(p), Vector_3(n[0], n[1], n[2]));
 
@@ -337,7 +337,7 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Triangle(Vector3d p, Vector
 	}
 }
 
-extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(Vector3d p, Vector3d n, std::string path)
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(const Vector3d& p, const Vector3d & n, const std::string& path)
 {
 	std::cerr << "CGAL_3D_Intersection_Ray_Mesh..." << std::endl;
 
@@ -355,7 +355,7 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(Vector3d p, Vector3d n
 }
 
 //test each group directions (nes[i]) for each point in ps
-extern "C" PPGL_EXPORT void  CGAL_3D_Intersection_Rays_Mesh_C1_Bool(Vector3d1 ps, Vector3d2 nes, std::string path, Vector1b2& inters)
+extern "C" PPGL_EXPORT void  CGAL_3D_Intersection_Rays_Mesh_C1_Bool(const Vector3d1& ps, const Vector3d2& nes, const std::string& path, Vector1b2& inters)
 {
 	//input validation
 	if (ps.size() != nes.size()  || !Functs::DetectExisting(path))
@@ -384,7 +384,7 @@ extern "C" PPGL_EXPORT void  CGAL_3D_Intersection_Rays_Mesh_C1_Bool(Vector3d1 ps
 }
 
 //test all directions (ns) for each point in ps
-extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(Vector3d1 ps, Vector3d1 ns, std::string path, Vector1b2& inters)
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(const Vector3d1& ps, const Vector3d1& ns, const std::string & path, Vector1b2& inters)
 {
 	//input validation
 	if (!Functs::DetectExisting(path))
@@ -411,7 +411,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(Vector3d1 ps,
 }
 
 
-extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1& inters)
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(const Vector3d1& ps, const Vector3d1& ns, const std::string& path, Vector3d1& inters)
 {
 	std::ifstream input(path);
 	Mesh mesh;

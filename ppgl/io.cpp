@@ -16,18 +16,18 @@ Point_2 VectorPoint2d(Vector2d p) {
     return Point_2(p[0], p[1]);
 }
 
-extern "C" PPGL_EXPORT void CGAL_Test_PGL(Vector3d n) 
+extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n) 
 {
     Functs::MAssert("Test PGL ...");
 }
 
-extern "C" PPGL_EXPORT void CGAL_Vector_Base(Vector3d n, Vector3d &result) {
+extern "C" PPGL_EXPORT void CGAL_Vector_Base(const Vector3d& n, Vector3d &result) {
     Plane_3 plane(Point_3(0.0, 0.0, 0.0), Vector_3(n[0], n[1], n[2]));
     Vector_3 v = plane.base1();
     result = Vector3d(v[0], v[1], v[2]);
 }
 
-//3d plane relaed
+//3d plane related
 Vector3d CGAL_3D_Plane_Base_1(Vector3d plane_p, Vector3d plane_n) {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     Vector_3 v = plane.base1();
@@ -35,8 +35,8 @@ Vector3d CGAL_3D_Plane_Base_1(Vector3d plane_p, Vector3d plane_n) {
 }
 
 extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_output, int &export_index,
-                                                               std::string s_name, double r, double g, double b,
-                                                               Vector3d &start, Vector3d &end, double radius) {
+                                                               const std::string s_name, const double r, const double g, const double b,
+                                                               const Vector3d &start, const Vector3d &end, const double radius) {
     Vector3d normal = end - start;
     Vector3d base_1;
     CGAL_Vector_Base(normal, base_1);
@@ -91,9 +91,9 @@ extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_
     export_index += 8;
 }
 
-extern "C" PPGL_EXPORT void CGAL_Export_Path_Point(std::ofstream &export_file_output, int &export_index,
-                                                             std::string s_name, double r, double g, double b,
-                                                             Vector3d point, double radius) {
+extern "C" PPGL_EXPORT void CGAL_Export_Path_Point
+(std::ofstream &export_file_output, int &export_index,const std::string s_name, const double r, const double g, const double b,const Vector3d point, const double radius)
+{
     Vector3d1 vecs;
     vecs.push_back(Vector3d(0.5, 0.5, 0.5));
     vecs.push_back(Vector3d(-0.5, 0.5, 0.5));

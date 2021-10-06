@@ -20,7 +20,7 @@ void Generate_CGAL_H()
 				funct_values.push_back(value);
 				funct_titles.push_back(title);
 				funct_paras.push_back(para);
-				std::cerr << "Function: " << title << " para: " << para << std::endl;
+				std::cerr << "Function: " << title << " para: " << para.substr(0,6) << std::endl;
 			}
 			else
 			{
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
 	//generate cgal head file
 	Generate_CGAL_H();
 
-	//system("pause");
+	Functs::MAssert("Successfully finishing the post processing...");
 	return 0;
 }
 

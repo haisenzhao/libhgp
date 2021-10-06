@@ -1,18 +1,18 @@
 #include "geom.h"
 #include "clipper/clipper.hpp"
 
-extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Point(Vector2d p_0, Vector2d p_1) 
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Point(const Vector2d& p_0, const Vector2d& p_1)
 {
     return sqrt(pow((p_0[0] - p_1[0]), 2.0) + pow((p_0[1] - p_1[1]), 2.0));
 }
 
-extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Segment(Vector2d v, Vector2d s_0, Vector2d s_1) {
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Segment(const Vector2d& v, const Vector2d & s_0, const Vector2d & s_1) {
     return sqrt((double) CGAL::squared_distance(Point_2(v[0], v[1]),
                                                 Segment_2(Point_2(s_0[0], s_0[1]), Point_2(s_1[0], s_1[1]))));
 }
 
 extern "C" PPGL_EXPORT double
-CGAL_2D_Distance_Segment_Segment(Vector2d s_0, Vector2d s_1, Vector2d e_0, Vector2d e_1) {
+CGAL_2D_Distance_Segment_Segment(const Vector2d& s_0, const Vector2d & s_1, const Vector2d & e_0, const Vector2d & e_1) {
     double d0 = CGAL_2D_Distance_Point_Segment(s_0, e_0, e_1);
     double d1 = CGAL_2D_Distance_Point_Segment(s_1, e_0, e_1);
     double d2 = CGAL_2D_Distance_Point_Segment(e_0, s_0, s_1);
@@ -24,12 +24,12 @@ CGAL_2D_Distance_Segment_Segment(Vector2d s_0, Vector2d s_1, Vector2d e_0, Vecto
     return min_d;
 }
 
-extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Line(Vector2d v, Vector2d l_0, Vector2d l_1) {
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Line(const Vector2d& v, const Vector2d & l_0, const Vector2d & l_1) {
     return sqrt((double) CGAL::squared_distance(Point_2(v[0], v[1]),
                                                 Line_2(Point_2(l_0[0], l_0[1]), Point_2(l_1[0], l_1[1]))));
 }
 
-extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(Vector2d p, Vector2d1 py) {
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(const Vector2d& p, const Vector2d1 & py) {
     double distance = 1000000000000.0;
     for (int i = 0; i < py.size(); i++)
     {
@@ -64,7 +64,7 @@ CGAL_Construct_InOutSide_Polygon(const Vector2d1 &py, const Vector2d &p, const V
     return true;
 }
 
-extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(Vector2d p, Vector2d1 py) {
+extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(const Vector2d & p, const Vector2d1 & py) {
     Polygon_2 poly;
     for (int i = 0; i < py.size(); i++)
         poly.push_back(Point_2(py[i][0], py[i][1]));
@@ -95,7 +95,7 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &ps,
 }
 
 extern "C" bool CGAL_2D_Intersection_Segment_Segment
-        (Vector2d s_0_s, Vector2d s_0_e, Vector2d s_1_s, Vector2d s_1_e, Vector2d &inter) {
+        (const Vector2d & s_0_s, const Vector2d & s_0_e, const Vector2d & s_1_s, const Vector2d & s_1_e, Vector2d &inter) {
     CGAL::Object result = intersection(Segment_2(Point_2(s_0_s[0], s_0_s[1]), Point_2(s_0_e[0], s_0_e[1])),
                                        Segment_2(Point_2(s_1_s[0], s_1_s[1]), Point_2(s_1_e[0], s_1_e[1])));
 
@@ -214,7 +214,7 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Line_Line
 }
 
 extern "C" PPGL_EXPORT bool
-CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, Vector2d s_e, Vector2d1 &p) {
+CGAL_2D_Intersection_Segment_Polygon(const Vector2d & s_s, const Vector2d & s_e, Vector2d1 &p) {
     for (int i = 0; i < p.size(); i++) {
         Vector2d inter;
         int ii = (static_cast<int>(i) + 1) % p.size();
@@ -225,7 +225,7 @@ CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, Vector2d s_e, Vector2d1 &p) {
     return false;
 }
 
-extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(Vector2d1 &ps) {
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(const Vector2d1 &ps) {
     Polygon_2 poly;
     for (int i = 0; i < ps.size(); i++)
         poly.push_back(Point_2(ps[i][0], ps[i][1]));
@@ -265,8 +265,7 @@ extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d1 
 }
 
 extern "C" PPGL_EXPORT double
-CGAL_2D_Two_Polygons_Union(Vector2d1 poly_0, Vector2d1 poly_1,
-                           Vector2d2  &inter_polygons) {
+CGAL_2D_Two_Polygons_Union(const Vector2d1& poly_0, const Vector2d1 & poly_1, Vector2d2  &inter_polygons) {
     double scale = 1000000.0;
 
     ClipperLib::Paths subj(1);
@@ -324,9 +323,7 @@ static void RemoveClosePoints(Vector2d1 &poly) {
     }
 }
 
-extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(Vector2d1 &poly,
-                                                                  double d,
-                                                                  Vector2d2  &offset_polys) {
+extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(const Vector2d1 &poly, const double& d, Vector2d2  &offset_polys) {
     if (!(poly.size() > 0)) return;
 
     double scale = 1000000.0;
@@ -373,7 +370,7 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(Vector2d1 &poly,
 }
 
 extern "C" PPGL_EXPORT void
-CGAL_Decompose_Polyline(Vector2d1 &polyline, double threshold, Vector1i1& result) {
+CGAL_Decompose_Polyline(const Vector2d1 &polyline, const double& threshold, Vector1i1& result) {
     for (auto &p : polyline) 
     {
 

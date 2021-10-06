@@ -21,11 +21,11 @@ Point_2 point_to_2d(const Point_3 &p, Plane_3 &pl) {
     return Point_2(ter * basis[0], ter * basis[1]);
 }
 
-extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e) {
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment(const Vector3d& p, const Vector3d & s_s, const Vector3d & s_e) {
     return sqrt((double) CGAL::squared_distance(VectorPoint3d(p), Segment_3(VectorPoint3d(s_s), VectorPoint3d(s_e))));
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Plane_Fitting(Vector3d1 &points, Vector3d &plane_p, Vector3d &plane_n) {
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_Fitting(const Vector3d1 &points, Vector3d &plane_p, Vector3d &plane_n) {
     // centroid of 3D points
     std::vector<Point_3> points_3;
     for (int i = 0; i < points.size(); i++)
@@ -49,45 +49,45 @@ extern "C" PPGL_EXPORT void CGAL_3D_Plane_Fitting(Vector3d1 &points, Vector3d &p
     plane_n[2] = plane.orthogonal_vector().z();
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Plane_Point_Projection(Vector3d &plane_p, Vector3d &plane_n, Vector3d &p,
-                                                                     Vector3d &result) {
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_Point_Projection(const Vector3d &plane_p, const Vector3d &plane_n, const Vector3d &p, Vector3d &result) 
+{
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     result = PointVector3d(plane.projection(VectorPoint3d(p)));
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Plane_Points_Projection(Vector3d &plane_p, Vector3d &plane_n,
-                                                                      Vector3d1 &points,
-                                                                      Vector3d1 &project_points) {
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_Points_Projection
+(const Vector3d &plane_p, const Vector3d &plane_n, const Vector3d1 &points,Vector3d1 &project_points) 
+{
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     for (int i = 0; i < points.size(); i++)
         project_points.push_back(PointVector3d(plane.projection(VectorPoint3d(points[i]))));
 }
 
 extern "C" PPGL_EXPORT void
-CGAL_3D_Plane_3D_to_2D_Point(Vector3d &plane_p, Vector3d &plane_n, Vector3d &point_3d,
-                             Vector2d &result) {
+CGAL_3D_Plane_3D_to_2D_Point(const Vector3d &plane_p, const Vector3d &plane_n, const Vector3d &point_3d, Vector2d &result) 
+{
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     result = PointVector2d(point_to_2d(VectorPoint3d(point_3d), plane));
 }
 
 extern "C" PPGL_EXPORT void
-CGAL_3D_Plane_2D_to_3D_Point(Vector3d &plane_p, Vector3d &plane_n, Vector2d &points_2d,
-                             Vector3d &result) {
+CGAL_3D_Plane_2D_to_3D_Point(const Vector3d &plane_p, const Vector3d &plane_n, const Vector2d &points_2d, Vector3d &result) 
+{
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     result = PointVector3d(point_to_3d(VectorPoint2d(points_2d), plane));
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(Vector3d &plane_p, Vector3d &plane_n,
-                                                                    Vector3d1 &points_3d,
-                                                                    Vector2d1 &points_2d) {
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Points
+(const Vector3d &plane_p, const Vector3d &plane_n, const Vector3d1 &points_3d, Vector2d1 &points_2d) 
+{
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     for (int i = 0; i < points_3d.size(); i++)
         points_2d.push_back(PointVector2d(plane.to_2d(VectorPoint3d(points_3d[i]))));
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(Vector3d &plane_p, Vector3d &plane_n,
-                                                                    Vector2d1 &points_2d,
-                                                                    Vector3d1 &points_3d) {
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Points
+(const Vector3d &plane_p, const Vector3d &plane_n, const Vector2d1 &points_2d, Vector3d1 &points_3d) 
+{
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     for (int i = 0; i < points_2d.size(); i++)
         points_3d.push_back(PointVector3d(plane.to_3d(VectorPoint2d(points_2d[i]))));
@@ -100,7 +100,7 @@ double CGAL_3D_Distance_Point_Point(const Vector3d& v0, const Vector3d& v1)
 }
 
 
-extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(Vector3d p, Vector3d s_s, Vector3d s_e) {
+extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(const Vector3d& p, const Vector3d & s_s, const Vector3d & s_e) {
     Line_3 l(VectorPoint3d(s_s), VectorPoint3d(s_e));
     auto m_p = PointVector3d(l.projection(VectorPoint3d(p)));
 	double d_m_s = CGAL_3D_Distance_Point_Point(m_p, s_s);
@@ -260,8 +260,8 @@ void CGAL_Load_Obj(std::string path, std::vector<double> &coords,Vector1i1 &tris
     fclose(fp);
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Output_Triangle_Mesh(std::string path, Vector3d1 & vecs, 
-                        Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2)
+extern "C" PPGL_EXPORT void CGAL_3D_Output_Triangle_Mesh
+(const std::string& path, const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2)
 {
 	std::ofstream file(path);
 
@@ -275,7 +275,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Output_Triangle_Mesh(std::string path, Vecto
 	file.close();
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(std::string path, Vector3d1 &vecs,
+extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const std::string& path, Vector3d1 &vecs,
                         Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2)
 {
     //if (path.substr(path.size() - 3, path.size()) == "off")
