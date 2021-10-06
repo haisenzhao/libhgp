@@ -32,7 +32,10 @@ extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Line(Vector2d v, Vector2d l
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(Vector2d p, Vector2d1 py) {
     double distance = 1000000000000.0;
     for (int i = 0; i < py.size(); i++)
-        distance = std::min(distance, CGAL_2D_Distance_Point_Segment(p, py[i], py[(i + 1) % py.size()]));
+    {
+        int ii = (static_cast<int>(i) + 1) % py.size();
+		distance = std::min(distance, CGAL_2D_Distance_Point_Segment(p, py[i], py[ii]));
+    }
     return distance;
 }
 
@@ -187,7 +190,8 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Polygon(
     int nIntersect = 0;
     for (int i = 0; i < poly.size(); i++) {
         Vector2d inter;
-        if (CGAL_2D_Intersection_Ray_Segment(r_s, r_d, poly[i], poly[(i + 1) % poly.size()], inter)) {
+        int ii = (static_cast<int>(i) + 1) % poly.size();
+        if (CGAL_2D_Intersection_Ray_Segment(r_s, r_d, poly[i], poly[ii], inter)) {
             ++nIntersect;
             return true;
         }
@@ -213,7 +217,8 @@ extern "C" PPGL_EXPORT bool
 CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, Vector2d s_e, Vector2d1 &p) {
     for (int i = 0; i < p.size(); i++) {
         Vector2d inter;
-        if (CGAL_2D_Intersection_Segment_Segment(s_s, s_e, p[i], p[(i + 1) % p.size()], inter)) {
+        int ii = (static_cast<int>(i) + 1) % p.size();
+        if (CGAL_2D_Intersection_Segment_Segment(s_s, s_e, p[i], p[ii], inter)) {
             return true;
         }
     }
@@ -234,11 +239,11 @@ extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d1 
 
     ClipperLib::Paths subj(1);
     for (int i = 0; i < poly_0.size(); i++)
-        subj[0] << ClipperLib::IntPoint(poly_0[i][0] * scale, poly_0[i][1] * scale);
+        subj[0] << ClipperLib::IntPoint((ClipperLib::cInt)(poly_0[i][0] * scale), (ClipperLib::cInt)(poly_0[i][1] * scale));
 
     ClipperLib::Paths cliper(1);
     for (int i = 0; i < poly_1.size(); i++)
-        cliper[0] << ClipperLib::IntPoint(poly_1[i][0] * scale, poly_1[i][1] * scale);
+        cliper[0] << ClipperLib::IntPoint((ClipperLib::cInt)(poly_1[i][0] * scale), (ClipperLib::cInt)(poly_1[i][1] * scale));
 
     ClipperLib::Paths solution;
     ClipperLib::Clipper c;
@@ -266,11 +271,11 @@ CGAL_2D_Two_Polygons_Union(Vector2d1 poly_0, Vector2d1 poly_1,
 
     ClipperLib::Paths subj(1);
     for (int i = 0; i < poly_0.size(); i++)
-        subj[0] << ClipperLib::IntPoint(poly_0[i][0] * scale, poly_0[i][1] * scale);
+        subj[0] << ClipperLib::IntPoint((ClipperLib::cInt)(poly_0[i][0] * scale), (ClipperLib::cInt)(poly_0[i][1] * scale));
 
     ClipperLib::Paths cliper(1);
     for (int i = 0; i < poly_1.size(); i++)
-        cliper[0] << ClipperLib::IntPoint(poly_1[i][0] * scale, poly_1[i][1] * scale);
+        cliper[0] << ClipperLib::IntPoint((ClipperLib::cInt)(poly_1[i][0] * scale), (ClipperLib::cInt)(poly_1[i][1] * scale));
 
     ClipperLib::Paths solution;
     ClipperLib::Clipper c;
@@ -308,11 +313,12 @@ static void RemoveClosePoints(Vector2d1 &poly) {
 
     if (poly.size() > 2) {
         for (int i = 0; i < poly.size() - 1; i++) {
-            double d = CGAL_2D_Distance_Point_Point(poly[i], poly[(i + 1) % poly.size()]);
-            if (d < 0.00001) remove_int.push_back((i + 1) % poly.size());
+            int ii = (static_cast<int>(i) + 1) % poly.size();
+            double d = CGAL_2D_Distance_Point_Point(poly[i], poly[ii]);
+            if (d < 0.00001) remove_int.push_back(ii);
         }
 
-        for (int i = remove_int.size() - 1; i >= 0; i--) {
+        for (int i = (int)remove_int.size() - 1; i >= 0; i--) {
             poly.erase(poly.begin() + remove_int[i]);
         }
     }
@@ -337,7 +343,7 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(Vector2d1 &poly,
 
     //build the most outside path
     for (int i = 0; i < poly.size(); i++)
-        subj << ClipperLib::IntPoint(poly[i].x * scale, poly[i].y * scale);
+        subj << ClipperLib::IntPoint((ClipperLib::cInt)(poly[i].x * scale), (ClipperLib::cInt)(poly[i].y * scale));
     co.AddPath(subj, ClipperLib::jtMiter, ClipperLib::etClosedPolygon);
 
     // execute
@@ -379,10 +385,10 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_NotExtend(
         const Vector2d1 &polygon,
         const Vector2d &s, const Vector2d &e) {
     const Vector2d dir = normalize(e - s);
-    const int polySize = polygon.size();
+    const int polySize = (int)polygon.size();
 
     for (int i = 0; i < polySize; i++) {
-        Vector2d inter1, inter2;
+        Vector2d inter1;
         const auto &pop1 = polygon[i];
         const auto &pop2 = polygon[(i + 1) % polySize];
         const Vector2d segDir = normalize(pop1 - pop2);
@@ -453,7 +459,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
 
     //std::cerr << "input cut = " << cutDir[0] << " " << cutDir[1] << std::endl;
     ns = s, ne = e;
-    const int polySize = polygon.size();
+    const int polySize = (int)polygon.size();
     Vector2d1 rayD1Int, rayD2Int;
 
     const auto pd1 = CGAL_2D_Distance_Point_Polygon(s, polygon);
@@ -626,7 +632,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
     Vector2d cutDir = normalize(e - s);
     ns = s, ne = e;
     Vector2d ts = s, te = e;
-    const int polySize = polygon.size();
+    const int polySize = (int)polygon.size();
     Vector2d1 rayD1Int, rayD2Int;
 
     const auto pd1 = CGAL_2D_Distance_Point_Polygon(s, polygon);
@@ -693,7 +699,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
     //std::cerr << "pd1 = " << pd1 << " pd2 = " << pd2 << std::endl;
     if (!Functs::IsAlmostZero(pd1)) {
         for (int i = 0; i < polySize; i++) {
-            Vector2d inter1, inter2;
+            Vector2d inter1;
             if (CGAL_2D_Intersection_Ray_Segment(ts + eps * cutDir, -cutDir, polygon[i],
                                                  polygon[(i + 1) % polySize], inter1))
                 rayD1Int.push_back(inter1);
@@ -717,8 +723,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
 
     if (!Functs::IsAlmostZero(pd2)) {
         for (int i = 0; i < polySize; i++) {
-            Vector2d inter1, inter2;
-
+            Vector2d inter2;
             if (CGAL_2D_Intersection_Ray_Segment(te - eps * cutDir, cutDir, polygon[i],
                                                  polygon[(i + 1) % polySize], inter2))
                 rayD2Int.push_back(inter2);
@@ -760,7 +765,8 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon,const
     const double offLine = polyArea / 1e4;
 
     for (auto i = 1; i < cutLine.size(); ++i) {
-        Point_2 curA(cutLine[i - 1][0], cutLine[i - 1][1]);
+        int ii = i - 1;
+        Point_2 curA(cutLine[ii][0], cutLine[ii][1]);
         Point_2 curB(cutLine[i][0], cutLine[i][1]);
         Vector_2 cutDir = curB - curA;
         //cutDir /= CGAL::sqrt(cutDir.squared_length());
@@ -777,8 +783,8 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon,const
         //curB += cutDir;
         curB = Point_2(curB.x() + cutDir.x(), curB.y() + cutDir.y());
 
-        if (poly.bounded_side(curA) != CGAL::ON_BOUNDED_SIDE) result[i - 1].first = true;
-        if (poly.bounded_side(curB) != CGAL::ON_BOUNDED_SIDE) result[i - 1].second = true;
+        if (poly.bounded_side(curA) != CGAL::ON_BOUNDED_SIDE) result[ii].first = true;
+        if (poly.bounded_side(curB) != CGAL::ON_BOUNDED_SIDE) result[ii].second = true;
     }
     //
     // 	for (auto& p : cutLine)

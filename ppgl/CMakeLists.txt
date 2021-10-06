@@ -3,6 +3,11 @@ project(ppgl)
 
 set(CMAKE_CXX_STANDARD 11)
 
+#add _CRT_SECURE_NO_WARNINGS
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
 set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
 find_package( CGAL QUIET COMPONENTS Core)
 if ( NOT CGAL_FOUND )

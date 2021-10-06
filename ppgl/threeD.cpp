@@ -212,7 +212,7 @@ void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys, Vector1i2 &faces)
 			polygon.push_back(Point_2(polys[i][j][0], polys[i][j][1]));
 			indexInt.emplace_back(j + nb);
 		}
-		nb += polys[i].size();
+		nb += (int)polys[i].size();
 		insert_polygon(cdt, polygon, indexInt);
 	}
 

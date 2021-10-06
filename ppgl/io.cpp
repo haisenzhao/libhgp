@@ -48,7 +48,7 @@ extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_
 
     Vector3d1 vecs;
     for (int i = 0; i < 4; i++) {
-        double angle = static_cast<int>(i) * 2 * Math_PI / 4;
+        double angle = (double)(i) * Math_PI / 2.0;
         Vector3d v = Functs::RotationAxis(normal + base_1, angle, normal);
         vecs.push_back(v + start);
     }
