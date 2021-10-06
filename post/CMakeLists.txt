@@ -1,5 +1,11 @@
 project(post)
 
+#add _CRT_SECURE_NO_WARNINGS
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
+
 # Create the executable
 add_executable(${PROJECT_NAME} main.cpp)
 
