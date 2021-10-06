@@ -22,7 +22,7 @@ void Test_CGAL_GEOM()
 
 };
 
-void PostProcess() 
+void Generate_CGAL_H() 
 {
 	//parse geom.h
 	VectorStr1 funct_values, funct_titles, funct_paras;
@@ -120,15 +120,14 @@ void PostProcess()
 };
 
 
-int main()
+int main(int argc, char* argv[])
 {
-	system("copy E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\ppgl.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
-	system("copy E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\gmp.dll E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
 
-
-	PostProcess();
-
-	
+	Generate_CGAL_H();
 	system("pause");
 	return 0;
 }
