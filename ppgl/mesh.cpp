@@ -83,9 +83,9 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, std::string path, Vector3d1
 
 		for (Polyhedron_3::Face_iterator iter = polyhedron.facets_begin(); iter != polyhedron.facets_end(); iter++)
 		{
-			face_id_0.push_back(iter->halfedge()->next()->next()->vertex()->id());
-			face_id_1.push_back(iter->halfedge()->vertex()->id());
-			face_id_2.push_back(iter->halfedge()->next()->vertex()->id());
+			face_id_0.push_back((int)iter->halfedge()->next()->next()->vertex()->id());
+			face_id_1.push_back((int)iter->halfedge()->vertex()->id());
+			face_id_2.push_back((int)iter->halfedge()->next()->vertex()->id());
 		}
 	}
 	if (path.substr(path.size() - 3, path.size()) == "obj")
@@ -100,7 +100,7 @@ Poly_point_3 Minus(Poly_point_3 a, Poly_point_3 b) {
     return Poly_point_3(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 }
 
-float Dot(Poly_point_3 a, Poly_point_3 b) {
+double Dot(Poly_point_3 a, Poly_point_3 b) {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
@@ -211,7 +211,7 @@ CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature, const Vector1i1 
     //searching for all of the cutting points on edges
     Vector3d1 cutting_points;
     /*******************************************/
-    int cur_face_id = project_faces[0]->id();
+    int cur_face_id = (int)project_faces[0]->id();
     Poly_facet_iterator cur_face = project_faces[0];
     Halfedge_handle cur_handle = cur_face->halfedge();
     Vector3d inside = feature[0];
@@ -226,11 +226,13 @@ CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature, const Vector1i1 
         while (true) {
             if (cur_face_id == project_faces[next_index]->id()) {
                 inside = feature[next_index];
-                next_index = (next_index + 1) % feature.size();
+				next_index = (next_index + 1);
+                next_index = next_index % feature.size();
                 if (next_index == 0) break;
             } else {
                 if (OutsidePointInsideTriangle(cur_face, feature[next_index])) {
-                    next_index = (next_index + 1) % feature.size();
+					next_index = next_index + 1;
+                    next_index = next_index% feature.size();
                     if (next_index == 0) break;
                 } else {
                     goon = true;
@@ -256,7 +258,7 @@ CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature, const Vector1i1 
             //move next step
             inside = intersection;
             cur_handle = handle->opposite();
-            cur_face_id = cur_handle->face()->id();
+            cur_face_id = (int)cur_handle->face()->id();
             cur_face = cur_handle->face();
 
             if (cur_face_id == project_faces[0]->id()) {
@@ -265,23 +267,23 @@ CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature, const Vector1i1 
         } else {
             cutting_points.erase(cutting_points.begin() + cutting_points.size() - 1);
             handles.erase(handles.begin() + handles.size() - 1);
-
-            next_index = (next_index + 1) % feature.size();
+			next_index = next_index + 1;
+            next_index = next_index % feature.size();
             if (next_index == 0) break;
 
             inside = cutting_points[cutting_points.size() - 1];
             cur_handle = handles[handles.size() - 1]->opposite();
-            cur_face_id = cur_handle->face()->id();
+            cur_face_id = (int)cur_handle->face()->id();
             cur_face = cur_handle->face();
         }
         iteration++;
     }
 
     for (int i = 0; i < handles.size(); i++) {
-        cutting_faces[handles[i]->face()->id()].push_back(igl_cutting_0_edges.size());
-        cutting_faces[handles[i]->opposite()->face()->id()].push_back(igl_cutting_0_edges.size());
-        igl_cutting_0_edges.push_back(handles[i]->vertex()->id());
-        igl_cutting_1_edges.push_back(handles[i]->opposite()->vertex()->id());
+        cutting_faces[(int)handles[i]->face()->id()].push_back((int)igl_cutting_0_edges.size());
+        cutting_faces[(int)handles[i]->opposite()->face()->id()].push_back((int)igl_cutting_0_edges.size());
+        igl_cutting_0_edges.push_back((int)handles[i]->vertex()->id());
+        igl_cutting_1_edges.push_back((int)handles[i]->opposite()->vertex()->id());
     }
     igl_cutting_points = cutting_points;
 }
@@ -371,7 +373,7 @@ extern "C" PPGL_EXPORT void  CGAL_3D_Intersection_Rays_Mesh_C1_Bool(Vector3d1 ps
 	inters = Vector1b2(ps.size(), Vector1b1());
 	for (int i = 0; i < ps.size(); i++)
 	{
-		Functs::OutputIterInfo("CGAL_3D_Intersection_Rays_Mesh_Bool", ps.size(), i,100);
+		Functs::OutputIterInfo("CGAL_3D_Intersection_Rays_Mesh_Bool", ps.size(), (int)i,(int)100);
 		Point_3 p3=VectorPoint3d(ps[i]);
 		for (int j = 0; j < nes[i].size(); j++)
 		{

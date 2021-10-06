@@ -50,7 +50,7 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Polygon(Vector2d s_s, V
 extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(Vector2d1 &ps);
 extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Union(Vector2d1 poly_0, Vector2d1 poly_1,Vector2d2 &inter_polygons);
 extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d1 &poly_0, const Vector2d1 &poly_1);
-extern "C" PPGL_EXPORT Vector1i1 CGAL_Decompose_Polyline(Vector2d1 &polyline, double threshold);
+extern "C" PPGL_EXPORT void CGAL_Decompose_Polyline(Vector2d1 &polyline, double threshold, Vector1i1& result);
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(const Vector2d1 &polygon, const Vector2d &s,const Vector2d &e, Vector2d &ns, Vector2d &ne);
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_NotExtend(const Vector2d1 &polygon, const Vector2d &s,const Vector2d &e);
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon, const Vector2d1 &cutLine, VectorPB1 &result);

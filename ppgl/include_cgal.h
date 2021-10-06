@@ -127,7 +127,7 @@ typedef CGAL::AABB_tree<AABB_triangle_traits_3> Tree_3;
 
 struct FaceInfo2
 {
-	FaceInfo2() {}
+	FaceInfo2():nesting_level(0){}
 	int nesting_level;
 	bool in_domain() {
 		return nesting_level % 2 == 1;

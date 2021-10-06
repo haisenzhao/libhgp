@@ -366,12 +366,12 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(Vector2d1 &poly,
     }
 }
 
-extern "C" PPGL_EXPORT Vector1i1
-CGAL_Decompose_Polyline(Vector2d1 &polyline, double threshold) {
-    Vector1i1 result;
-    for (auto &p : polyline) {
+extern "C" PPGL_EXPORT void
+CGAL_Decompose_Polyline(Vector2d1 &polyline, double threshold, Vector1i1& result) {
+    for (auto &p : polyline) 
+    {
+
     }
-    return result;
 }
 
 // This one is used to intersect a polygon with a segment
