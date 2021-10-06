@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(ppgl)
 
-set(CMAKE_CXX_STANDARD 11)
-
 #add _CRT_SECURE_NO_WARNINGS
 if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
