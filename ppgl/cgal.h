@@ -25,7 +25,7 @@ typedef  bool (*CGAL_2D_Intersection_Segment_Polygon)(Vector2d s_s, Vector2d s_e
 typedef  bool (*CGAL_2D_Polygon_Is_Clockwise_Oriented)(Vector2d1 &ps);
 typedef  double (*CGAL_2D_Two_Polygons_Union)(Vector2d1 poly_0, Vector2d1 poly_1,Vector2d2 &inter_polygons);
 typedef  double (*CGAL_2D_Two_Polygons_Intersection)(const Vector2d1 &poly_0, const Vector2d1 &poly_1);
-typedef  Vector1i1 (*CGAL_Decompose_Polyline)(Vector2d1 &polyline, double threshold);
+typedef  void (*CGAL_Decompose_Polyline)(Vector2d1 &polyline, double threshold, Vector1i1& result);
 typedef  bool (*CGAL_Identify_Polycut_Extend)(const Vector2d1 &polygon, const Vector2d &s,const Vector2d &e, Vector2d &ns, Vector2d &ne);
 typedef  bool (*CGAL_Identify_Polycut_NotExtend)(const Vector2d1 &polygon, const Vector2d &s,const Vector2d &e);
 typedef  bool (*CGAL_Identify_Polycut)(const Vector2d1 &polygon, const Vector2d1 &cutLine, VectorPB1 &result);
