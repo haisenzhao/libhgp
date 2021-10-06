@@ -353,7 +353,7 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(Vector3d p, Vector3d n
 }
 
 //test each group directions (nes[i]) for each point in ps
-extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C1_Bool(Vector3d1 ps, Vector3d2 nes, std::string path, Vector1b2 & inters)
+extern "C" PPGL_EXPORT void  CGAL_3D_Intersection_Rays_Mesh_C1_Bool(Vector3d1 ps, Vector3d2 nes, std::string path, Vector1b2& inters)
 {
 	//input validation
 	if (ps.size() != nes.size()  || !Functs::DetectExisting(path))
@@ -382,13 +382,11 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C1_Bool(Vector3d1 ps,
 }
 
 //test all directions (ns) for each point in ps
-extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(Vector3d1 ps, Vector3d1 ns, std::string path, Vector1b2 & inters)
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(Vector3d1 ps, Vector3d1 ns, std::string path, Vector1b2& inters)
 {
 	//input validation
 	if (!Functs::DetectExisting(path))
-	{
 		Functs::MAssert("!Functs::DetectExisting(path)");
-	}
 
 	//construct polyhedron
 	Polyhedron_3 polyhedron;
@@ -411,7 +409,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(Vector3d1 ps,
 }
 
 
-extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1 & inters)
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(Vector3d1 ps, Vector3d1 ns, std::string path, Vector3d1& inters)
 {
 	std::ifstream input(path);
 	Mesh mesh;
