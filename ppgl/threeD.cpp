@@ -241,6 +241,8 @@ void CGAL_Load_Obj(std::string path, std::vector<double> &coords,Vector1i1 &tris
     char line[1024], v0[1024], v1[1024], v2[1024];
 
     // open the file, return if open fails
+    if (!Functs::DetectExisting(path))
+        Functs::MAssert("Path does not exist: "+ path);
     FILE *fp = fopen(path.c_str(), "r");
     if (!fp) return;
 
