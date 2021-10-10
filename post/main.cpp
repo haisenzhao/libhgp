@@ -71,11 +71,12 @@ void Generate_CGAL_H()
 	cgal_file << "		hModule = Functs::LoadHMODULE(\"ppgl.dll\");" << std::endl;
 	for (int i = 0; i < funct_titles.size(); i++)
 	{
+		std::string pre_str = "		";
 		auto title = funct_titles[i];
-		cgal_file << "		" << title << "_C = ("<<title<<")GetProcAddress(hModule, \""<<title<<"\");" << std::endl;
+		cgal_file << pre_str << title << "_C = ("<<title<<")GetProcAddress(hModule, \""<<title<<"\");" << std::endl;
 		if (funct_notations.find(i) != funct_notations.end())
 			for (auto& line : funct_notations[i])
-				cgal_file << line << std::endl;
+				cgal_file << pre_str << line << std::endl;
 	}
 	cgal_file << "	};" << std::endl << std::endl;
 	cgal_file << "	static PL& Inst()" << std::endl;
@@ -89,11 +90,12 @@ void Generate_CGAL_H()
 
 	for (int i = 0; i < funct_titles.size(); i++)
 	{
+		std::string pre_str = "	";
 		auto title = funct_titles[i];
-		cgal_file <<"	" << title << " " << title << "_C;" << std::endl;
+		cgal_file << pre_str << title << " " << title << "_C;" << std::endl;
 		if (funct_notations.find(i) != funct_notations.end())
 			for (auto& line : funct_notations[i])
-				cgal_file << line << std::endl;
+				cgal_file << pre_str << line << std::endl;
 	}
 
 	cgal_file << "};" << std::endl;

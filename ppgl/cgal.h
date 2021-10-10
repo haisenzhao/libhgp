@@ -70,9 +70,13 @@ class PL
 	{
 		hModule = Functs::LoadHMODULE("ppgl.dll");
 		CGAL_Test_PGL_C = (CGAL_Test_PGL)GetProcAddress(hModule, "CGAL_Test_PGL");
+		//implementation in "io.cpp"
+		//####################################################################################
 		CGAL_Vector_Base_C = (CGAL_Vector_Base)GetProcAddress(hModule, "CGAL_Vector_Base");
 		CGAL_Export_Path_Segment_C = (CGAL_Export_Path_Segment)GetProcAddress(hModule, "CGAL_Export_Path_Segment");
 		CGAL_Export_Path_Point_C = (CGAL_Export_Path_Point)GetProcAddress(hModule, "CGAL_Export_Path_Point");
+		//implementation in "twoD.cpp"
+		//####################################################################################
 		CGAL_2D_Distance_Point_Point_C = (CGAL_2D_Distance_Point_Point)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Point");
 		CGAL_2D_Distance_Point_Line_C = (CGAL_2D_Distance_Point_Line)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Line");
 		CGAL_2D_Distance_Point_Segment_C = (CGAL_2D_Distance_Point_Segment)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Segment");
@@ -94,6 +98,8 @@ class PL
 		CGAL_Construct_InOutSide_Polygon_C = (CGAL_Construct_InOutSide_Polygon)GetProcAddress(hModule, "CGAL_Construct_InOutSide_Polygon");
 		CGAL_2D_Intersection_Ray_Segment_C = (CGAL_2D_Intersection_Ray_Segment)GetProcAddress(hModule, "CGAL_2D_Intersection_Ray_Segment");
 		CGAL_Get_Angle_Kerf_Offset_Tan_C = (CGAL_Get_Angle_Kerf_Offset_Tan)GetProcAddress(hModule, "CGAL_Get_Angle_Kerf_Offset_Tan");
+		//implementation in "threeD.cpp"
+		//####################################################################################
 		CGAL_3D_Distance_Point_Segment_C = (CGAL_3D_Distance_Point_Segment)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Segment");
 		CGAL_3D_Plane_Fitting_C = (CGAL_3D_Plane_Fitting)GetProcAddress(hModule, "CGAL_3D_Plane_Fitting");
 		CGAL_3D_Plane_Point_Projection_C = (CGAL_3D_Plane_Point_Projection)GetProcAddress(hModule, "CGAL_3D_Plane_Point_Projection");
@@ -106,6 +112,8 @@ class PL
 		CGAL_3D_Distance_Point_Point_C = (CGAL_3D_Distance_Point_Point)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Point");
 		CGAL_3D_Distance_Point_Polygon_C = (CGAL_3D_Distance_Point_Polygon)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Polygon");
 		CGAL_2D_Polygon_Triangulation_C = (CGAL_2D_Polygon_Triangulation)GetProcAddress(hModule, "CGAL_2D_Polygon_Triangulation");
+		//implementation in "mesh.cpp"
+		//####################################################################################
 		CGAL_Remesh_Surface_by_Adding_Feature_C = (CGAL_Remesh_Surface_by_Adding_Feature)GetProcAddress(hModule, "CGAL_Remesh_Surface_by_Adding_Feature");
 		CGAL_3D_Output_Triangle_Mesh_C = (CGAL_3D_Output_Triangle_Mesh)GetProcAddress(hModule, "CGAL_3D_Output_Triangle_Mesh");
 		CGAL_3D_Read_Triangle_Mesh_C = (CGAL_3D_Read_Triangle_Mesh)GetProcAddress(hModule, "CGAL_3D_Read_Triangle_Mesh");
@@ -114,7 +122,9 @@ class PL
 		CGAL_3D_Intersection_Ray_Triangle_C = (CGAL_3D_Intersection_Ray_Triangle)GetProcAddress(hModule, "CGAL_3D_Intersection_Ray_Triangle");
 		CGAL_3D_Intersection_Ray_Mesh_C = (CGAL_3D_Intersection_Ray_Mesh)GetProcAddress(hModule, "CGAL_3D_Intersection_Ray_Mesh");
 		CGAL_3D_Intersection_Rays_Mesh_Vector3d_C = (CGAL_3D_Intersection_Rays_Mesh_Vector3d)GetProcAddress(hModule, "CGAL_3D_Intersection_Rays_Mesh_Vector3d");
+		//test each group directions (nes[i]) for each point in ps
 		CGAL_3D_Intersection_Rays_Mesh_C1_Bool_C = (CGAL_3D_Intersection_Rays_Mesh_C1_Bool)GetProcAddress(hModule, "CGAL_3D_Intersection_Rays_Mesh_C1_Bool");
+		//test all directions (ns) for each point in ps
 		CGAL_3D_Intersection_Rays_Mesh_C2_Bool_C = (CGAL_3D_Intersection_Rays_Mesh_C2_Bool)GetProcAddress(hModule, "CGAL_3D_Intersection_Rays_Mesh_C2_Bool");
 	};
 
@@ -126,9 +136,13 @@ class PL
 
 	HMODULE hModule;
 	CGAL_Test_PGL CGAL_Test_PGL_C;
+	//implementation in "io.cpp"
+	//####################################################################################
 	CGAL_Vector_Base CGAL_Vector_Base_C;
 	CGAL_Export_Path_Segment CGAL_Export_Path_Segment_C;
 	CGAL_Export_Path_Point CGAL_Export_Path_Point_C;
+	//implementation in "twoD.cpp"
+	//####################################################################################
 	CGAL_2D_Distance_Point_Point CGAL_2D_Distance_Point_Point_C;
 	CGAL_2D_Distance_Point_Line CGAL_2D_Distance_Point_Line_C;
 	CGAL_2D_Distance_Point_Segment CGAL_2D_Distance_Point_Segment_C;
@@ -150,6 +164,8 @@ class PL
 	CGAL_Construct_InOutSide_Polygon CGAL_Construct_InOutSide_Polygon_C;
 	CGAL_2D_Intersection_Ray_Segment CGAL_2D_Intersection_Ray_Segment_C;
 	CGAL_Get_Angle_Kerf_Offset_Tan CGAL_Get_Angle_Kerf_Offset_Tan_C;
+	//implementation in "threeD.cpp"
+	//####################################################################################
 	CGAL_3D_Distance_Point_Segment CGAL_3D_Distance_Point_Segment_C;
 	CGAL_3D_Plane_Fitting CGAL_3D_Plane_Fitting_C;
 	CGAL_3D_Plane_Point_Projection CGAL_3D_Plane_Point_Projection_C;
@@ -162,6 +178,8 @@ class PL
 	CGAL_3D_Distance_Point_Point CGAL_3D_Distance_Point_Point_C;
 	CGAL_3D_Distance_Point_Polygon CGAL_3D_Distance_Point_Polygon_C;
 	CGAL_2D_Polygon_Triangulation CGAL_2D_Polygon_Triangulation_C;
+	//implementation in "mesh.cpp"
+	//####################################################################################
 	CGAL_Remesh_Surface_by_Adding_Feature CGAL_Remesh_Surface_by_Adding_Feature_C;
 	CGAL_3D_Output_Triangle_Mesh CGAL_3D_Output_Triangle_Mesh_C;
 	CGAL_3D_Read_Triangle_Mesh CGAL_3D_Read_Triangle_Mesh_C;
@@ -170,7 +188,9 @@ class PL
 	CGAL_3D_Intersection_Ray_Triangle CGAL_3D_Intersection_Ray_Triangle_C;
 	CGAL_3D_Intersection_Ray_Mesh CGAL_3D_Intersection_Ray_Mesh_C;
 	CGAL_3D_Intersection_Rays_Mesh_Vector3d CGAL_3D_Intersection_Rays_Mesh_Vector3d_C;
+	//test each group directions (nes[i]) for each point in ps
 	CGAL_3D_Intersection_Rays_Mesh_C1_Bool CGAL_3D_Intersection_Rays_Mesh_C1_Bool_C;
+	//test all directions (ns) for each point in ps
 	CGAL_3D_Intersection_Rays_Mesh_C2_Bool CGAL_3D_Intersection_Rays_Mesh_C2_Bool_C;
 };
 #endif
