@@ -94,6 +94,52 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &ps,
     return true;
 }
 
+extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1 & py, const double& d, Vector2d1 & sampling_points, const int& total_iter)
+{
+	Polygon_2 poly;
+	for (int i = 0; i < py.size(); i++)
+		poly.push_back(Point_2(py[i][0], py[i][1]));
+
+	double xmin = poly.bbox().xmin();
+	double ymin = poly.bbox().ymin();
+	double xmax = poly.bbox().xmax();
+	double ymax = poly.bbox().ymax();
+
+	int run = 0;
+	Vector2d1 insert_points;
+
+	while (run < total_iter)
+	{
+		run++;
+		double x = rand() / double(RAND_MAX);
+		double y = rand() / double(RAND_MAX);
+		x = (xmax - xmin) * x + xmin;
+		y = (ymax - ymin) * y + ymin;
+
+		if (poly.bounded_side(Point_2(x, y)) == CGAL::ON_BOUNDED_SIDE)
+		{
+			double distance = CGAL_IA_MAX_DOUBLE;
+			for (int i = 0; i < insert_points.size(); i++)
+				distance = std::min(distance, CGAL_2D_Distance_Point_Point(insert_points[i], Vector2d(x, y)));
+
+			if (distance > d)
+			{
+				insert_points.push_back(Vector2d(x, y));
+				run = 0;
+			}
+		}
+	}
+
+	for (int i = 0; i < insert_points.size(); i++)
+	{
+		double distance = CGAL_IA_MAX_DOUBLE;
+		for (int j = 0; j < py.size(); j++)
+			distance = std::min(distance, CGAL_2D_Distance_Point_Point(py[j], insert_points[i]));
+		if (distance > d / 2.0)
+			sampling_points.push_back(insert_points[i]);
+	}
+}
+
 extern "C" bool CGAL_2D_Intersection_Segment_Segment
         (const Vector2d & s_0_s, const Vector2d & s_0_e, const Vector2d & s_1_s, const Vector2d & s_1_e, Vector2d &inter) {
     CGAL::Object result = intersection(Segment_2(Point_2(s_0_s[0], s_0_s[1]), Point_2(s_0_e[0], s_0_e[1])),
