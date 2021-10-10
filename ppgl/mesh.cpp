@@ -411,6 +411,41 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(const Vector3
 	}
 }
 
+extern "C" PPGL_EXPORT void  CGAL_3D_Points_Inside_Triangles_C1_Bool(const Vector3d1& vecs, const std::vector<int>& face_id_0, const std::vector<int>& face_id_1, const std::vector<int>& face_id_2, const Vector3d1& points, std::vector<bool>& insides)
+{
+	//build polyhedron
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
+
+	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> inside(polyhedron);
+
+	for (int i = 0; i < points.size(); i++)
+	{
+		CGAL::Bounded_side res = inside(Point_3(points[i][0], points[i][1], points[i][2]));
+		if (res == CGAL::ON_BOUNDED_SIDE)
+			insides.push_back(true);
+		else
+			insides.push_back(false);
+	}
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Points_Inside_Triangles_C2_Bool(const std::string& path, const Vector3d1& points, std::vector<bool>& insides)
+{
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, path);
+
+	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> inside(polyhedron);
+
+	for (int i = 0; i < points.size(); i++)
+	{
+		CGAL::Bounded_side res = inside(Point_3(points[i][0], points[i][1], points[i][2]));
+		if (res == CGAL::ON_BOUNDED_SIDE)
+			insides.push_back(true);
+		else
+			insides.push_back(false);
+	}
+}
+
 
 extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(const Vector3d1& ps, const Vector3d1& ns, const std::string& path, Vector3d1& inters)
 {
