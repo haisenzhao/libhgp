@@ -73,9 +73,12 @@ void Generate_CGAL_H()
 	{
 		auto title = funct_titles[i];
 		cgal_file << "		" << title << "_C = ("<<title<<")GetProcAddress(hModule, \""<<title<<"\");" << std::endl;
+		if (funct_notations.find(i) != funct_notations.end())
+			for (auto& line : funct_notations[i])
+				cgal_file << line << std::endl;
 	}
 	cgal_file << "	};" << std::endl << std::endl;
-	cgal_file << "	static PL& Instance()" << std::endl;
+	cgal_file << "	static PL& Inst()" << std::endl;
 	cgal_file << "	{" << std::endl;
 	cgal_file << "		static PL instance;" << std::endl;
 	cgal_file << "		return instance;" << std::endl;
@@ -88,6 +91,9 @@ void Generate_CGAL_H()
 	{
 		auto title = funct_titles[i];
 		cgal_file <<"	" << title << " " << title << "_C;" << std::endl;
+		if (funct_notations.find(i) != funct_notations.end())
+			for (auto& line : funct_notations[i])
+				cgal_file << line << std::endl;
 	}
 
 	cgal_file << "};" << std::endl;

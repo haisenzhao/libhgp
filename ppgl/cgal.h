@@ -118,7 +118,7 @@ class PL
 		CGAL_3D_Intersection_Rays_Mesh_C2_Bool_C = (CGAL_3D_Intersection_Rays_Mesh_C2_Bool)GetProcAddress(hModule, "CGAL_3D_Intersection_Rays_Mesh_C2_Bool");
 	};
 
-	static PL& Instance()
+	static PL& Inst()
 	{
 		static PL instance;
 		return instance;

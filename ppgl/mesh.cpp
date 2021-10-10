@@ -402,6 +402,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(const Vector3
 	{
 		Functs::OutputIterInfo("CGAL_3D_Intersection_Rays_Mesh_Bool", (int)ps.size(), (int)i, (int)10);
 		Point_3 p3 = VectorPoint3d(ps[i]);
+
 		for (int j = 0; j < ns.size(); j++)
 		{
 			Ray_3 ray(p3, Vector_3(ns[j][0], ns[j][1], ns[j][2]));
