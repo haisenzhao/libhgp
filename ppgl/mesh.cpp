@@ -546,6 +546,101 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C2(const std::string & ou
 }
 
 
+//d: percentage value of the length of the diagonal of the bounding box.
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C1(const std::string & outside_path, const double& d, Vector3d1 & sampling_points)
+{
+	if (!(d > 0 && d < 1.0))
+		Functs::MAssert("CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
+
+	Polyhedron_3 out_polyhedron;
+	Vector3d1 out_vecs;
+	Vector1i1 out_face_id_0, out_face_id_1, out_face_id_2;
+	Construct_Polyhedron(out_polyhedron, outside_path, out_vecs, out_face_id_0, out_face_id_1, out_face_id_2);
+	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> out_checker(out_polyhedron);
+	Vector3d out_minC, out_maxC;
+	Functs::GetBoundingBox(out_vecs, out_minC, out_maxC);
+
+	double diagonal_length = CGAL_3D_Distance_Point_Point(out_minC, out_maxC);
+	double minimal_d = d * diagonal_length;
+
+	double x(out_minC[0]);
+	while (x < out_maxC[0])
+	{
+		double y(out_minC[1]);
+		while (y < out_maxC[1])
+		{
+			double z(out_minC[2]);
+			while (z < out_maxC[2])
+			{
+				CGAL::Bounded_side res = out_checker(Point_3(x, y, z));
+				if (res == CGAL::ON_BOUNDED_SIDE)
+				{
+					sampling_points.push_back(Vector3d(x, y, z));
+					if (sampling_points.size() % 100 == 0) std::cerr << sampling_points.size() << " ";
+				}
+
+				z += minimal_d;
+			}
+			y += minimal_d;
+		}
+
+		x += minimal_d;
+	}
+
+	std::cerr << std::endl;
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C2(const std::string & outside_path, const std::string & inside_path, const double& d, Vector3d1 & sampling_points)
+{
+	if (!(d > 0 && d < 1.0))
+		Functs::MAssert("CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
+
+	//outside
+	Polyhedron_3 out_polyhedron;
+	Vector3d1 out_vecs;
+	Vector1i1 out_face_id_0, out_face_id_1, out_face_id_2;
+	Construct_Polyhedron(out_polyhedron, outside_path, out_vecs, out_face_id_0, out_face_id_1, out_face_id_2);
+	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> out_checker(out_polyhedron);
+	Vector3d out_minC, out_maxC;
+	Functs::GetBoundingBox(out_vecs, out_minC, out_maxC);
+
+	//inside
+	Polyhedron_3 in_polyhedron;
+	Construct_Polyhedron(in_polyhedron, inside_path);
+	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> in_checker(in_polyhedron);
+
+	double diagonal_length = CGAL_3D_Distance_Point_Point(out_minC, out_maxC);
+	double minimal_d = d * diagonal_length;
+
+	double x(out_minC[0]);
+	while (x < out_maxC[0])
+	{
+		double y(out_minC[1]);
+		while (y < out_maxC[1])
+		{
+			double z(out_minC[2]);
+			while (z < out_maxC[2])
+			{
+				CGAL::Bounded_side out_res = out_checker(Point_3(x, y, z));
+				CGAL::Bounded_side in_res = in_checker(Point_3(x, y, z));
+				if (out_res == CGAL::ON_BOUNDED_SIDE && in_res == CGAL::ON_UNBOUNDED_SIDE)
+				{
+					sampling_points.push_back(Vector3d(x, y, z));
+					if (sampling_points.size() % 100 == 0) std::cerr << sampling_points.size() << " ";
+				}
+
+				z += minimal_d;
+			}
+			y += minimal_d;
+		}
+
+		x += minimal_d;
+	}
+
+	std::cerr << std::endl;
+}
+
+
 extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(const Vector3d1& ps, const Vector3d1& ns, const std::string& path, Vector3d1& inters)
 {
 	std::ifstream input(path);

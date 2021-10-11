@@ -69,6 +69,10 @@ typedef  void (*CGAL_3D_Points_Inside_Triangles_C2_Bool)(const std::string& path
 typedef  void (*CGAL_3D_Mesh_Dart_Sampling_C1)(const std::string & outside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter);
 //d: percentage value of the length of the diagonal of the bounding box.
 typedef  void (*CGAL_3D_Mesh_Dart_Sampling_C2)(const std::string & outside_path, const std::string & inside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter);
+//d: percentage value of the length of the diagonal of the bounding box.
+typedef  void (*CGAL_3D_Mesh_Regular_Sampling_C1)(const std::string & outside_path, const double& d, Vector3d1 & sampling_points);
+//d: percentage value of the length of the diagonal of the bounding box.
+typedef  void (*CGAL_3D_Mesh_Regular_Sampling_C2)(const std::string & outside_path, const std::string & inside_path, const double& d, Vector3d1 & sampling_points);
 
 
 class PL
@@ -142,6 +146,10 @@ class PL
 		CGAL_3D_Mesh_Dart_Sampling_C1_C = (CGAL_3D_Mesh_Dart_Sampling_C1)GetProcAddress(hModule, "CGAL_3D_Mesh_Dart_Sampling_C1");
 		//d: percentage value of the length of the diagonal of the bounding box.
 		CGAL_3D_Mesh_Dart_Sampling_C2_C = (CGAL_3D_Mesh_Dart_Sampling_C2)GetProcAddress(hModule, "CGAL_3D_Mesh_Dart_Sampling_C2");
+		//d: percentage value of the length of the diagonal of the bounding box.
+		CGAL_3D_Mesh_Regular_Sampling_C1_C = (CGAL_3D_Mesh_Regular_Sampling_C1)GetProcAddress(hModule, "CGAL_3D_Mesh_Regular_Sampling_C1");
+		//d: percentage value of the length of the diagonal of the bounding box.
+		CGAL_3D_Mesh_Regular_Sampling_C2_C = (CGAL_3D_Mesh_Regular_Sampling_C2)GetProcAddress(hModule, "CGAL_3D_Mesh_Regular_Sampling_C2");
 	};
 
 	static PL& Inst()
@@ -216,5 +224,9 @@ class PL
 	CGAL_3D_Mesh_Dart_Sampling_C1 CGAL_3D_Mesh_Dart_Sampling_C1_C;
 	//d: percentage value of the length of the diagonal of the bounding box.
 	CGAL_3D_Mesh_Dart_Sampling_C2 CGAL_3D_Mesh_Dart_Sampling_C2_C;
+	//d: percentage value of the length of the diagonal of the bounding box.
+	CGAL_3D_Mesh_Regular_Sampling_C1 CGAL_3D_Mesh_Regular_Sampling_C1_C;
+	//d: percentage value of the length of the diagonal of the bounding box.
+	CGAL_3D_Mesh_Regular_Sampling_C2 CGAL_3D_Mesh_Regular_Sampling_C2_C;
 };
 #endif
