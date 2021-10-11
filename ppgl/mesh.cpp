@@ -445,8 +445,12 @@ extern "C" PPGL_EXPORT void CGAL_3D_Points_Inside_Triangles_C2_Bool(const std::s
 	}
 }
 
+//d: percentage value of the length of the diagonal of the bounding box.
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C1(const std::string & outside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter)
 {
+	if (!(d > 0 && d < 1.0))
+		Functs::MAssert("CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
+
 	Polyhedron_3 out_polyhedron;
 	Vector3d1 out_vecs;
 	Vector1i1 out_face_id_0, out_face_id_1, out_face_id_2;
@@ -454,6 +458,9 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C1(const std::string & ou
 	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> out_checker(out_polyhedron);
 	Vector3d out_minC, out_maxC;
 	Functs::GetBoundingBox(out_vecs, out_minC, out_maxC);
+
+	double diagonal_length = CGAL_3D_Distance_Point_Point(out_minC, out_maxC);
+	double minimal_d = d * diagonal_length;
 
 	int run = 0;
 	while (run < total_iter)
@@ -473,17 +480,22 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C1(const std::string & ou
 			for (int i = 0; i < sampling_points.size(); i++)
 				distance = std::min(distance, CGAL_3D_Distance_Point_Point(sampling_points[i], Vector3d(x, y, z)));
 
-			if (distance > d)
+			if (distance > minimal_d)
 			{
 				sampling_points.push_back(Vector3d(x, y, z));
+				if (sampling_points.size() % 100 == 0) std::cerr << sampling_points.size() << " ";
 				run = 0;
 			}
 		}
 	}
+	std::cerr << std::endl;
 }
 
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C2(const std::string & outside_path, const std::string & inside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter)
 {
+	if (!(d > 0 && d < 1.0))
+		Functs::MAssert("CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
+
 	//outside
 	Polyhedron_3 out_polyhedron;
 	Vector3d1 out_vecs;
@@ -497,6 +509,9 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C2(const std::string & ou
 	Polyhedron_3 in_polyhedron;
 	Construct_Polyhedron(in_polyhedron, inside_path);
 	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> in_checker(in_polyhedron);
+
+	double diagonal_length = CGAL_3D_Distance_Point_Point(out_minC, out_maxC);
+	double minimal_d = d * diagonal_length;
 
 	int run = 0;
 	while (run < total_iter)
@@ -517,13 +532,17 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C2(const std::string & ou
 			for (int i = 0; i < sampling_points.size(); i++)
 				distance = std::min(distance, CGAL_3D_Distance_Point_Point(sampling_points[i], Vector3d(x, y, z)));
 
-			if (distance > d)
+			if (distance > minimal_d)
 			{
 				sampling_points.push_back(Vector3d(x, y, z));
+
+				if (sampling_points.size() % 100 == 0) std::cerr<< sampling_points.size()<<" ";
+
 				run = 0;
 			}
 		}
 	}
+	std::cerr << std::endl;
 }
 
 

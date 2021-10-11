@@ -96,6 +96,9 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &ps,
 
 extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1 & py, const double& d, Vector2d1 & sampling_points, const int& total_iter)
 {
+	if (!(d > 0 && d < 1.0))
+		Functs::MAssert("CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
+
 	Polygon_2 poly;
 	for (int i = 0; i < py.size(); i++)
 		poly.push_back(Point_2(py[i][0], py[i][1]));
@@ -104,6 +107,9 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1 & py, 
 	double ymin = poly.bbox().ymin();
 	double xmax = poly.bbox().xmax();
 	double ymax = poly.bbox().ymax();
+
+	double diagonal_length = CGAL_2D_Distance_Point_Point(Vector2d(xmin,ymin), Vector2d(xmax,ymax));
+	double minimal_d = d * diagonal_length;
 
 	int run = 0;
 	Vector2d1 insert_points;
@@ -122,7 +128,7 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1 & py, 
 			for (int i = 0; i < insert_points.size(); i++)
 				distance = std::min(distance, CGAL_2D_Distance_Point_Point(insert_points[i], Vector2d(x, y)));
 
-			if (distance > d)
+			if (distance > minimal_d)
 			{
 				insert_points.push_back(Vector2d(x, y));
 				run = 0;

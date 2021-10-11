@@ -16,7 +16,6 @@
 
 using namespace PGL;
 
-
 Vector3d PointVector3d(Point_3 p);
 Point_3 VectorPoint3d(Vector3d p);
 Vector2d PointVector2d(Point_2 p);
@@ -42,6 +41,7 @@ extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Segment(const Vector2d & v,
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Segment_Segment(const Vector2d & s_0, const Vector2d & s_1, const Vector2d & e_0, const Vector2d & e_1);
 extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(const Vector2d & p, const Vector2d1 & py);
 extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &ps, const Vector2d1 &py);
+//d: percentage value of the length of the diagonal of the bounding box.
 extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1& py, const double& d, Vector2d1& sampling_points, const int& total_iter);
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(const Vector2d & p, const Vector2d1 & py);
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Segment(const Vector2d & s_0_s, const Vector2d & s_0_e, const Vector2d & s_1_s, const Vector2d & s_1_e, Vector2d &inter);
@@ -90,7 +90,9 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C1_Bool(const Vector3
 extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(const Vector3d1 & ps, const Vector3d1 & ns, const std::string & path, Vector1b2 & inters);
 extern "C" PPGL_EXPORT void CGAL_3D_Points_Inside_Triangles_C1_Bool(const Vector3d1& vecs, const std::vector<int>& face_id_0, const std::vector<int>& face_id_1, const std::vector<int>& face_id_2, const Vector3d1& points, std::vector<bool>& insides);
 extern "C" PPGL_EXPORT void CGAL_3D_Points_Inside_Triangles_C2_Bool(const std::string& path, const Vector3d1& points, std::vector<bool>& insides);
+//d: percentage value of the length of the diagonal of the bounding box.
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C1(const std::string & outside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter);
+//d: percentage value of the length of the diagonal of the bounding box.
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C2(const std::string & outside_path, const std::string & inside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter);
 
 #endif

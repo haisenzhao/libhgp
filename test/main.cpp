@@ -1,5 +1,5 @@
-#include "cgal.h" //call functions from a dll
-//#include "geom.h" //call functions directly
+//#include "cgal.h" //call functions from a dll
+#include "geom.h" //call functions directly
 
 using namespace std;
 
@@ -23,6 +23,13 @@ int main(int argc, char* argv[])
 	Vector3d result;
 	CGAL_Vector_Base(Vector3d(1.0, 323.0, 0.0), result);
 	std::cerr << result[0] << " " << result[1] << " " << result[2] << std::endl;
+
+	std::string root = "E:\\Dropbox\\Mold\\microstructures\\demo";
+	std::string cube_file = "1_cube.obj";
+	std::string micro_file = "1_micro.obj";
+	Vector3d1 sampling_points;
+	CGAL_3D_Mesh_Dart_Sampling_C2(root + "\\" + cube_file, root + "\\" + micro_file, 10, sampling_points, 10);
+	Functs::CerrLine("Total sampling_points: " + std::to_string(sampling_points.size()), 2);
 
 #endif
 

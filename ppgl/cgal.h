@@ -18,6 +18,7 @@ typedef  double (*CGAL_2D_Distance_Point_Segment)(const Vector2d & v, const Vect
 typedef  double (*CGAL_2D_Distance_Segment_Segment)(const Vector2d & s_0, const Vector2d & s_1, const Vector2d & e_0, const Vector2d & e_1);
 typedef  bool (*CGAL_2D_Location_Point_Polygon)(const Vector2d & p, const Vector2d1 & py);
 typedef  bool (*CGAL_2D_Location_Points_Polygon)(const Vector2d1 &ps, const Vector2d1 &py);
+//d: percentage value of the length of the diagonal of the bounding box.
 typedef  void (*CGAL_2D_Polygon_Dart_Sampling)(const Vector2d1& py, const double& d, Vector2d1& sampling_points, const int& total_iter);
 typedef  double (*CGAL_2D_Distance_Point_Polygon)(const Vector2d & p, const Vector2d1 & py);
 typedef  bool (*CGAL_2D_Intersection_Segment_Segment)(const Vector2d & s_0_s, const Vector2d & s_0_e, const Vector2d & s_1_s, const Vector2d & s_1_e, Vector2d &inter);
@@ -64,7 +65,9 @@ typedef  void (*CGAL_3D_Intersection_Rays_Mesh_C1_Bool)(const Vector3d1 & ps, co
 typedef  void (*CGAL_3D_Intersection_Rays_Mesh_C2_Bool)(const Vector3d1 & ps, const Vector3d1 & ns, const std::string & path, Vector1b2 & inters);
 typedef  void (*CGAL_3D_Points_Inside_Triangles_C1_Bool)(const Vector3d1& vecs, const std::vector<int>& face_id_0, const std::vector<int>& face_id_1, const std::vector<int>& face_id_2, const Vector3d1& points, std::vector<bool>& insides);
 typedef  void (*CGAL_3D_Points_Inside_Triangles_C2_Bool)(const std::string& path, const Vector3d1& points, std::vector<bool>& insides);
+//d: percentage value of the length of the diagonal of the bounding box.
 typedef  void (*CGAL_3D_Mesh_Dart_Sampling_C1)(const std::string & outside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter);
+//d: percentage value of the length of the diagonal of the bounding box.
 typedef  void (*CGAL_3D_Mesh_Dart_Sampling_C2)(const std::string & outside_path, const std::string & inside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter);
 
 
@@ -88,6 +91,7 @@ class PL
 		CGAL_2D_Distance_Segment_Segment_C = (CGAL_2D_Distance_Segment_Segment)GetProcAddress(hModule, "CGAL_2D_Distance_Segment_Segment");
 		CGAL_2D_Location_Point_Polygon_C = (CGAL_2D_Location_Point_Polygon)GetProcAddress(hModule, "CGAL_2D_Location_Point_Polygon");
 		CGAL_2D_Location_Points_Polygon_C = (CGAL_2D_Location_Points_Polygon)GetProcAddress(hModule, "CGAL_2D_Location_Points_Polygon");
+		//d: percentage value of the length of the diagonal of the bounding box.
 		CGAL_2D_Polygon_Dart_Sampling_C = (CGAL_2D_Polygon_Dart_Sampling)GetProcAddress(hModule, "CGAL_2D_Polygon_Dart_Sampling");
 		CGAL_2D_Distance_Point_Polygon_C = (CGAL_2D_Distance_Point_Polygon)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Polygon");
 		CGAL_2D_Intersection_Segment_Segment_C = (CGAL_2D_Intersection_Segment_Segment)GetProcAddress(hModule, "CGAL_2D_Intersection_Segment_Segment");
@@ -134,7 +138,9 @@ class PL
 		CGAL_3D_Intersection_Rays_Mesh_C2_Bool_C = (CGAL_3D_Intersection_Rays_Mesh_C2_Bool)GetProcAddress(hModule, "CGAL_3D_Intersection_Rays_Mesh_C2_Bool");
 		CGAL_3D_Points_Inside_Triangles_C1_Bool_C = (CGAL_3D_Points_Inside_Triangles_C1_Bool)GetProcAddress(hModule, "CGAL_3D_Points_Inside_Triangles_C1_Bool");
 		CGAL_3D_Points_Inside_Triangles_C2_Bool_C = (CGAL_3D_Points_Inside_Triangles_C2_Bool)GetProcAddress(hModule, "CGAL_3D_Points_Inside_Triangles_C2_Bool");
+		//d: percentage value of the length of the diagonal of the bounding box.
 		CGAL_3D_Mesh_Dart_Sampling_C1_C = (CGAL_3D_Mesh_Dart_Sampling_C1)GetProcAddress(hModule, "CGAL_3D_Mesh_Dart_Sampling_C1");
+		//d: percentage value of the length of the diagonal of the bounding box.
 		CGAL_3D_Mesh_Dart_Sampling_C2_C = (CGAL_3D_Mesh_Dart_Sampling_C2)GetProcAddress(hModule, "CGAL_3D_Mesh_Dart_Sampling_C2");
 	};
 
@@ -159,6 +165,7 @@ class PL
 	CGAL_2D_Distance_Segment_Segment CGAL_2D_Distance_Segment_Segment_C;
 	CGAL_2D_Location_Point_Polygon CGAL_2D_Location_Point_Polygon_C;
 	CGAL_2D_Location_Points_Polygon CGAL_2D_Location_Points_Polygon_C;
+	//d: percentage value of the length of the diagonal of the bounding box.
 	CGAL_2D_Polygon_Dart_Sampling CGAL_2D_Polygon_Dart_Sampling_C;
 	CGAL_2D_Distance_Point_Polygon CGAL_2D_Distance_Point_Polygon_C;
 	CGAL_2D_Intersection_Segment_Segment CGAL_2D_Intersection_Segment_Segment_C;
@@ -205,7 +212,9 @@ class PL
 	CGAL_3D_Intersection_Rays_Mesh_C2_Bool CGAL_3D_Intersection_Rays_Mesh_C2_Bool_C;
 	CGAL_3D_Points_Inside_Triangles_C1_Bool CGAL_3D_Points_Inside_Triangles_C1_Bool_C;
 	CGAL_3D_Points_Inside_Triangles_C2_Bool CGAL_3D_Points_Inside_Triangles_C2_Bool_C;
+	//d: percentage value of the length of the diagonal of the bounding box.
 	CGAL_3D_Mesh_Dart_Sampling_C1 CGAL_3D_Mesh_Dart_Sampling_C1_C;
+	//d: percentage value of the length of the diagonal of the bounding box.
 	CGAL_3D_Mesh_Dart_Sampling_C2 CGAL_3D_Mesh_Dart_Sampling_C2_C;
 };
 #endif

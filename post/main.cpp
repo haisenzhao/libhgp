@@ -116,6 +116,17 @@ int main(int argc, char* argv[])
 	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\post\\Release\\");
 	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\post\\Release\\");
 
+	//RelWithDebInfo
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\RelWithDebInfo\\");
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\RelWithDebInfo\\");
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\");
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\");
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\post\\RelWithDebInfo\\");
+	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\post\\RelWithDebInfo\\");
+
+
 	//generate cgal head file
 	Generate_CGAL_H();
 
