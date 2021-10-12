@@ -1068,3 +1068,902 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Subdivision(const std::string & in_path, c
 
 	CGAL_Output_Obj_C2(out_path, vecs, face_id_0, face_id_1, face_id_2);
 }
+
+
+
+
+
+
+
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&max_curs, const std::vector<double>&min_curs)
+{
+	int verticeSize = vecs.size();
+	int faceindiceSize = face_id_0.size() * 3;
+
+	Wm5::Vector3<double>* points = new Wm5::Vector3<double>[verticeSize];
+	int* indices = new int[faceindiceSize];
+
+	for (int i = 0; i < verticeSize; i++)
+	{
+		points[i].X() = vecs[i][0];
+		points[i].Y() = vecs[i][1];
+		points[i].Z() = vecs[i][2];
+	}
+
+	for (int i = 0; i < face_id_0.size(); i++)
+	{
+		indices[3 * i] = face_id_0[i];
+		indices[3 * i + 1] = face_id_1[i];
+		indices[3 * i + 2] = face_id_2[i];
+	}
+	Wm5::MeshCurvature<double> meshCurvature(verticeSize, points, faceindiceSize / 3, indices);
+
+	for (int i = 0; i < verticeSize; i++)
+	{
+		max_curs.push_back(meshCurvature.GetMaxCurvatures()[i]);
+		min_curs.push_back(meshCurvature.GetMinCurvatures()[i]);
+	}
+}
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<double>&max_curs, const std::vector<double>&min_curs)
+{
+	std::vector<int> face_id_0, face_id_1, face_id_2;
+
+	for (int i = 0; i < face_ids.size(); i++)
+	{
+		face_id_0.push_back(face_ids[i][0]);
+		face_id_1.push_back(face_ids[i][1]);
+		face_id_2.push_back(face_ids[i][2]);
+	}
+
+	CGAL_3D_Mesh_Curvature(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs);
+
+	std::vector<int>().swap(face_id_0);
+	std::vector<int>().swap(face_id_1);
+	std::vector<int>().swap(face_id_2);
+
+}
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions)
+{
+	int verticeSize = vecs.size();
+	int faceindiceSize = face_id_0.size() * 3;
+
+	Wm5::Vector3<double>* points = new Wm5::Vector3<double>[verticeSize];
+	int* indices = new int[faceindiceSize];
+
+	for (int i = 0; i < verticeSize; i++)
+	{
+		points[i].X() = vecs[i][0];
+		points[i].Y() = vecs[i][1];
+		points[i].Z() = vecs[i][2];
+	}
+
+	for (int i = 0; i < face_id_0.size(); i++)
+	{
+		indices[3 * i] = face_id_0[i];
+		indices[3 * i + 1] = face_id_1[i];
+		indices[3 * i + 2] = face_id_2[i];
+	}
+
+	Wm5::MeshCurvature<double> meshCurvature(verticeSize, points, faceindiceSize / 3, indices);
+
+	for (int i = 0; i < verticeSize; i++)
+	{
+		max_curs.push_back(meshCurvature.GetMaxCurvatures()[i]);
+		min_curs.push_back(meshCurvature.GetMinCurvatures()[i]);
+
+		Wm5::Vector3<double> max_curs_direction = meshCurvature.GetMaxDirections()[i];
+		Wm5::Vector3<double> min_curs_direction = meshCurvature.GetMinDirections()[i];
+
+		max_curs_directions.push_back(Vector3d(max_curs_direction[0], max_curs_direction[1], max_curs_direction[2]));
+		min_curs_directions.push_back(Vector3d(min_curs_direction[0], min_curs_direction[1], min_curs_direction[2]));
+	}
+}
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions)
+{
+	std::vector<int> face_id_0, face_id_1, face_id_2;
+
+	for (int i = 0; i < face_ids.size(); i++)
+	{
+		face_id_0.push_back(face_ids[i][0]);
+		face_id_1.push_back(face_ids[i][1]);
+		face_id_2.push_back(face_ids[i][2]);
+	}
+
+	CGAL_3D_Mesh_Curvature(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions);
+
+	std::vector<int>().swap(face_id_0);
+	std::vector<int>().swap(face_id_1);
+	std::vector<int>().swap(face_id_2);
+}
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions, const Vector3d1 & normals)
+{
+	int verticeSize = vecs.size();
+	int faceindiceSize = face_id_0.size() * 3;
+
+	Wm5::Vector3<double>* points = new Wm5::Vector3<double>[verticeSize];
+	int* indices = new int[faceindiceSize];
+
+	for (int i = 0; i < verticeSize; i++)
+	{
+		points[i].X() = vecs[i][0];
+		points[i].Y() = vecs[i][1];
+		points[i].Z() = vecs[i][2];
+	}
+
+	for (int i = 0; i < face_id_0.size(); i++)
+	{
+		indices[3 * i] = face_id_0[i];
+		indices[3 * i + 1] = face_id_1[i];
+		indices[3 * i + 2] = face_id_2[i];
+	}
+	Wm5::MeshCurvature<double> meshCurvature(verticeSize, points, faceindiceSize / 3, indices);
+
+	for (int i = 0; i < verticeSize; i++)
+	{
+		max_curs.push_back(meshCurvature.GetMaxCurvatures()[i]);
+		min_curs.push_back(meshCurvature.GetMinCurvatures()[i]);
+
+		Wm5::Vector3<double> max_curs_direction = meshCurvature.GetMaxDirections()[i];
+		Wm5::Vector3<double> min_curs_direction = meshCurvature.GetMinDirections()[i];
+
+		max_curs_directions.push_back(Vector3d(max_curs_direction[0], max_curs_direction[1], max_curs_direction[2]));
+		min_curs_directions.push_back(Vector3d(min_curs_direction[0], min_curs_direction[1], min_curs_direction[2]));
+
+		Wm5::Vector3<double> normal = meshCurvature.GetNormals()[i];
+		normals.push_back(Vector3d(normal[0], normal[1], normal[2]));
+	}
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions, const Vector3d1 & normals)
+{
+	std::vector<int> face_id_0, face_id_1, face_id_2;
+
+	for (int i = 0; i < face_ids.size(); i++)
+	{
+		face_id_0.push_back(face_ids[i][0]);
+		face_id_1.push_back(face_ids[i][1]);
+		face_id_2.push_back(face_ids[i][2]);
+	}
+
+	CGAL_3D_Mesh_Curvature(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions, normals);
+
+	std::vector<int>().swap(face_id_0);
+	std::vector<int>().swap(face_id_1);
+	std::vector<int>().swap(face_id_2);
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<bool>&bools)
+{
+	std::vector<bool>().swap(bools);
+
+	std::vector<std::vector<int>> vecs_neigbor(vecs.size(), std::vector<int>());
+	std::vector<std::vector<int>> vecs_neigbor_lable(vecs.size(), std::vector<int>());
+	std::vector<int> edges;
+	for (int i = 0; i < face_id_0.size(); i++) {
+		int index_0 = face_id_0[i];
+		int index_1 = face_id_1[i];
+		int index_2 = face_id_2[i];
+		edges.push_back(index_0);
+		edges.push_back(index_1);
+		edges.push_back(index_1);
+		edges.push_back(index_2);
+		edges.push_back(index_2);
+		edges.push_back(index_0);
+
+		edges.push_back(index_1);
+		edges.push_back(index_0);
+		edges.push_back(index_2);
+		edges.push_back(index_1);
+		edges.push_back(index_0);
+		edges.push_back(index_2);
+	}
+
+	for (int i = 0; i < edges.size(); i = i + 2) {
+		int index_0 = edges[i];
+		int index_1 = edges[i + 1];
+
+		int search_0 = -1;
+		for (int j = 0; j < vecs_neigbor[index_0].size() && search_0 < 0; j++) {
+			if (vecs_neigbor[index_0][j] == index_1) {
+				search_0 = j;
+				vecs_neigbor_lable[index_0][j]++;
+			}
+		}
+
+		if (search_0 < 0) {
+			vecs_neigbor[index_0].push_back(index_1);
+			vecs_neigbor_lable[index_0].push_back(1);
+		}
+	}
+
+	for (int i = 0; i < vecs.size(); i++) {
+		bool b = false;
+		for (int j = 0; j < vecs_neigbor_lable[i].size() & !b; j++) {
+			if (vecs_neigbor_lable[i][j] == 1) {
+				b = true;
+			}
+		}
+		bools.push_back(b);
+	}
+
+	std::vector<std::vector<int>>().swap(vecs_neigbor);
+	std::vector<std::vector<int>>().swap(vecs_neigbor_lable);
+	std::vector<int>().swap(edges);
+}
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C2(const std::string & path, std::vector<bool>&bools)
+{
+	Vector3d1 vecs;
+	std::vector<int> face_id_0;
+	std::vector<int> face_id_1;
+	std::vector<int> face_id_2;
+	CGAL_3D_Read_Triangle_Mesh(path, vecs, face_id_0, face_id_1, face_id_2);
+	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, bools);
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments(Vector2d2 & segments, Vector2d2 & lines)
+{
+	//save connecting relations
+	std::vector<bool> used(segments.size(), false);
+
+	std::vector<int> relations;
+#pragma region get_relations
+	for (int i = 0; i < segments.size(); i++)
+	{
+		for (int j = 0; j < segments.size(); j++)
+		{
+			if (i != j && !used[i] && !used[j])
+			{
+				bool b_0_0 = Functs::IsAlmostZero_Double(CGAL_2D_Distance_Point_Point(segments[i][0], segments[j][0]), 1.0E-09);
+				bool b_0_1 = Functs::IsAlmostZero_Double(CGAL_2D_Distance_Point_Point(segments[i][0], segments[j][1]), 1.0E-09);
+				bool b_1_0 = Functs::IsAlmostZero_Double(CGAL_2D_Distance_Point_Point(segments[i][1], segments[j][0]), 1.0E-09);
+				bool b_1_1 = Functs::IsAlmostZero_Double(CGAL_2D_Distance_Point_Point(segments[i][1], segments[j][1]), 1.0E-09);
+
+				if ((b_0_0 && b_1_1) || (b_0_1 && b_1_0))
+				{
+					used[j] = true;
+					continue;
+				}
+
+				if (b_0_0)
+				{
+					relations.push_back(i);
+					relations.push_back(0);
+					relations.push_back(j);
+					relations.push_back(0);
+					continue;
+				}
+				if (b_0_1)
+				{
+					relations.push_back(i);
+					relations.push_back(0);
+					relations.push_back(j);
+					relations.push_back(1);
+					continue;
+				}
+				if (b_1_0)
+				{
+					relations.push_back(i);
+					relations.push_back(1);
+					relations.push_back(j);
+					relations.push_back(0);
+					continue;
+				}
+				if (b_1_1)
+				{
+					relations.push_back(i);
+					relations.push_back(1);
+					relations.push_back(j);
+					relations.push_back(1);
+					continue;
+				}
+			}
+		}
+	}
+#pragma endregion
+
+	std::vector<std::vector<int>> ones;
+
+
+	while (true)
+	{
+		int index = -1;
+		int end = -1;
+
+		for (int i = 0; i < segments.size(); i++)
+		{
+			if (!used[i]) {
+				index = i;
+				end = 0;
+				used[i] = true;
+				break;
+			}
+		}
+
+		if (index < 0)break;
+
+		Vector2d1 line(1, segments[index][end]);
+
+		std::vector<int> one(1, index);
+
+		while (true)
+		{
+			end = 1 - end;
+			bool search = false;
+			for (int i = 0; i < relations.size(); i = i + 4)
+			{
+				if (relations[i] == index && relations[i + 1] == end && !used[relations[i + 2]])
+				{
+					line.push_back(segments[relations[i + 2]][relations[i + 3]]);
+					one.push_back(relations[i + 2]);
+					index = relations[i + 2];
+					end = relations[i + 3];
+					used[index] = true;
+					search = true;
+					break;
+				}
+				if (relations[i + 2] == index && relations[i + 3] == end && !used[relations[i]])
+				{
+					line.push_back(segments[relations[i]][relations[i + 1]]);
+					one.push_back(relations[i]);
+					index = relations[i];
+					end = relations[i + 1];
+					used[index] = true;
+					search = true;
+					break;
+				}
+			}
+			if (!search) { break; }
+		}
+
+		ones.push_back(one);
+		lines.push_back(line);
+	}
+}
+extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments(Vector3d2 & segments, Vector3d2 & lines)
+{
+	//save connecting relations
+	std::vector<bool> used(segments.size(), false);
+
+	std::vector<int> relations;
+#pragma region get_relations
+	for (int i = 0; i < segments.size(); i++)
+	{
+		for (int j = 0; j < segments.size(); j++)
+		{
+			if (i != j && !used[i] && !used[j])
+			{
+				bool b_0_0 = Functs::IsAlmostZero_Double(CGAL_3D_Distance_Point_Point(segments[i][0], segments[j][0]), 1.0E-09);
+				bool b_0_1 = Functs::IsAlmostZero_Double(CGAL_3D_Distance_Point_Point(segments[i][0], segments[j][1]), 1.0E-09);
+				bool b_1_0 = Functs::IsAlmostZero_Double(CGAL_3D_Distance_Point_Point(segments[i][1], segments[j][0]), 1.0E-09);
+				bool b_1_1 = Functs::IsAlmostZero_Double(CGAL_3D_Distance_Point_Point(segments[i][1], segments[j][1]), 1.0E-09);
+
+				if ((b_0_0 && b_1_1) || (b_0_1 && b_1_0))
+				{
+					used[j] = true;
+					continue;
+				}
+
+				if (b_0_0)
+				{
+					relations.push_back(i);
+					relations.push_back(0);
+					relations.push_back(j);
+					relations.push_back(0);
+					continue;
+				}
+				if (b_0_1)
+				{
+					relations.push_back(i);
+					relations.push_back(0);
+					relations.push_back(j);
+					relations.push_back(1);
+					continue;
+				}
+				if (b_1_0)
+				{
+					relations.push_back(i);
+					relations.push_back(1);
+					relations.push_back(j);
+					relations.push_back(0);
+					continue;
+				}
+				if (b_1_1)
+				{
+					relations.push_back(i);
+					relations.push_back(1);
+					relations.push_back(j);
+					relations.push_back(1);
+					continue;
+				}
+			}
+		}
+	}
+#pragma endregion
+
+	std::vector<std::vector<int>> ones;
+
+
+	while (true)
+	{
+		int index = -1;
+		int end = -1;
+
+		for (int i = 0; i < segments.size(); i++)
+		{
+			if (!used[i]) {
+				index = i;
+				end = 0;
+				used[i] = true;
+				break;
+			}
+		}
+
+		if (index < 0)break;
+
+		Vector3d1 line(1, segments[index][end]);
+
+		std::vector<int> one(1, index);
+
+		while (true)
+		{
+			end = 1 - end;
+			bool search = false;
+			for (int i = 0; i < relations.size(); i = i + 4)
+			{
+				if (relations[i] == index && relations[i + 1] == end && !used[relations[i + 2]])
+				{
+					line.push_back(segments[relations[i + 2]][relations[i + 3]]);
+					one.push_back(relations[i + 2]);
+					index = relations[i + 2];
+					end = relations[i + 3];
+					used[index] = true;
+					search = true;
+					break;
+				}
+				if (relations[i + 2] == index && relations[i + 3] == end && !used[relations[i]])
+				{
+					line.push_back(segments[relations[i]][relations[i + 1]]);
+					one.push_back(relations[i]);
+					index = relations[i];
+					end = relations[i + 1];
+					used[index] = true;
+					search = true;
+					break;
+				}
+			}
+			if (!search) { break; }
+		}
+
+		ones.push_back(one);
+		lines.push_back(line);
+	}
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs, std::vector<int> &face_id_0, std::vector<int> &face_id_1, std::vector<int> &face_id_2, Vector3d2 & boundaries, Vector3d & inside = Vector3d(0.0, 0.0, 0.0))
+{
+	Vector3d2 segments;
+
+	std::vector<std::vector<int>> vecs_neigbor(vecs.size(), std::vector<int>());
+	std::vector<std::vector<int>> vecs_neigbor_lable(vecs.size(), std::vector<int>());
+	std::vector<int> edges;
+	for (int i = 0; i < face_id_0.size(); i++) {
+		int index_0 = face_id_0[i];
+		int index_1 = face_id_1[i];
+		int index_2 = face_id_2[i];
+		edges.push_back(index_0);
+		edges.push_back(index_1);
+		edges.push_back(index_1);
+		edges.push_back(index_2);
+		edges.push_back(index_2);
+		edges.push_back(index_0);
+
+		edges.push_back(index_1);
+		edges.push_back(index_0);
+		edges.push_back(index_2);
+		edges.push_back(index_1);
+		edges.push_back(index_0);
+		edges.push_back(index_2);
+	}
+
+	for (int i = 0; i < edges.size(); i = i + 2) {
+		int index_0 = edges[i];
+		int index_1 = edges[i + 1];
+
+		int search_0 = -1;
+		for (int j = 0; j < vecs_neigbor[index_0].size() && search_0 < 0; j++) {
+			if (vecs_neigbor[index_0][j] == index_1) {
+				search_0 = j;
+				vecs_neigbor_lable[index_0][j]++;
+			}
+		}
+
+		if (search_0 < 0) {
+			vecs_neigbor[index_0].push_back(index_1);
+			vecs_neigbor_lable[index_0].push_back(1);
+		}
+	}
+
+	for (int i = 0; i < vecs.size(); i++)
+	{
+		int index_0 = i;
+
+		for (int j = 0; j < vecs_neigbor_lable[i].size(); j++)
+		{
+			if (vecs_neigbor_lable[i][j] == 1)
+			{
+				int index_1 = vecs_neigbor[i][j];
+
+				Vector3d1 segment;
+				segment.push_back(vecs[index_0]);
+				segment.push_back(vecs[index_1]);
+
+				segments.push_back(segment);
+
+				//delete
+				for (int k = 0; k < vecs_neigbor[index_1].size(); k++)
+				{
+					if (vecs_neigbor[index_1][k] == index_0)
+					{
+						vecs_neigbor_lable[index_1][k] = 0;
+					}
+				}
+
+			}
+		}
+	}
+
+	CGAL_3D_Connecting_Segments(segments, boundaries);
+
+	//CGAL_3D_Triangel_Mesh_Most_Inside_Point(vecs,face_id_0,face_id_1,face_id_2,inside);
+
+	for (int i = 0; i < segments.size(); i++)
+		Vector3d1().swap(segments[i]);
+	Vector3d2().swap(segments);
+	std::vector<std::vector<int>>().swap(vecs_neigbor);
+	std::vector<std::vector<int>>().swap(vecs_neigbor_lable);
+	std::vector<int>().swap(edges);
+}
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C4(Vector3d1 & vecs, std::vector<std::vector<int>>&face_ids, Vector3d2 & boundaries)
+{
+	std::vector<int> face_id_0;
+	std::vector<int> face_id_1;
+	std::vector<int> face_id_2;
+
+	for (auto& face : face_ids)
+	{
+		face_id_0.emplace_back(face[0]);
+		face_id_1.emplace_back(face[1]);
+		face_id_2.emplace_back(face[2]);
+	}
+
+	CGAL_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries);
+}
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C5(std::string path, Vector3d2 & boundaries, Vector3d & inside = Vector3d(0.0, 0.0, 0.0))
+{
+	Vector3d1 vecs;
+	std::vector<int> face_id_0;
+	std::vector<int> face_id_1;
+	std::vector<int> face_id_2;
+	CGAL_3D_Read_Triangle_Mesh(path, vecs, face_id_0, face_id_1, face_id_2);
+	CGAL_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries, inside);
+}
+
+
+extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth(const std::string & in_path, const std::string & out_path, const int laplace_nb)
+{
+	Vector3d1 vecs;
+	std::vector<int> face_id_0;
+	std::vector<int> face_id_1;
+	std::vector<int> face_id_2;
+	CGAL_3D_Read_Triangle_Mesh(in_path, vecs, face_id_0, face_id_1, face_id_2);
+	CGAL_Mesh_Laplace_Smooth(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
+	CGAL_Output_Obj_C2(out_path, vecs, face_id_0, face_id_1, face_id_2);
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbors(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, std::vector<std::vector<int>>&neighs)
+{
+	for (int i = 0; i < vecs.size(); i++)
+		neighs.push_back(std::vector<int>());
+
+	for (int i = 0; i < face_id_0.size(); i++)
+	{
+		int id_0 = face_id_0[i];
+		int id_1 = face_id_1[i];
+		int id_2 = face_id_2[i];
+
+		neighs[id_0].push_back(id_1);
+		neighs[id_0].push_back(id_2);
+
+		neighs[id_1].push_back(id_0);
+		neighs[id_1].push_back(id_2);
+
+		neighs[id_2].push_back(id_0);
+		neighs[id_2].push_back(id_1);
+	}
+
+	for (int i = 0; i < neighs.size(); i++)
+	{
+		sort(neighs[i].begin(), neighs[i].end());
+		neighs[i].erase(unique(neighs[i].begin(), neighs[i].end()), neighs[i].end());
+	}
+}
+
+extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, const int laplace_nb)
+{
+	std::vector<bool> vertices_boundary;
+	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, vertices_boundary);
+	std::vector<std::vector<int>> neighs;
+	CGAL_3D_Triangle_Mesh_Vecs_Neighbors(vecs, face_id_0, face_id_1, face_id_2, neighs);
+
+	for (int iter = 0; iter < laplace_nb; iter++)
+	{
+		Vector3d1 new_vecs;
+		for (int i = 0; i < vecs.size(); i++)
+		{
+			if (!vertices_boundary[i])
+			{
+				Vector3d v(0.0, 0.0, 0.0);
+				double w = 0.0;
+				for (int j = 0; j < neighs[i].size(); j++)
+				{
+					double d = CGAL_3D_Distance_Point_Point(vecs[neighs[i][j]], vecs[i]);
+					v += vecs[neighs[i][j]] * (double)(1.0 / d);
+					w += (1.0 / d);
+				}
+				v = vecs[i] * (double)0.5 + (double)0.5 * v / (double)w;
+
+				new_vecs.push_back(v);
+			}
+			else
+			{
+				new_vecs.push_back(vecs[i]);
+			}
+
+		}
+		vecs = new_vecs;
+	}
+}
+
+
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Faces(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2,
+	std::vector<std::vector<int>>&surface_vectices_to_face)
+{
+	surface_vectices_to_face = std::vector<std::vector<int>>(vecs.size(), std::vector<int>());
+
+	std::vector<std::vector<int>> sets(vecs.size(), std::vector<int>());
+	for (int i = 0; i < face_id_0.size(); i++)
+	{
+		//surface_vectices_to_face
+		sets[face_id_0[i]].emplace_back(i);
+		sets[face_id_1[i]].emplace_back(i);
+		sets[face_id_2[i]].emplace_back(i);
+	}
+
+	for (int i = 0; i < vecs.size(); i++)
+	{
+		set<int>s(sets[i].begin(), sets[i].end());
+		vector<int> vec;
+		vec.assign(s.begin(), s.end());
+		surface_vectices_to_face[i] = vec;
+	}
+
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2,
+	std::vector<std::vector<std::vector<int>>>&surface_vectices_to_neighbor_edges)
+{
+	std::vector<std::vector<int>> surface_vectices_to_face;
+	CGAL_3D_Triangle_Mesh_Vecs_Faces(vecs, face_id_0, face_id_1, face_id_2, surface_vectices_to_face);
+
+	for (int i = 0; i < vecs.size(); i++)
+	{
+		int vertice_id = i;
+
+		std::vector<std::vector<int>> edges;
+
+		for (int j = 0; j < surface_vectices_to_face[i].size(); j++)
+		{
+			int surface_id = surface_vectices_to_face[i][j];
+
+			std::vector<int> face;
+			face.push_back(face_id_0[surface_id]);
+			face.push_back(face_id_1[surface_id]);
+			face.push_back(face_id_2[surface_id]);
+
+			for (int k = 0; k < face.size(); k++)
+			{
+				if (face[k] == vertice_id)
+				{
+					int vertice_id_0 = face[(k + 1) % 3];
+					int vertice_id_1 = face[(k + 2) % 3];
+
+					std::vector<int> edge;
+					edge.push_back(vertice_id_0);
+					edge.push_back(vertice_id_1);
+					edges.push_back(edge);
+					break;
+				}
+			}
+		}
+		surface_vectices_to_neighbor_edges.push_back(edges);
+	}
+}
+
+
+extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, double& low_curvature)
+{
+	std::vector<double> max_curvature;
+	std::vector<double> min_curvature;
+	Vector3d1 max_curvature_direction;
+	Vector3d1 min_curvature_direction;
+
+	std::vector<bool> boundary;
+	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, boundary);
+
+	Vector3d1 vecs_normals;
+
+	int last_nb = 0;
+
+	std::vector<std::vector<int>> vecs_neighbors;
+	CGAL_3D_Triangle_Mesh_Vecs_Neighbors(vecs, face_id_0, face_id_1, face_id_2, vecs_neighbors);
+
+	std::vector<std::vector<std::vector<int>>> surface_vectices_to_neighbor_edges;
+	CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges(vecs, face_id_0, face_id_1, face_id_2, surface_vectices_to_neighbor_edges);
+
+	int stop = 0;
+
+	double par_0 = 0.1;
+	double par_1 = 0.6;
+	double par_2 = 0.3;
+
+	for (int iter = 0; iter < 500; iter++)
+		//while (true)
+	{
+		//compute vertices curvature
+		std::vector<double>().swap(max_curvature);
+		std::vector<double>().swap(min_curvature);
+		Vector3d1().swap(max_curvature_direction);
+		Vector3d1().swap(min_curvature_direction);
+		Vector3d1().swap(vecs_normals);
+
+		CGAL_3D_Mesh_Curvature(vecs, face_id_0, face_id_1, face_id_2, max_curvature, min_curvature, max_curvature_direction, min_curvature_direction, vecs_normals);
+
+		int nb = 0;
+		double minimal_cur = 100000.0;
+		for (int i = 0; i < vecs.size(); i++)
+		{
+			if (min_curvature[i] < low_curvature && !boundary[i])
+			{
+				nb++;
+				minimal_cur = std::min(minimal_cur, min_curvature[i]);
+			}
+		}
+
+
+		//terminal condition
+
+		if (nb < 5)break;
+
+		if (abs(last_nb - nb) < 2)
+			stop++;
+		else
+			stop = 0;
+
+		if (stop == 60)
+		{
+			//break;
+			par_0 = 0.10;
+			par_1 = 0.65;
+			par_2 = 0.25;
+		}
+
+		if (stop == 100)
+		{
+			par_0 = 0.10;
+			par_1 = 0.70;
+			par_2 = 0.20;
+		}
+
+		if (stop == 300)
+		{
+			break;
+		}
+
+		std::cout << "Current low curvature points number: " << stop << " " << nb << " " << minimal_cur << std::endl;
+
+		last_nb = nb;
+
+		//one iteration
+		Vector3d1 iteration_vecs;
+
+		for (int i = 0; i < vecs.size(); i++)
+		{
+			if (boundary[i])
+			{
+				iteration_vecs.push_back(vecs[i]);
+			}
+			else
+			{
+				bool run = min_curvature[i] < low_curvature + 0.1;
+
+				for (int j = 0; j < vecs_neighbors[i].size() && !run; j++)
+				{
+					if (min_curvature[vecs_neighbors[i][j]] < low_curvature)
+					{
+						run = true;
+					}
+
+					if (true)
+					{
+						int vertice_id = vecs_neighbors[i][j];
+
+						for (int k = 0; k < vecs_neighbors[vertice_id].size() && !run; k++)
+						{
+							if (min_curvature[vecs_neighbors[vertice_id][k]] < low_curvature)
+							{
+								run = true;
+							}
+						}
+					}
+				}
+
+				if (run)
+				{
+					Vector3d cur_v = vecs[i] + Functs::SetVectorLength(vecs_normals[i], 0.001 * min_curvature[i] / low_curvature);
+
+					Vector3d smooth_v(0.0, 0.0, 0.0);
+
+					double weight = 0.0;
+					for (int j = 0; j < vecs_neighbors[i].size(); j++)
+					{
+						double l = CGAL_3D_Distance_Point_Point(vecs[vecs_neighbors[i][j]], vecs[i]);
+						smooth_v += vecs[vecs_neighbors[i][j]] * (double)l;
+						weight += l;
+					}
+					smooth_v = smooth_v / (double)weight;
+
+					if (min_curvature[i] < 0.0 && max_curvature[i]>0.0)
+					{
+						//smooth_v = vecs[i];
+						iteration_vecs.push_back((double)par_0 * vecs[i] + (double)par_1 * cur_v + (double)par_2 * smooth_v);
+					}
+					else
+						iteration_vecs.push_back((double)par_0 * vecs[i] + (double)par_1 * cur_v + (double)par_2 * smooth_v);
+
+					//iteration_vecs.push_back(LaplaceMeshSmoothForOnePoint(i, vecs, min_curvature_direction, vecs_normals, surface_vectices_to_neighbor_edges));
+				}
+				else
+				{
+					iteration_vecs.push_back(vecs[i]);
+				}
+			}
+		}
+
+		Vector3d1().swap(vecs);
+		vecs = iteration_vecs;
+		Vector3d1().swap(iteration_vecs);
+	}
+}
+
+extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_Own_Version(const std::string & in_path, const int& step, const std::string & out_path, const int& laplace_nb = 0)
+{
+	Vector3d1 vecs;
+	std::vector<int> face_id_0;
+	std::vector<int> face_id_1;
+	std::vector<int> face_id_2;
+
+	CGAL_3D_Read_Triangle_Mesh(in_path, vecs, face_id_0, face_id_1, face_id_2);
+
+	for (int i = 0; i < step; i++)
+	{
+		CGAL_Mesh_Loop_Subdivision_One_Step(vecs, face_id_0, face_id_1, face_id_2);
+		CGAL_Mesh_Laplace_Smooth(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
+	}
+
+	CGAL_Output_Obj_C2(out_path, vecs, face_id_0, face_id_1, face_id_2);
+
+	Vector3d1().swap(vecs);
+	std::vector<int>().swap(face_id_0);
+	std::vector<int>().swap(face_id_1);
+	std::vector<int>().swap(face_id_2);
+}
