@@ -41,6 +41,9 @@ extern "C" PPGL_EXPORT void CGAL_Output_Obj_C4(const std::string & path, const V
 extern "C" PPGL_EXPORT void CGAL_Output_Obj_C5(const std::string & path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
 extern "C" PPGL_EXPORT void CGAL_Output_Obj_C6(const std::string & path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<std::vector<int>>&face_ids);
 
+extern "C" PPGL_EXPORT void CGAL_Output_Off(const std::string & path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
+extern "C" PPGL_EXPORT void CGAL_Load_Obj(const std::string & path, const std::vector<double>&coords, const std::vector<int>&tris);
+
 //implementation in "twoD.cpp"
 //####################################################################################
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Point(const Vector2d & p_0, const Vector2d& p_1);
@@ -165,12 +168,12 @@ extern "C" PPGL_EXPORT void CGAL_3D_Points_inside_Triangles_C2(const std::string
 extern "C" PPGL_EXPORT void CGAL_Mesh_Subdivision(const std::string & in_path, const std::string & sub, const int& step, const std::string & out_path);
 extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2);
 
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&max_curs, const std::vector<double>&min_curs);
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<double>&max_curs, const std::vector<double>&min_curs);
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions);
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions);
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions, const Vector3d1 & normals);
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions, const Vector3d1 & normals);
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs);
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs);
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions);
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions);
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals);
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals);
 extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<bool>&bools);
 extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C2(const std::string & path, std::vector<bool>&bools);
 extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments_C1(Vector2d2 & segments, Vector2d2 & lines);
@@ -185,7 +188,226 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Faces(Vector3d1 & vecs, s
 extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2,std::vector<std::vector<std::vector<int>>>&surface_vectices_to_neighbor_edges);
 extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, double& low_curvature);
 extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_Own_Version(const std::string & in_path, const int& step, const std::string & out_path, const int& laplace_nb = 0);
+
 /////////////////////////////////////////////////////////////
 
+extern "C" PPGL_EXPORT void CGAL_Rotation_Obj(const std::string & path, const double& angle, const Vector3d & axis)
+{
+	Vector3d1 vecs;
+	std::vector<int> face_id_0;
+	std::vector<int> face_id_1;
+	std::vector<int> face_id_2;
+
+	CGAL_3D_Read_Triangle_Mesh(path, vecs, face_id_0, face_id_1, face_id_2);
+	for (int i = 0; i < vecs.size(); i++)
+	{
+		Vector3d v = Functs::RotationAxis(vecs[i], angle, axis);
+		vecs[i] = v;
+	}
+	CGAL_Output_Obj_C2(path, vecs, face_id_0, face_id_1, face_id_2);
+}
+extern "C" PPGL_EXPORT void CGAL_Slicer_Mesh(const std::string & path, const Vector3d & plane_normal, const std::vector<double>&plane_d, const Vector3d3 & offsetses, const Vector3d2 & offsets)
+{
+	std::ifstream input(path.c_str());
+	Mesh mesh;
+	if (!input || !(input >> mesh) || mesh.is_empty()) {
+		std::cerr << "Not a valid off file." << std::endl;
+		return;
+	}
+	// Slicer constructor from the mesh
+	CGAL::Polygon_mesh_slicer<Mesh, K> slicer(mesh);
+	Polylines polylines;
+
+	// Use the Slicer constructor from a pre-built AABB_treen
+	AABB_tree tree(edges(mesh).first, edges(mesh).second, mesh);
+
+	CGAL::Polygon_mesh_slicer<Mesh, K> slicer_aabb(mesh, tree);
+
+	for (int i = 0; i < plane_d.size(); i++)
+	{
+		std::cout << i << "/" << plane_d.size() << std::endl;
+
+		slicer_aabb(K::Plane_3(plane_normal[0], plane_normal[1], plane_normal[2], -plane_d[i]), std::back_inserter(polylines));
+
+		std::vector<std::vector<double>> xs;
+		std::vector<std::vector<double>> ys;
+		std::vector<std::vector<double>> zs;
+
+		Vector3d2 circles;
+
+		Polylines::iterator iter;
+		for (iter = polylines.begin(); iter != polylines.end(); iter++)
+		{
+			Vector3d1 one_circle;
+
+			Polyline_type::iterator p_iter;
+			for (p_iter = iter->begin(); p_iter != iter->end(); p_iter++)
+			{
+				one_circle.push_back(Vector3d(p_iter->x(), p_iter->y(), p_iter->z()));
+			}
+			circles.push_back(one_circle);
+			offsets.push_back(one_circle);
+		}
+		polylines.clear();
+		offsetses.push_back(circles);
+	}
+}
+extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path(const std::string&, const std::vector<double>&, const std::vector<double>&, const std::vector<double>&)
+{
+	// read input polyhedron
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, path);
+	// pick up a random face
+	const size_t randSeed = 7915421;
+	CGAL::Random rand(randSeed);
+	const int target_face_index = rand.get_int(0, num_faces(polyhedron));
+	face_iterator face_it = faces(polyhedron).first;
+	std::advance(face_it, target_face_index);
+	// ... and define a barycentric coordinate inside the face
+	Traits::Barycentric_coordinate face_location = { { 0.25, 0.5, 0.25 } };
+	// construct a shortest path query object and add a source point
+	Surface_mesh_shortest_path shortest_paths(polyhedron);
+	shortest_paths.add_source_point(*face_it, face_location);
+
+	vertex_iterator vit = polyhedron.vertices_begin();
+	std::vector<Traits::Point_3> points;
+	shortest_paths.shortest_path_points_to_source_points(*vit, std::back_inserter(points));
+
+	for (int i = 0; i < points.size(); i++)
+	{
+		x.push_back(points[i][0]);
+		y.push_back(points[i][1]);
+		z.push_back(points[i][2]);
+	}
+}
+
+extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path(const std::string & path, const Vector3d & source, const Vector3d & target, const Vector3d1 & output)
+{
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, path);
+
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+	tree.accelerate_distance_queries();
+
+	//////////////////////////////////////////////////////////////
+	face_iterator source_face, target_face;
+	double source_x_w, source_y_w, source_z_w;
+	double target_x_w, target_y_w, target_z_w;
+	Poly_point_3 source_nearest_point, target_nearest_point;
+
+	RelatedFaceAndBarycentric(polyhedron, tree, source[0], source[1], source[2], source_x_w, source_y_w, source_z_w, source_nearest_point, source_face);
+	RelatedFaceAndBarycentric(polyhedron, tree, target[0], target[1], target[2], target_x_w, target_y_w, target_z_w, target_nearest_point, target_face);
+
+	Traits::Barycentric_coordinate source_face_location = { { source_x_w, source_y_w, source_z_w } };
+	Traits::Barycentric_coordinate target_face_location = { { target_x_w, target_y_w, target_z_w } };
+	//////////////////////////////////////////////////////////////
+
+	Surface_mesh_shortest_path shortest_paths(polyhedron);
+	shortest_paths.add_source_point(*source_face, source_face_location);
+
+	std::vector<Traits::Point_3> points;
+	shortest_paths.shortest_path_points_to_source_points(*target_face, target_face_location, std::back_inserter(points));
+
+	for (int i = points.size() - 1; i >= 0; i--)
+	{
+		output.push_back(Vector3d(points[i][0], points[i][1], points[i][2]));
+	}
+}
+
+extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path(const std::string&, const std::vector<double>&, const std::vector<double>&, const std::vector<double>&, const std::vector<double>&, const std::vector<double>&, const std::vector<double>&, const std::vector<std::vector<double>>&, const std::vector<std::vector<double>>&, const std::vector<std::vector<double>>&)
+{
+	Polyhedron_3 polyhedron;
+
+	Construct_Polyhedron(polyhedron, path);
+
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+	tree.accelerate_distance_queries();
+
+	std::cout << "Start to compute the geodesic path..." << std::endl;
+
+	for (int i = 0; i < sources_x.size(); i++)
+	{
+		std::cout << "Path: " << i << std::endl;
+
+		double source_x = sources_x[i];
+		double source_y = sources_y[i];
+		double source_z = sources_z[i];
+
+		double target_x = targets_x[i];
+		double target_y = targets_y[i];
+		double target_z = targets_z[i];
+
+		std::vector<double> x, y, z;
+		CGAL_Shortest_Geodesic_Path(polyhedron, tree, source_x, source_y, source_z, target_x, target_y, target_z, x, y, z);
+
+		xs.push_back(x);
+		ys.push_back(y);
+		zs.push_back(z);
+
+		std::vector<double>().swap(x);
+		std::vector<double>().swap(y);
+		std::vector<double>().swap(z);
+	}
+}
+extern "C" PPGL_EXPORT double CGAL_Geodesic_Distance(const std::string & path, const Vector3d & source, const Vector3d & target)
+{
+	std::cout << "one time geodesic computing.." << std::endl;
+
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, path);
+
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+	tree.accelerate_distance_queries();
+
+	//////////////////////////////////////////////////////////////
+	face_iterator source_face, target_face;
+	double source_x_w, source_y_w, source_z_w;
+	double target_x_w, target_y_w, target_z_w;
+	Poly_point_3 source_nearest_point, target_nearest_point;
+
+	RelatedFaceAndBarycentric(polyhedron, tree, source[0], source[1], source[2], source_x_w, source_y_w, source_z_w, source_nearest_point, source_face);
+	RelatedFaceAndBarycentric(polyhedron, tree, target[0], target[1], target[2], target_x_w, target_y_w, target_z_w, target_nearest_point, target_face);
+
+	Traits::Barycentric_coordinate source_face_location = { { source_x_w, source_y_w, source_z_w } };
+	Traits::Barycentric_coordinate target_face_location = { { target_x_w, target_y_w, target_z_w } };
+	//////////////////////////////////////////////////////////////
+
+	Surface_mesh_shortest_path shortest_paths(polyhedron);
+	shortest_paths.add_source_point(*source_face, source_face_location);
+
+	return shortest_paths.shortest_distance_to_source_points(*target_face, target_face_location).first;
+}
+extern "C" PPGL_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const Vector3d1 & points)
+{
+	//construct polyhedron
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
+
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+	tree.accelerate_distance_queries();
+
+	Vector3d1 temp;
+	for (int i = 0; i < points.size(); i++)
+	{
+		temp.push_back(NearestPoint(polyhedron, tree, points[i]));
+	}
+	return temp;
+}
+
+extern "C" PPGL_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface(const std::string & path, const Vector3d1 & points)
+{
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, path);
+
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+	tree.accelerate_distance_queries();
+
+	Vector3d1 temp;
+	for (int i = 0; i < points.size(); i++)
+	{
+		temp.push_back(NearestPoint(polyhedron, tree, points[i]));
+	}
+	return temp;
+}
 
 #endif

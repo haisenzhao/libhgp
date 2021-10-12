@@ -1,7 +1,6 @@
 #include "geom.h"
 
-//extern "C" PPGL_EXPORT
-
+#include <Mathematics/MeshCurvature.h>
 
 void  Construct_Polyhedron(Polyhedron_3& polyhedron, const Vector3d1& vecs, const Vector1i1& face_id_0, const Vector1i1& face_id_1, const Vector1i1& face_id_2)
 {
@@ -298,10 +297,10 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(const double& center
 	const double& ray_origin_x, const double& ray_origin_y, const double& ray_origin_z, const double& ray_direction_x, const double& ray_direction_y, const double& ray_direction_z,
 	std::vector<double>& i_x, std::vector<double>& i_y, std::vector<double>& i_z)
 {
-	//Wm5::Sphere3<double> sphere(Wm5::Vector3d(center_x, center_y, center_z), radius);
-	//Wm5::Ray3<double> ray(Wm5::Vector3d(ray_origin_x, ray_origin_y, ray_origin_z), Wm5::Vector3d(ray_direction_x, ray_direction_y, ray_direction_z));
+	//gte::Sphere3<double> sphere(gte::Vector3d(center_x, center_y, center_z), radius);
+	//gte::Ray3<double> ray(gte::Vector3d(ray_origin_x, ray_origin_y, ray_origin_z), gte::Vector3d(ray_direction_x, ray_direction_y, ray_direction_z));
 
-	//Wm5::IntrRay3Sphere3d intr(ray,sphere);
+	//gte::IntrRay3Sphere3d intr(ray,sphere);
 
 	//intr.Test();
 	//intr.Find();
@@ -310,7 +309,7 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(const double& center
 
 	//for (int i = 0; i < nb; i++)
 	//{
-	//	Wm5::Vector3d p = intr.GetPoint(i);
+	//	gte::Vector3d p = intr.GetPoint(i);
 	//	i_x.push_back(p[0]);
 	//	i_y.push_back(p[1]);
 	//	i_z.push_back(p[2]);
@@ -1071,19 +1070,19 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Subdivision(const std::string & in_path, c
 
 
 
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&max_curs, const std::vector<double>&min_curs)
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs)
 {
 	int verticeSize = vecs.size();
 	int faceindiceSize = face_id_0.size() * 3;
 
-	Wm5::Vector3<double>* points = new Wm5::Vector3<double>[verticeSize];
-	int* indices = new int[faceindiceSize];
+	gte::Vector3<double>* points = new gte::Vector3<double>[verticeSize];
+	unsigned int* indices = new unsigned int[faceindiceSize];
 
 	for (int i = 0; i < verticeSize; i++)
 	{
-		points[i].X() = vecs[i][0];
-		points[i].Y() = vecs[i][1];
-		points[i].Z() = vecs[i][2];
+		points[i][0] = vecs[i][0];
+		points[i][1] = vecs[i][1];
+		points[i][2] = vecs[i][2];
 	}
 
 	for (int i = 0; i < face_id_0.size(); i++)
@@ -1092,7 +1091,9 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, co
 		indices[3 * i + 1] = face_id_1[i];
 		indices[3 * i + 2] = face_id_2[i];
 	}
-	Wm5::MeshCurvature<double> meshCurvature(verticeSize, points, faceindiceSize / 3, indices);
+	gte::MeshCurvature<double> meshCurvature;
+
+	meshCurvature((size_t)verticeSize, points, (size_t)(faceindiceSize / 3), indices, 1e-06f);
 
 	for (int i = 0; i < verticeSize; i++)
 	{
@@ -1100,7 +1101,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, co
 		min_curs.push_back(meshCurvature.GetMinCurvatures()[i]);
 	}
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<double>&max_curs, const std::vector<double>&min_curs)
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs)
 {
 	std::vector<int> face_id_0, face_id_1, face_id_2;
 
@@ -1118,19 +1119,19 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, co
 	std::vector<int>().swap(face_id_2);
 
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions)
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
 {
 	int verticeSize = vecs.size();
 	int faceindiceSize = face_id_0.size() * 3;
 
-	Wm5::Vector3<double>* points = new Wm5::Vector3<double>[verticeSize];
-	int* indices = new int[faceindiceSize];
+	gte::Vector3<double>* points = new gte::Vector3<double>[verticeSize];
+	unsigned int* indices = new unsigned int[faceindiceSize];
 
 	for (int i = 0; i < verticeSize; i++)
 	{
-		points[i].X() = vecs[i][0];
-		points[i].Y() = vecs[i][1];
-		points[i].Z() = vecs[i][2];
+		points[i][0] = vecs[i][0];
+		points[i][1] = vecs[i][1];
+		points[i][2] = vecs[i][2];
 	}
 
 	for (int i = 0; i < face_id_0.size(); i++)
@@ -1140,21 +1141,22 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, co
 		indices[3 * i + 2] = face_id_2[i];
 	}
 
-	Wm5::MeshCurvature<double> meshCurvature(verticeSize, points, faceindiceSize / 3, indices);
+	gte::MeshCurvature<double> meshCurvature;
+	meshCurvature((size_t)verticeSize, points, (size_t)(faceindiceSize / 3), indices, 1e-06f);
 
 	for (int i = 0; i < verticeSize; i++)
 	{
 		max_curs.push_back(meshCurvature.GetMaxCurvatures()[i]);
 		min_curs.push_back(meshCurvature.GetMinCurvatures()[i]);
 
-		Wm5::Vector3<double> max_curs_direction = meshCurvature.GetMaxDirections()[i];
-		Wm5::Vector3<double> min_curs_direction = meshCurvature.GetMinDirections()[i];
+		gte::Vector3<double> max_curs_direction = meshCurvature.GetMaxDirections()[i];
+		gte::Vector3<double> min_curs_direction = meshCurvature.GetMinDirections()[i];
 
 		max_curs_directions.push_back(Vector3d(max_curs_direction[0], max_curs_direction[1], max_curs_direction[2]));
 		min_curs_directions.push_back(Vector3d(min_curs_direction[0], min_curs_direction[1], min_curs_direction[2]));
 	}
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions)
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
 {
 	std::vector<int> face_id_0, face_id_1, face_id_2;
 
@@ -1171,19 +1173,19 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, co
 	std::vector<int>().swap(face_id_1);
 	std::vector<int>().swap(face_id_2);
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions, const Vector3d1 & normals)
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals)
 {
 	int verticeSize = vecs.size();
 	int faceindiceSize = face_id_0.size() * 3;
 
-	Wm5::Vector3<double>* points = new Wm5::Vector3<double>[verticeSize];
-	int* indices = new int[faceindiceSize];
+	gte::Vector3<double>* points = new gte::Vector3<double>[verticeSize];
+	unsigned int* indices = new unsigned int[faceindiceSize];
 
 	for (int i = 0; i < verticeSize; i++)
 	{
-		points[i].X() = vecs[i][0];
-		points[i].Y() = vecs[i][1];
-		points[i].Z() = vecs[i][2];
+		points[i][0] = vecs[i][0];
+		points[i][1] = vecs[i][1];
+		points[i][2] = vecs[i][2];
 	}
 
 	for (int i = 0; i < face_id_0.size(); i++)
@@ -1192,25 +1194,26 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, co
 		indices[3 * i + 1] = face_id_1[i];
 		indices[3 * i + 2] = face_id_2[i];
 	}
-	Wm5::MeshCurvature<double> meshCurvature(verticeSize, points, faceindiceSize / 3, indices);
+	gte::MeshCurvature<double> meshCurvature;
+	meshCurvature((size_t)verticeSize, points, (size_t)(faceindiceSize / 3), indices, 1e-06f);
 
 	for (int i = 0; i < verticeSize; i++)
 	{
 		max_curs.push_back(meshCurvature.GetMaxCurvatures()[i]);
 		min_curs.push_back(meshCurvature.GetMinCurvatures()[i]);
 
-		Wm5::Vector3<double> max_curs_direction = meshCurvature.GetMaxDirections()[i];
-		Wm5::Vector3<double> min_curs_direction = meshCurvature.GetMinDirections()[i];
+		gte::Vector3<double> max_curs_direction = meshCurvature.GetMaxDirections()[i];
+		gte::Vector3<double> min_curs_direction = meshCurvature.GetMinDirections()[i];
 
 		max_curs_directions.push_back(Vector3d(max_curs_direction[0], max_curs_direction[1], max_curs_direction[2]));
 		min_curs_directions.push_back(Vector3d(min_curs_direction[0], min_curs_direction[1], min_curs_direction[2]));
 
-		Wm5::Vector3<double> normal = meshCurvature.GetNormals()[i];
+		gte::Vector3<double> normal = meshCurvature.GetNormals()[i];
 		normals.push_back(Vector3d(normal[0], normal[1], normal[2]));
 	}
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<double>&max_curs, const std::vector<double>&min_curs, const Vector3d1 & max_curs_directions, const Vector3d1 & min_curs_directions, const Vector3d1 & normals)
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals)
 {
 	std::vector<int> face_id_0, face_id_1, face_id_2;
 

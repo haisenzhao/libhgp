@@ -120,6 +120,26 @@ typedef  void (*CGAL_3D_Points_inside_Triangles_C1)(const Vector3d1 & vecs, cons
 typedef  void (*CGAL_3D_Points_inside_Triangles_C2)(const std::string & path, const Vector3d1 & points, std::vector<bool>&insides);
 typedef  void (*CGAL_Mesh_Subdivision)(const std::string & in_path, const std::string & sub, const int& step, const std::string & out_path);
 typedef  void (*CGAL_Mesh_Loop_Subdivision_One_Step)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2);
+typedef  void (*CGAL_3D_Mesh_Curvature_C1)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs);
+typedef  void (*CGAL_3D_Mesh_Curvature_C2)(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs);
+typedef  void (*CGAL_3D_Mesh_Curvature_C3)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions);
+typedef  void (*CGAL_3D_Mesh_Curvature_C4)(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions);
+typedef  void (*CGAL_3D_Mesh_Curvature_C5)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals);
+typedef  void (*CGAL_3D_Mesh_Curvature_C6)(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals);
+typedef  void (*CGAL_3D_Triangle_Mesh_Boundary_C1)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<bool>&bools);
+typedef  void (*CGAL_3D_Triangle_Mesh_Boundary_C2)(const std::string & path, std::vector<bool>&bools);
+typedef  void (*CGAL_3D_Connecting_Segments_C1)(Vector2d2 & segments, Vector2d2 & lines);
+typedef  void (*CGAL_3D_Connecting_Segments_C2)(Vector3d2 & segments, Vector3d2 & lines);
+typedef  void (*CGAL_3D_Triangle_Mesh_Boundary_C3)(Vector3d1 & vecs, std::vector<int> &face_id_0, std::vector<int> &face_id_1, std::vector<int> &face_id_2, Vector3d2 & boundaries);
+typedef  void (*CGAL_3D_Triangle_Mesh_Boundary_C4)(Vector3d1 & vecs, std::vector<std::vector<int>>&face_ids, Vector3d2 & boundaries);
+typedef  void (*CGAL_3D_Triangle_Mesh_Boundary_C5)(std::string path, Vector3d2 & boundaries);
+typedef  void (*CGAL_Mesh_Laplace_Smooth_C1)(const std::string & in_path, const std::string & out_path, const int laplace_nb);
+typedef  void (*CGAL_3D_Triangle_Mesh_Vecs_Neighbors)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, std::vector<std::vector<int>>&neighs);
+typedef  void (*CGAL_Mesh_Laplace_Smooth_C2)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, const int laplace_nb);
+typedef  void (*CGAL_3D_Triangle_Mesh_Vecs_Faces)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2,std::vector<std::vector<int>>&surface_vectices_to_face);
+typedef  void (*CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2,std::vector<std::vector<std::vector<int>>>&surface_vectices_to_neighbor_edges);
+typedef  void (*CGAL_Mesh_Laplace_Smooth_by_Curvature)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, double& low_curvature);
+typedef  void (*CGAL_Mesh_Loop_Subdivision_Own_Version)(const std::string & in_path, const int& step, const std::string & out_path, const int& laplace_nb = 0);
 /////////////////////////////////////////////////////////////
 
 
@@ -245,6 +265,26 @@ class PL
 		CGAL_3D_Points_inside_Triangles_C2_C = (CGAL_3D_Points_inside_Triangles_C2)GetProcAddress(hModule, "CGAL_3D_Points_inside_Triangles_C2");
 		CGAL_Mesh_Subdivision_C = (CGAL_Mesh_Subdivision)GetProcAddress(hModule, "CGAL_Mesh_Subdivision");
 		CGAL_Mesh_Loop_Subdivision_One_Step_C = (CGAL_Mesh_Loop_Subdivision_One_Step)GetProcAddress(hModule, "CGAL_Mesh_Loop_Subdivision_One_Step");
+		CGAL_3D_Mesh_Curvature_C1_C = (CGAL_3D_Mesh_Curvature_C1)GetProcAddress(hModule, "CGAL_3D_Mesh_Curvature_C1");
+		CGAL_3D_Mesh_Curvature_C2_C = (CGAL_3D_Mesh_Curvature_C2)GetProcAddress(hModule, "CGAL_3D_Mesh_Curvature_C2");
+		CGAL_3D_Mesh_Curvature_C3_C = (CGAL_3D_Mesh_Curvature_C3)GetProcAddress(hModule, "CGAL_3D_Mesh_Curvature_C3");
+		CGAL_3D_Mesh_Curvature_C4_C = (CGAL_3D_Mesh_Curvature_C4)GetProcAddress(hModule, "CGAL_3D_Mesh_Curvature_C4");
+		CGAL_3D_Mesh_Curvature_C5_C = (CGAL_3D_Mesh_Curvature_C5)GetProcAddress(hModule, "CGAL_3D_Mesh_Curvature_C5");
+		CGAL_3D_Mesh_Curvature_C6_C = (CGAL_3D_Mesh_Curvature_C6)GetProcAddress(hModule, "CGAL_3D_Mesh_Curvature_C6");
+		CGAL_3D_Triangle_Mesh_Boundary_C1_C = (CGAL_3D_Triangle_Mesh_Boundary_C1)GetProcAddress(hModule, "CGAL_3D_Triangle_Mesh_Boundary_C1");
+		CGAL_3D_Triangle_Mesh_Boundary_C2_C = (CGAL_3D_Triangle_Mesh_Boundary_C2)GetProcAddress(hModule, "CGAL_3D_Triangle_Mesh_Boundary_C2");
+		CGAL_3D_Connecting_Segments_C1_C = (CGAL_3D_Connecting_Segments_C1)GetProcAddress(hModule, "CGAL_3D_Connecting_Segments_C1");
+		CGAL_3D_Connecting_Segments_C2_C = (CGAL_3D_Connecting_Segments_C2)GetProcAddress(hModule, "CGAL_3D_Connecting_Segments_C2");
+		CGAL_3D_Triangle_Mesh_Boundary_C3_C = (CGAL_3D_Triangle_Mesh_Boundary_C3)GetProcAddress(hModule, "CGAL_3D_Triangle_Mesh_Boundary_C3");
+		CGAL_3D_Triangle_Mesh_Boundary_C4_C = (CGAL_3D_Triangle_Mesh_Boundary_C4)GetProcAddress(hModule, "CGAL_3D_Triangle_Mesh_Boundary_C4");
+		CGAL_3D_Triangle_Mesh_Boundary_C5_C = (CGAL_3D_Triangle_Mesh_Boundary_C5)GetProcAddress(hModule, "CGAL_3D_Triangle_Mesh_Boundary_C5");
+		CGAL_Mesh_Laplace_Smooth_C1_C = (CGAL_Mesh_Laplace_Smooth_C1)GetProcAddress(hModule, "CGAL_Mesh_Laplace_Smooth_C1");
+		CGAL_3D_Triangle_Mesh_Vecs_Neighbors_C = (CGAL_3D_Triangle_Mesh_Vecs_Neighbors)GetProcAddress(hModule, "CGAL_3D_Triangle_Mesh_Vecs_Neighbors");
+		CGAL_Mesh_Laplace_Smooth_C2_C = (CGAL_Mesh_Laplace_Smooth_C2)GetProcAddress(hModule, "CGAL_Mesh_Laplace_Smooth_C2");
+		CGAL_3D_Triangle_Mesh_Vecs_Faces_C = (CGAL_3D_Triangle_Mesh_Vecs_Faces)GetProcAddress(hModule, "CGAL_3D_Triangle_Mesh_Vecs_Faces");
+		CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges_C = (CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges)GetProcAddress(hModule, "CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges");
+		CGAL_Mesh_Laplace_Smooth_by_Curvature_C = (CGAL_Mesh_Laplace_Smooth_by_Curvature)GetProcAddress(hModule, "CGAL_Mesh_Laplace_Smooth_by_Curvature");
+		CGAL_Mesh_Loop_Subdivision_Own_Version_C = (CGAL_Mesh_Loop_Subdivision_Own_Version)GetProcAddress(hModule, "CGAL_Mesh_Loop_Subdivision_Own_Version");
 		/////////////////////////////////////////////////////////////
 	};
 
@@ -371,6 +411,26 @@ class PL
 	CGAL_3D_Points_inside_Triangles_C2 CGAL_3D_Points_inside_Triangles_C2_C;
 	CGAL_Mesh_Subdivision CGAL_Mesh_Subdivision_C;
 	CGAL_Mesh_Loop_Subdivision_One_Step CGAL_Mesh_Loop_Subdivision_One_Step_C;
+	CGAL_3D_Mesh_Curvature_C1 CGAL_3D_Mesh_Curvature_C1_C;
+	CGAL_3D_Mesh_Curvature_C2 CGAL_3D_Mesh_Curvature_C2_C;
+	CGAL_3D_Mesh_Curvature_C3 CGAL_3D_Mesh_Curvature_C3_C;
+	CGAL_3D_Mesh_Curvature_C4 CGAL_3D_Mesh_Curvature_C4_C;
+	CGAL_3D_Mesh_Curvature_C5 CGAL_3D_Mesh_Curvature_C5_C;
+	CGAL_3D_Mesh_Curvature_C6 CGAL_3D_Mesh_Curvature_C6_C;
+	CGAL_3D_Triangle_Mesh_Boundary_C1 CGAL_3D_Triangle_Mesh_Boundary_C1_C;
+	CGAL_3D_Triangle_Mesh_Boundary_C2 CGAL_3D_Triangle_Mesh_Boundary_C2_C;
+	CGAL_3D_Connecting_Segments_C1 CGAL_3D_Connecting_Segments_C1_C;
+	CGAL_3D_Connecting_Segments_C2 CGAL_3D_Connecting_Segments_C2_C;
+	CGAL_3D_Triangle_Mesh_Boundary_C3 CGAL_3D_Triangle_Mesh_Boundary_C3_C;
+	CGAL_3D_Triangle_Mesh_Boundary_C4 CGAL_3D_Triangle_Mesh_Boundary_C4_C;
+	CGAL_3D_Triangle_Mesh_Boundary_C5 CGAL_3D_Triangle_Mesh_Boundary_C5_C;
+	CGAL_Mesh_Laplace_Smooth_C1 CGAL_Mesh_Laplace_Smooth_C1_C;
+	CGAL_3D_Triangle_Mesh_Vecs_Neighbors CGAL_3D_Triangle_Mesh_Vecs_Neighbors_C;
+	CGAL_Mesh_Laplace_Smooth_C2 CGAL_Mesh_Laplace_Smooth_C2_C;
+	CGAL_3D_Triangle_Mesh_Vecs_Faces CGAL_3D_Triangle_Mesh_Vecs_Faces_C;
+	CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges_C;
+	CGAL_Mesh_Laplace_Smooth_by_Curvature CGAL_Mesh_Laplace_Smooth_by_Curvature_C;
+	CGAL_Mesh_Loop_Subdivision_Own_Version CGAL_Mesh_Loop_Subdivision_Own_Version_C;
 	/////////////////////////////////////////////////////////////
 };
 #endif
