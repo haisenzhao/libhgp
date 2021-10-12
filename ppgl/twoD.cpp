@@ -274,6 +274,23 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Line_Line
     return false;
 }
 
+extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Line(const Vector2d & s_s, const Vector2d & s_e, const Vector2d & l_s, const Vector2d & l_e, Vector2d & inter)
+{
+	CGAL::Object result = CGAL::intersection(Segment_2(Point_2(s_s[0], s_s[1]), Point_2(s_e[0], s_e[1])),
+		Line_2(Point_2(l_s[0], l_s[1]), Point_2(l_e[0], l_e[1])));
+
+	if (const Point_2* ipoint = CGAL::object_cast<Point_2>(&result))
+	{
+		inter[0] = ipoint->x();
+		inter[1] = ipoint->y();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 extern "C" PPGL_EXPORT bool
 CGAL_2D_Intersection_Segment_Polygon(const Vector2d & s_s, const Vector2d & s_e, Vector2d1 &p) {
     for (int i = 0; i < p.size(); i++) {
@@ -367,23 +384,6 @@ CGAL_2D_Two_Polygons_Union(const Vector2d1& poly_0, const Vector2d1 & poly_1, Ve
     return area;
 }
 
-
-static void RemoveClosePoints(Vector2d1 &poly) {
-   Vector1i1 remove_int;
-
-    if (poly.size() > 2) {
-        for (int i = 0; i < poly.size() - 1; i++) {
-            int ii = (static_cast<int>(i) + 1) % poly.size();
-            double d = CGAL_2D_Distance_Point_Point(poly[i], poly[ii]);
-            if (d < 0.00001) remove_int.push_back(ii);
-        }
-
-        for (int i = (int)remove_int.size() - 1; i >= 0; i--) {
-            poly.erase(poly.begin() + remove_int[i]);
-        }
-    }
-}
-
 extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(const Vector2d1 &poly, const double& d, Vector2d2  &offset_polys) {
     if (!(poly.size() > 0)) return;
 
@@ -424,10 +424,109 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(const Vector2d1 &poly, c
         }
 
         //remove closed points
-        RemoveClosePoints(one_offset);
+        one_offset= Functs::RemoveClosePoints(one_offset);
         offset_polys.push_back(one_offset);
         Vector2d1().swap(one_offset);
     }
+}
+
+
+
+extern "C" PPGL_EXPORT void CGAL_2D_Polygons_One_Offsets(const Vector2d2 & polys, const double& d, Vector2d2 & offset_polys)
+{
+	if (!(polys.size() > 0 && polys[0].size() > 0)) return;
+
+	double scale = 1000000.0;
+
+	ClipperLib::ClipperOffset co;
+	co.ArcTolerance = co.ArcTolerance * scale / 1000.0;
+
+	ClipperLib::Path subj;
+	ClipperLib::Paths solution;
+
+	//build the most outside path
+	for (int i = 0; i < polys[0].size(); i++)
+		subj << ClipperLib::IntPoint(polys[0][i][0] * scale, polys[0][i][1] * scale);
+	co.AddPath(subj, ClipperLib::jtRound, ClipperLib::etClosedPolygon);
+
+	//build the following paths
+	for (int i = 1; i < polys.size(); i++)
+	{
+		subj.clear();
+		for (int j = 0; j < polys[i].size(); j++)
+			subj << ClipperLib::IntPoint(polys[i][j][0] * scale, polys[i][j][1] * scale);
+		co.AddPath(subj, ClipperLib::jtRound, ClipperLib::etClosedPolygon);
+	}
+
+	// execute
+	co.Execute(solution, -d * scale);
+
+	//output
+	for (int i = 0; i < solution.size(); i++)
+	{
+        Vector2d1 one_offset_xys;
+
+		Polygon_2 poly_2;
+		for (int j = 0; j < solution[i].size(); j++)
+		{
+            one_offset_xys.push_back(Vector2d(((double)solution[i][j].X) / scale, ((double)solution[i][j].Y) / scale));
+			poly_2.push_back(Point_2(((double)solution[i][j].X) / scale, ((double)solution[i][j].Y) / scale));
+		}
+
+		if (poly_2.is_clockwise_oriented())
+		{
+			std::reverse(one_offset_xys.begin(), one_offset_xys.end());
+		}
+
+		//remove closed points
+        one_offset_xys = Functs::RemoveClosePoints(one_offset_xys);
+
+        offset_polys.push_back(one_offset_xys);
+        Vector2d1().swap(one_offset_xys);
+	}
+}
+
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygons_Simple(const Vector2d2 & poly)
+{
+	for (auto& py : poly)
+		if (!CGAL_2D_Polygon_Simple(py))
+			return false;
+	return true;
+}
+
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Simple(const Vector2d1 & py)
+{
+	Polygon_2 poly;
+	for (int i = 0; i < py.size(); i++)
+		poly.push_back(VectorPoint2d(py[i]));
+	return poly.is_simple();
+}
+
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Simple_Inter(const Vector2d1 & poly)
+{
+	for (int i = 0; i < poly.size(); i++)
+	{
+		auto s_0 = poly[i];
+		auto e_0 = poly[(i + 1) % poly.size()];
+
+		for (int j = 0; j < poly.size(); j++)
+		{
+			auto s_1 = poly[j];
+			auto e_1 = poly[(j + 1) % poly.size()];
+
+			if (i != j && i != (j + 1) % poly.size() && (i + 1) % poly.size() != j && (i + 1) % poly.size() != (j + 1) % poly.size())
+			{
+				Vector2d inter;
+				bool b = CGAL_2D_Intersection_Segment_Segment(s_0, e_0, s_1, e_1, inter);
+
+				if (b)
+				{
+					return false;
+				}
+			}
+		}
+	}
+	return true;
 }
 
 extern "C" PPGL_EXPORT void
@@ -517,6 +616,319 @@ extern "C" PPGL_EXPORT Vector2d CGAL_2D_Projection_Point_Segment(const Vector2d 
 	if (d_m_s >= d_s_e) return e;
 	if (d_m_e >= d_s_e) return s;
     return PointVector2d(m_p);
+}
+
+extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C1(const Vector2d1 & outside_py, const Vector2d & p)
+{
+	Vector2d outside_max, outside_min;
+    Functs::GetBoundingBox(outside_py, outside_min, outside_max);
+
+	if (outside_max[0] < p[0])return false;
+	if (outside_max[1] < p[1])return false;
+	if (p[0] < outside_min[0])return false;
+	if (p[1] < outside_min[1])return false;
+
+	Polygon_2 poly;
+	for (int i = 0; i < outside_py.size(); i++)
+		poly.push_back(Point_2(outside_py[i][0], outside_py[i][1]));
+
+	if (poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_UNBOUNDED_SIDE)
+	{
+		double dis = CGAL_2D_Distance_Point_Polygon(p, outside_py);
+		if (dis > 0.1)
+			return false;
+	}
+
+	return true;
+}
+
+extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C2(const Vector2d1 & outside_py, const Vector2d1 & inside_py)
+{
+	Vector2d outside_max, outside_min, inside_max, inside_min;
+    Functs::GetBoundingBox(outside_py, outside_min, outside_max);
+	Functs::GetBoundingBox(inside_py, inside_min, inside_max);
+
+
+	if (outside_max[0] < inside_min[0])return false;
+	if (outside_max[1] < inside_min[1])return false;
+	if (inside_max[0] < outside_min[0])return false;
+	if (inside_max[1] < outside_min[1])return false;
+
+	Polygon_2 poly;
+	for (int i = 0; i < outside_py.size(); i++)
+		poly.push_back(Point_2(outside_py[i][0], outside_py[i][1]));
+
+	for (auto p : inside_py)
+	{
+		if (poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_UNBOUNDED_SIDE)
+		{
+			double dis = CGAL_2D_Distance_Point_Polygon(p, outside_py);
+			if (dis > 0.1)
+				return false;
+		}
+	}
+	return true;
+}
+extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C3(const Vector2d2 & outside_pys, const Vector2d & p)
+{
+	if (!CGAL_2D_Detect_Polygon_Inside_C1(outside_pys[0], p)) return false;
+
+	for (int i = 1; i < outside_pys.size(); i++)
+	{
+		Polygon_2 poly;
+		for (auto p : outside_pys[i]) poly.push_back(Point_2(p[0], p[1]));
+
+		if (poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_BOUNDED_SIDE)
+		{
+			double dis = CGAL_2D_Distance_Point_Polygon(p, outside_pys[i]);
+			if (dis > 0.1)
+				return false;
+		}
+	}
+
+	return true;
+}
+extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C4(const Vector2d2 & outside_pys, const Vector2d1 & inside_py)
+{
+	if (!CGAL_2D_Detect_Polygon_Inside_C2(outside_pys[0], inside_py)) return false;
+
+	for (int i = 1; i < outside_pys.size(); i++)
+	{
+		Polygon_2 poly;
+		for (auto p : outside_pys[i]) poly.push_back(Point_2(p[0], p[1]));
+
+		for (auto p : inside_py)
+		{
+			if (poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_BOUNDED_SIDE)
+			{
+				double dis = CGAL_2D_Distance_Point_Polygon(p, outside_pys[i]);
+				if (dis > 0.1)
+					return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C5(const Vector2d2 & outside_pys, const Vector2d2 & inside_pys)
+{
+	for (auto inside_py : inside_pys)
+	{
+		if (!CGAL_2D_Detect_Polygon_Inside_C4(outside_pys, inside_py))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+
+
+
+
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Polygon_Polygon(const Vector2d1 & poly_0, const Vector2d1 & poly_1)
+{
+	double min_d = 1000000000.0;
+	for (int i = 0; i < poly_0.size(); i++)
+	{
+		Vector2d v = CGAL_2D_Nearest_Point_Polygon_C1(poly_0[i], poly_1);
+		double l = CGAL_2D_Distance_Point_Point(poly_0[i], v);
+		if (l < min_d)
+		{
+			min_d = l;
+		}
+	}
+	return min_d;
+}
+
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Polygons_Polygons(const Vector2d2 & poly_0, const Vector2d2 & poly_1)
+{
+	double min_d = 1000000000.0;
+	for (auto poly_ : poly_0)
+	{
+		for (auto poly__ : poly_1)
+		{
+			double l = CGAL_2D_Distance_Polygon_Polygon(poly_, poly__);
+			if (l < min_d)
+			{
+				min_d = l;
+			}
+		}
+	}
+	return min_d;
+}
+
+extern "C" PPGL_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygon_C1(const Vector2d & v, const Vector2d1 & poly)
+{
+	double min_d = 1000000000.0;
+	int min_i = -1;
+
+	for (int i = 0; i < poly.size(); i++)
+	{
+		double l = CGAL_2D_Distance_Point_Segment(v, poly[i], poly[(i + 1) % poly.size()]);
+
+		if (l < min_d)
+		{
+			min_d = l;
+			min_i = i;
+		}
+	}
+
+	return CGAL_2D_Projection_Point_Segment(v, poly[min_i], poly[(min_i + 1) % poly.size()]);
+}
+extern "C" PPGL_EXPORT void CGAL_2D_Nearest_Point_Polygon_C2(const Vector2d & v, const Vector2d1 & poly, Vector2d & p, double& min_d)
+{
+	min_d = 1000000000.0;
+	int min_i = -1;
+
+	for (int i = 0; i < poly.size(); i++)
+	{
+		double l = CGAL_2D_Distance_Point_Segment(v, poly[i], poly[(i + 1) % poly.size()]);
+
+		if (l < min_d)
+		{
+			min_d = l;
+			min_i = i;
+		}
+	}
+
+    p= CGAL_2D_Projection_Point_Segment(v, poly[min_i], poly[(min_i + 1) % poly.size()]);
+}
+extern "C" PPGL_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygons(const Vector2d & v, const Vector2d2 & polys)
+{
+	Vector2d result;
+	double min_d = 1000000000.0;
+	for (int i = 0; i < polys.size(); i++)
+	{
+		Vector2d p;
+		double p_d;
+		CGAL_2D_Nearest_Point_Polygon_C2(v, polys[i], p, p_d);
+
+		if (p_d < min_d)
+		{
+			min_d = p_d;
+			result = p;
+		}
+	}
+	return result;
+}
+
+extern "C" PPGL_EXPORT void CGAL_2d_Polygon_Boundingbox(const Vector2d1 & ps, Vector2d & min_corner, Vector2d & max_corner)
+{
+    Functs::GetBoundingBox(ps, min_corner, max_corner);
+}
+
+
+extern "C" PPGL_EXPORT double CGAL_2D_Polygon_Area(const Vector2d1 & py)
+{
+	Polygon_2 poly;
+	for (int i = 0; i < py.size(); i++)
+		poly.push_back(Point_2(py[i][0], py[i][1]));
+	return abs(poly.area());
+}
+
+extern "C" PPGL_EXPORT Vector2d CGAL_2D_Polygon_Inside_Point_C1(const Vector2d1 & py)
+{
+	double inside_x, inside_y;
+	Polygon_2 poly;
+	for (int i = 0; i < py.size(); i++)
+		poly.push_back(VectorPoint2d(py[i]));
+
+	if (poly.is_clockwise_oriented()) poly.reverse_orientation();
+
+	double max_dis = -10000.0;
+	for (int i = 0; i < py.size(); i++) {
+		for (int j = i + 2; j < py.size(); j++) {
+			double p_x = (py[i][0] + py[j][0]) / 2.0;
+			double p_y = (py[i][0] + py[j][0]) / 2.0;
+			if (poly.bounded_side(Point_2(p_x, p_y)) == CGAL::ON_BOUNDED_SIDE)
+			{
+				double dis = CGAL_2D_Distance_Point_Point(py[i], py[j]);
+				if (dis > max_dis)
+				{
+					max_dis = dis;
+					inside_x = p_x;
+					inside_y = p_y;
+				}
+			}
+		}
+	}
+	return Vector2d(inside_x, inside_y);
+}
+
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Inside_Point_C2(const Vector2d2 & polys, Vector2d & inner_vec)
+{
+	auto CheckValid = [](std::vector<Polygon_2>& cgal_polys, double p_x, double p_y)
+	{
+		if (cgal_polys.front().bounded_side(Point_2(p_x, p_y)) == CGAL::ON_BOUNDED_SIDE)
+		{
+			for (int i = 1; i < cgal_polys.size(); i++)
+			{
+				if (cgal_polys[i].bounded_side(Point_2(p_x, p_y)) == CGAL::ON_BOUNDED_SIDE)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	};
+
+	std::vector<Polygon_2> cgal_polys;
+	for (int i = 0; i < polys.size(); i++)
+	{
+		Polygon_2 poly;
+		for (int j = 0; j < polys[i].size(); j++)
+			poly.push_back(VectorPoint2d(polys[i][j]));
+		if (poly.is_clockwise_oriented()) poly.reverse_orientation();
+		cgal_polys.emplace_back(poly);
+	}
+
+	auto outside_poly = cgal_polys.front();
+
+	double xmin = outside_poly.bbox().xmin();
+	double ymin = outside_poly.bbox().ymin();
+	double xmax = outside_poly.bbox().xmax();
+	double ymax = outside_poly.bbox().ymax();
+	int inter = 0;
+	int success_iter = 0;
+	double dis_success;
+	while (true)
+	{
+		double p_x = rand() / double(RAND_MAX) * (xmax - xmin) + xmin;
+		double p_y = rand() / double(RAND_MAX) * (ymax - ymin) + ymin;
+
+		if (CheckValid(cgal_polys, p_x, p_y))
+		{
+			if (success_iter == 0)
+			{
+				dis_success = CGAL_2D_Distance_Point_Polygons(Vector2d(p_x, p_y), polys);
+				inner_vec[0] = p_x;
+				inner_vec[1] = p_y;
+			}
+			else
+			{
+				//double distance = CGAL_2D_Distance_Point_Polygon(Vector2d(p_x, p_y), polys);
+				double distance = p_y;
+				if (distance > dis_success)
+				{
+					dis_success = distance;
+					inner_vec[0] = p_x;
+					inner_vec[1] = p_y;
+				}
+			}
+			success_iter++;
+		}
+
+		if (inter > 10000 || success_iter > 50)
+		{
+			break;
+		}
+		inter++;
+	}
+
+	return success_iter != 0;
 }
 
 // This one is used to intersect a polygon with a line

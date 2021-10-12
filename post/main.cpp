@@ -3,6 +3,65 @@
 using namespace std;
 using namespace PGL;
 
+void Check_Not_Included() 
+{
+
+	auto Get_CGAL_Functions = [](const std::string& path, 
+		VectorStr1& funct_titles, VectorStr1& funct_lines)
+	{
+		std::ifstream file(path);
+		for (std::string line; std::getline(file, line); )
+		{
+			if (Functs::StringContain(line, "CGAL"))
+			{
+				auto title = line.substr(line.find("CGAL"), line.find("(") - line.find("CGAL"));
+				funct_titles.push_back(title);
+				funct_lines.push_back(line);
+				//std::cerr << title << std::endl;
+			}
+		}
+		file.close();
+
+	};
+
+	//parse geom.h
+	VectorStr1 funct_titles;
+	VectorStr1 funct_lines;
+
+	Get_CGAL_Functions("E:\\Task2\\personal-pack-geom-lib\\ppgl\\geom.h", funct_titles, funct_lines);
+
+
+	VectorStr1 sfc_titles;
+	VectorStr1 sfc_lines;
+	Get_CGAL_Functions("E:\\Task2\\SmartCFS\\cgal\\cgalpackage.h",sfc_titles, sfc_lines);
+
+	ofstream file("E:\\out.txt");
+	int i = 0;
+	for (auto& sfc_title : sfc_titles)
+	{
+		bool b = true;
+		for (auto& title : funct_titles)
+		{
+			if (sfc_title == title)
+			{
+				b = false;
+				break;
+			}
+		}
+		if (b)
+		{
+			std::cerr << sfc_title << std::endl;
+			file <<"extern \"C\" PPGL_EXPORT " << sfc_lines[i] << std::endl;
+		}
+		i++;
+	}
+	
+	//Functs::CerrLine();
+	file.close();
+	system("pause");
+
+};
+
 void Generate_CGAL_H() 
 {
 	//parse geom.h
@@ -124,10 +183,12 @@ int main(int argc, char* argv[])
 	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\post\\RelWithDebInfo\\");
 	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\post\\RelWithDebInfo\\");
 
-	//generate cgal head file
-	Generate_CGAL_H();
+	if(argc==1)
+		Generate_CGAL_H();
+	else
+		Check_Not_Included();
 
-	Functs::MAssert("Successfully finishing the post processing...");
+	//Functs::MAssert("Successfully finishing the post processing...");
 	return 0;
 }
 

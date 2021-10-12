@@ -47,6 +47,8 @@ extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(const Vector2d & p,
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygons(const Vector2d & p, const Vector2d2 & pys);
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Segment(const Vector2d & s_0_s, const Vector2d & s_0_e, const Vector2d & s_1_s, const Vector2d & s_1_e, Vector2d &inter);
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Line_Line(const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter);
+extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Line(const Vector2d& s_s, const Vector2d & s_e, const Vector2d & l_s, const Vector2d & l_e, Vector2d& inter);
+
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Polygon(const Vector2d & s_s, const Vector2d & s_e, Vector2d1 &p);
 extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(const Vector2d1 &ps);
 extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Union(const Vector2d1 & poly_0, const Vector2d1 & poly_1, Vector2d2 & inter_polygons);
@@ -55,11 +57,39 @@ extern "C" PPGL_EXPORT void CGAL_Decompose_Polyline(const Vector2d1 & polyline, 
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(const Vector2d1 &polygon, const Vector2d &s,const Vector2d &e, Vector2d &ns, Vector2d &ne);
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_NotExtend(const Vector2d1 &polygon, const Vector2d &s,const Vector2d &e);
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon, const Vector2d1 &cutLine, VectorPB1 &result);
-extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(const Vector2d1 & poly, const double& d, Vector2d2 & offset_polys);
+
 extern "C" PPGL_EXPORT bool CGAL_Construct_InOutSide_Polygon(const Vector2d1 &py, const Vector2d &p, const Vector2d &q, bool &isPInside,bool &isQInside);
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Segment(const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s,const Vector2d &s_1_e, Vector2d &inter);
 extern "C" PPGL_EXPORT double CGAL_Get_Angle_Kerf_Offset_Tan(const Vector2d &a, const Vector2d &b);
 extern "C" PPGL_EXPORT Vector2d CGAL_2D_Projection_Point_Segment(const Vector2d& p, const Vector2d& s, const Vector2d& e);
+
+extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C1(const Vector2d1& outside_py,  const Vector2d& p);
+extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C2(const Vector2d1& outside_py,  const Vector2d1 & inside_py);
+extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C3(const Vector2d2& outside_pys, const Vector2d& p);
+extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C4(const Vector2d2& outside_pys, const Vector2d1& inside_py);
+extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C5(const Vector2d2& outside_pys, const Vector2d2& inside_pys);
+
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Polygon_Polygon(const Vector2d1& poly_0, const Vector2d1& poly_1);
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Polygons_Polygons(const Vector2d2& poly_0, const Vector2d2& poly_1);
+
+extern "C" PPGL_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygon_C1(const Vector2d& v, const Vector2d1& poly);
+extern "C" PPGL_EXPORT void CGAL_2D_Nearest_Point_Polygon_C2(const Vector2d & v, const Vector2d1 & poly, Vector2d& p, double& min_d);
+extern "C" PPGL_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygons(const Vector2d & v, const Vector2d2& polys);
+
+extern "C" PPGL_EXPORT void CGAL_2d_Polygon_Boundingbox(const Vector2d1& ps, Vector2d& min_corner, Vector2d& max_corner);
+extern "C" PPGL_EXPORT double CGAL_2D_Polygon_Area(const Vector2d1& py);
+extern "C" PPGL_EXPORT Vector2d CGAL_2D_Polygon_Inside_Point_C1(const Vector2d1& poly);
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Inside_Point_C2(const Vector2d2& polys, Vector2d& inner_vec);
+
+extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(const Vector2d1 & poly, const double& d, Vector2d2 & offset_polys);
+extern "C" PPGL_EXPORT void CGAL_2D_Polygons_One_Offsets(const Vector2d2 & polys, const double& d, Vector2d2 & offset_polys);
+
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygons_Simple(const Vector2d2& poly);
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Simple(const Vector2d1 & poly);
+extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Simple_Inter(const Vector2d1& poly);
+
+
+//extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Offsets(Vector1d2 xs, Vector1d2 ys, double d, Vector1d2& offsets_xs, Vector1d2& offsets_ys);
 
 
 
