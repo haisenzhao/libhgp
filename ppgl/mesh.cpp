@@ -1071,10 +1071,6 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Subdivision(const std::string & in_path, c
 
 
 
-
-
-
-
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&max_curs, const std::vector<double>&min_curs)
 {
 	int verticeSize = vecs.size();
@@ -1115,7 +1111,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, co
 		face_id_2.push_back(face_ids[i][2]);
 	}
 
-	CGAL_3D_Mesh_Curvature(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs);
+	CGAL_3D_Mesh_Curvature_C1(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs);
 
 	std::vector<int>().swap(face_id_0);
 	std::vector<int>().swap(face_id_1);
@@ -1169,7 +1165,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, co
 		face_id_2.push_back(face_ids[i][2]);
 	}
 
-	CGAL_3D_Mesh_Curvature(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions);
+	CGAL_3D_Mesh_Curvature_C3(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions);
 
 	std::vector<int>().swap(face_id_0);
 	std::vector<int>().swap(face_id_1);
@@ -1225,7 +1221,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, co
 		face_id_2.push_back(face_ids[i][2]);
 	}
 
-	CGAL_3D_Mesh_Curvature(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions, normals);
+	CGAL_3D_Mesh_Curvature_C5(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions, normals);
 
 	std::vector<int>().swap(face_id_0);
 	std::vector<int>().swap(face_id_1);
@@ -1300,7 +1296,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C2(const std::string 
 	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, bools);
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments(Vector2d2 & segments, Vector2d2 & lines)
+extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments_C1(Vector2d2 & segments, Vector2d2 & lines)
 {
 	//save connecting relations
 	std::vector<bool> used(segments.size(), false);
@@ -1419,7 +1415,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments(Vector2d2 & segments, Ve
 		lines.push_back(line);
 	}
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments(Vector3d2 & segments, Vector3d2 & lines)
+extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments_C2(Vector3d2 & segments, Vector3d2 & lines)
 {
 	//save connecting relations
 	std::vector<bool> used(segments.size(), false);
@@ -1539,7 +1535,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments(Vector3d2 & segments, Ve
 	}
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs, std::vector<int> &face_id_0, std::vector<int> &face_id_1, std::vector<int> &face_id_2, Vector3d2 & boundaries, Vector3d & inside = Vector3d(0.0, 0.0, 0.0))
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs, std::vector<int> &face_id_0, std::vector<int> &face_id_1, std::vector<int> &face_id_2, Vector3d2 & boundaries)
 {
 	Vector3d2 segments;
 
@@ -1612,9 +1608,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs, 
 		}
 	}
 
-	CGAL_3D_Connecting_Segments(segments, boundaries);
-
-	//CGAL_3D_Triangel_Mesh_Most_Inside_Point(vecs,face_id_0,face_id_1,face_id_2,inside);
+	CGAL_3D_Connecting_Segments_C2(segments, boundaries);
 
 	for (int i = 0; i < segments.size(); i++)
 		Vector3d1().swap(segments[i]);
@@ -1638,25 +1632,25 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C4(Vector3d1 & vecs, 
 
 	CGAL_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries);
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C5(std::string path, Vector3d2 & boundaries, Vector3d & inside = Vector3d(0.0, 0.0, 0.0))
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C5(std::string path, Vector3d2 & boundaries)
 {
 	Vector3d1 vecs;
 	std::vector<int> face_id_0;
 	std::vector<int> face_id_1;
 	std::vector<int> face_id_2;
 	CGAL_3D_Read_Triangle_Mesh(path, vecs, face_id_0, face_id_1, face_id_2);
-	CGAL_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries, inside);
+	CGAL_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries);
 }
 
 
-extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth(const std::string & in_path, const std::string & out_path, const int laplace_nb)
+extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_C1(const std::string & in_path, const std::string & out_path, const int laplace_nb)
 {
 	Vector3d1 vecs;
 	std::vector<int> face_id_0;
 	std::vector<int> face_id_1;
 	std::vector<int> face_id_2;
 	CGAL_3D_Read_Triangle_Mesh(in_path, vecs, face_id_0, face_id_1, face_id_2);
-	CGAL_Mesh_Laplace_Smooth(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
+	CGAL_Mesh_Laplace_Smooth_C2(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
 	CGAL_Output_Obj_C2(out_path, vecs, face_id_0, face_id_1, face_id_2);
 }
 
@@ -1688,7 +1682,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbors(Vector3d1 & vec
 	}
 }
 
-extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, const int laplace_nb)
+extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_C2(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, const int laplace_nb)
 {
 	std::vector<bool> vertices_boundary;
 	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, vertices_boundary);
@@ -1826,7 +1820,7 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & ve
 		Vector3d1().swap(min_curvature_direction);
 		Vector3d1().swap(vecs_normals);
 
-		CGAL_3D_Mesh_Curvature(vecs, face_id_0, face_id_1, face_id_2, max_curvature, min_curvature, max_curvature_direction, min_curvature_direction, vecs_normals);
+		CGAL_3D_Mesh_Curvature_C5(vecs, face_id_0, face_id_1, face_id_2, max_curvature, min_curvature, max_curvature_direction, min_curvature_direction, vecs_normals);
 
 		int nb = 0;
 		double minimal_cur = 100000.0;
@@ -1945,7 +1939,7 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & ve
 	}
 }
 
-extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_Own_Version(const std::string & in_path, const int& step, const std::string & out_path, const int& laplace_nb = 0)
+extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_Own_Version(const std::string & in_path, const int& step, const std::string & out_path, const int& laplace_nb)
 {
 	Vector3d1 vecs;
 	std::vector<int> face_id_0;
@@ -1957,7 +1951,7 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_Own_Version(const std::st
 	for (int i = 0; i < step; i++)
 	{
 		CGAL_Mesh_Loop_Subdivision_One_Step(vecs, face_id_0, face_id_1, face_id_2);
-		CGAL_Mesh_Laplace_Smooth(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
+		CGAL_Mesh_Laplace_Smooth_C2(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
 	}
 
 	CGAL_Output_Obj_C2(out_path, vecs, face_id_0, face_id_1, face_id_2);
