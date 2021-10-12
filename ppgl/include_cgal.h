@@ -196,4 +196,16 @@ public:
 	}
 };
 
+struct Edge
+{
+	int source;
+	int end;
+	Edge() {}
+	Edge(int s, int e)
+	{
+		source = s;
+		end = e;
+	}
+};
+
 #endif

@@ -10,6 +10,12 @@ typedef  void (*CGAL_Test_PGL)(const Vector3d& n);
 typedef  void (*CGAL_Vector_Base)(const Vector3d& n, Vector3d &);
 typedef  void (*CGAL_Export_Path_Segment)(std::ofstream & export_file_output, int& export_index,const std::string s_name, const double r, const double g, const double b,const Vector3d & start, const Vector3d & end, const double radius);
 typedef  void (*CGAL_Export_Path_Point)(std::ofstream & export_file_output, int& export_index, const std::string s_name, const double r, const double g, const double b, const Vector3d point, const double radius);
+typedef  void (*CGAL_Output_Obj_C1)(const std::string & path, const Vector3d1 & vecs);
+typedef  void (*CGAL_Output_Obj_C2)(const std::string & path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
+typedef  void (*CGAL_Output_Obj_C3)(const std::string & path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids);
+typedef  void (*CGAL_Output_Obj_C4)(const std::string & path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<int>&triangles_lables, const int& index);
+typedef  void (*CGAL_Output_Obj_C5)(const std::string & path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
+typedef  void (*CGAL_Output_Obj_C6)(const std::string & path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<std::vector<int>>&face_ids);
 //implementation in "twoD.cpp"
 //####################################################################################
 typedef  double (*CGAL_2D_Distance_Point_Point)(const Vector2d & p_0, const Vector2d& p_1);
@@ -56,7 +62,8 @@ typedef  void (*CGAL_2D_Polygons_One_Offsets)(const Vector2d2 & polys, const dou
 typedef  bool (*CGAL_2D_Polygons_Simple)(const Vector2d2& poly);
 typedef  bool (*CGAL_2D_Polygon_Simple)(const Vector2d1 & poly);
 typedef  bool (*CGAL_2D_Polygon_Simple_Inter)(const Vector2d1& poly);
-typedef  void (*CGAL_2D_Polygon_Offsets)(Vector1d2 xs, Vector1d2 ys, double d, Vector1d2& offsets_xs, Vector1d2& offsets_ys);
+typedef  void (*CGAL_2D_Convex_Hulls)(const Vector2d1 & vec, Vector2d1 & hull_points);
+typedef  void (*CGAL_2D_OBB_Box)(const Vector2d1 & vec, Vector2d & center, Vector2d & axis_0, Vector2d & axis_1, double& entent_0, double& entent_1);
 //implementation in "threeD.cpp"
 //####################################################################################
 typedef  double (*CGAL_3D_Distance_Point_Segment)(const Vector3d & p, const Vector3d & s_s, const Vector3d & s_e);
@@ -71,6 +78,14 @@ typedef  Vector3d (*CGAL_3D_Projection_Point_Segment)(const Vector3d & p, const 
 typedef  double (*CGAL_3D_Distance_Point_Point)(const Vector3d & v0, const Vector3d & v1);
 typedef  double (*CGAL_3D_Distance_Point_Polygon)(const Vector3d1 &py, const Vector3d &p);
 typedef  void (*CGAL_2D_Polygon_Triangulation)(const Vector2d2 &polys, Vector1i2 &faces);
+typedef  double (*CGAL_3D_Distance_Point_Line)(const Vector3d & p, const Vector3d & l_s, const Vector3d & l_e);
+typedef  Vector3d (*CGAL_3D_Projection_Point_Line)(const Vector3d & p, const Vector3d & l_s, const Vector3d & l_e);
+typedef  double (*CGAL_3D_Distance_Segment_Segment)(const Vector3d & s_0_s, const Vector3d & s_0_e, const Vector3d & s_1_s, const Vector3d & s_1_e);
+typedef  double (*CGAL_3D_Distance_Point_Plane)(const Vector3d & v, const Vector3d & plane_p, const Vector3d & plane_n);
+typedef  bool (*CGAL_3D_Intersection_Segment_Line)(const Vector3d & s_s, const Vector3d & s_e, const Vector3d & l_s, const Vector3d & l_e, Vector3d & inter);
+typedef  bool (*CGAL_3D_Intersection_Segment_Segment)(const Vector3d & s_0_s, const Vector3d & s_0_e, const Vector3d & s_1_s, const Vector3d & s_1_e, Vector3d & iter);
+typedef  bool (*CGAL_3D_Intersection_Segment_Plane)(const Vector3d & s_s, const Vector3d & s_e, const Vector3d & plane_p, const Vector3d & plane_n, Vector3d & inter);
+typedef  bool (*CGAL_3D_Intersection_Line_Plane)(const Vector3d & l_s, const Vector3d & l_e, const Vector3d & plane_p, const Vector3d & plane_n, Vector3d & inter);
 //implementation in "mesh.cpp"
 //####################################################################################
 typedef  void (*CGAL_Remesh_Surface_by_Adding_Feature)(const Vector3d1 &feature,const Vector1i1 &face_ids, const Vector3d1 &vecs, const Vector1i1 &face_id_0,const Vector1i1 &face_id_1,const Vector1i1 &face_id_2, Vector1i1 &igl_cutting_0_edges,Vector1i1 &igl_cutting_1_edges, Vector3d1 &igl_cutting_points,Vector1i2 &cutting_faces);
@@ -95,6 +110,17 @@ typedef  void (*CGAL_3D_Mesh_Dart_Sampling_C2)(const std::string & outside_path,
 typedef  void (*CGAL_3D_Mesh_Regular_Sampling_C1)(const std::string & outside_path, const double& d, Vector3d1 & sampling_points);
 //d: percentage value of the length of the diagonal of the bounding box.
 typedef  void (*CGAL_3D_Mesh_Regular_Sampling_C2)(const std::string & outside_path, const std::string & inside_path, const double& d, Vector3d1 & sampling_points);
+typedef  double (*CGAL_3D_Distance_Point_Triangle)(const Vector3d & p, const Vector3d & t_0, const Vector3d & t_1, const Vector3d & t_2);
+typedef  double (*CGAL_3D_Distance_Point_Triangles)(const Vector3d & p, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
+typedef  Vector3d (*CGAL_3D_Nearest_Point_Triangles)(const Vector3d & p, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
+typedef  void (*CGAL_3D_Distance_Point_Mesh)(const std::string & path, const Vector3d1 & query_points, std::vector<double>&distances);
+typedef  void (*CGAL_3D_Neareast_Point_Mesh)(const std::string & path, const Vector3d1 & ves, Vector3d1 & ners);
+typedef  void  (*CGAL_3D_Mesh_Near_Triangles)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const Vector3d1 & points, const double& d, std::vector<std::vector<int>>&triangles);
+typedef  void (*CGAL_3D_Points_inside_Triangles_C1)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const Vector3d1 & points, std::vector<bool>&insides);
+typedef  void (*CGAL_3D_Points_inside_Triangles_C2)(const std::string & path, const Vector3d1 & points, std::vector<bool>&insides);
+typedef  void (*CGAL_Mesh_Subdivision)(const std::string & in_path, const std::string & sub, const int& step, const std::string & out_path);
+typedef  void (*CGAL_Mesh_Loop_Subdivision_One_Step)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2);
+/////////////////////////////////////////////////////////////
 
 
 class PL
@@ -109,6 +135,12 @@ class PL
 		CGAL_Vector_Base_C = (CGAL_Vector_Base)GetProcAddress(hModule, "CGAL_Vector_Base");
 		CGAL_Export_Path_Segment_C = (CGAL_Export_Path_Segment)GetProcAddress(hModule, "CGAL_Export_Path_Segment");
 		CGAL_Export_Path_Point_C = (CGAL_Export_Path_Point)GetProcAddress(hModule, "CGAL_Export_Path_Point");
+		CGAL_Output_Obj_C1_C = (CGAL_Output_Obj_C1)GetProcAddress(hModule, "CGAL_Output_Obj_C1");
+		CGAL_Output_Obj_C2_C = (CGAL_Output_Obj_C2)GetProcAddress(hModule, "CGAL_Output_Obj_C2");
+		CGAL_Output_Obj_C3_C = (CGAL_Output_Obj_C3)GetProcAddress(hModule, "CGAL_Output_Obj_C3");
+		CGAL_Output_Obj_C4_C = (CGAL_Output_Obj_C4)GetProcAddress(hModule, "CGAL_Output_Obj_C4");
+		CGAL_Output_Obj_C5_C = (CGAL_Output_Obj_C5)GetProcAddress(hModule, "CGAL_Output_Obj_C5");
+		CGAL_Output_Obj_C6_C = (CGAL_Output_Obj_C6)GetProcAddress(hModule, "CGAL_Output_Obj_C6");
 		//implementation in "twoD.cpp"
 		//####################################################################################
 		CGAL_2D_Distance_Point_Point_C = (CGAL_2D_Distance_Point_Point)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Point");
@@ -155,7 +187,8 @@ class PL
 		CGAL_2D_Polygons_Simple_C = (CGAL_2D_Polygons_Simple)GetProcAddress(hModule, "CGAL_2D_Polygons_Simple");
 		CGAL_2D_Polygon_Simple_C = (CGAL_2D_Polygon_Simple)GetProcAddress(hModule, "CGAL_2D_Polygon_Simple");
 		CGAL_2D_Polygon_Simple_Inter_C = (CGAL_2D_Polygon_Simple_Inter)GetProcAddress(hModule, "CGAL_2D_Polygon_Simple_Inter");
-		CGAL_2D_Polygon_Offsets_C = (CGAL_2D_Polygon_Offsets)GetProcAddress(hModule, "CGAL_2D_Polygon_Offsets");
+		CGAL_2D_Convex_Hulls_C = (CGAL_2D_Convex_Hulls)GetProcAddress(hModule, "CGAL_2D_Convex_Hulls");
+		CGAL_2D_OBB_Box_C = (CGAL_2D_OBB_Box)GetProcAddress(hModule, "CGAL_2D_OBB_Box");
 		//implementation in "threeD.cpp"
 		//####################################################################################
 		CGAL_3D_Distance_Point_Segment_C = (CGAL_3D_Distance_Point_Segment)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Segment");
@@ -170,6 +203,14 @@ class PL
 		CGAL_3D_Distance_Point_Point_C = (CGAL_3D_Distance_Point_Point)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Point");
 		CGAL_3D_Distance_Point_Polygon_C = (CGAL_3D_Distance_Point_Polygon)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Polygon");
 		CGAL_2D_Polygon_Triangulation_C = (CGAL_2D_Polygon_Triangulation)GetProcAddress(hModule, "CGAL_2D_Polygon_Triangulation");
+		CGAL_3D_Distance_Point_Line_C = (CGAL_3D_Distance_Point_Line)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Line");
+		CGAL_3D_Projection_Point_Line_C = (CGAL_3D_Projection_Point_Line)GetProcAddress(hModule, "CGAL_3D_Projection_Point_Line");
+		CGAL_3D_Distance_Segment_Segment_C = (CGAL_3D_Distance_Segment_Segment)GetProcAddress(hModule, "CGAL_3D_Distance_Segment_Segment");
+		CGAL_3D_Distance_Point_Plane_C = (CGAL_3D_Distance_Point_Plane)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Plane");
+		CGAL_3D_Intersection_Segment_Line_C = (CGAL_3D_Intersection_Segment_Line)GetProcAddress(hModule, "CGAL_3D_Intersection_Segment_Line");
+		CGAL_3D_Intersection_Segment_Segment_C = (CGAL_3D_Intersection_Segment_Segment)GetProcAddress(hModule, "CGAL_3D_Intersection_Segment_Segment");
+		CGAL_3D_Intersection_Segment_Plane_C = (CGAL_3D_Intersection_Segment_Plane)GetProcAddress(hModule, "CGAL_3D_Intersection_Segment_Plane");
+		CGAL_3D_Intersection_Line_Plane_C = (CGAL_3D_Intersection_Line_Plane)GetProcAddress(hModule, "CGAL_3D_Intersection_Line_Plane");
 		//implementation in "mesh.cpp"
 		//####################################################################################
 		CGAL_Remesh_Surface_by_Adding_Feature_C = (CGAL_Remesh_Surface_by_Adding_Feature)GetProcAddress(hModule, "CGAL_Remesh_Surface_by_Adding_Feature");
@@ -194,6 +235,17 @@ class PL
 		CGAL_3D_Mesh_Regular_Sampling_C1_C = (CGAL_3D_Mesh_Regular_Sampling_C1)GetProcAddress(hModule, "CGAL_3D_Mesh_Regular_Sampling_C1");
 		//d: percentage value of the length of the diagonal of the bounding box.
 		CGAL_3D_Mesh_Regular_Sampling_C2_C = (CGAL_3D_Mesh_Regular_Sampling_C2)GetProcAddress(hModule, "CGAL_3D_Mesh_Regular_Sampling_C2");
+		CGAL_3D_Distance_Point_Triangle_C = (CGAL_3D_Distance_Point_Triangle)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Triangle");
+		CGAL_3D_Distance_Point_Triangles_C = (CGAL_3D_Distance_Point_Triangles)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Triangles");
+		CGAL_3D_Nearest_Point_Triangles_C = (CGAL_3D_Nearest_Point_Triangles)GetProcAddress(hModule, "CGAL_3D_Nearest_Point_Triangles");
+		CGAL_3D_Distance_Point_Mesh_C = (CGAL_3D_Distance_Point_Mesh)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Mesh");
+		CGAL_3D_Neareast_Point_Mesh_C = (CGAL_3D_Neareast_Point_Mesh)GetProcAddress(hModule, "CGAL_3D_Neareast_Point_Mesh");
+		CGAL_3D_Mesh_Near_Triangles_C = (CGAL_3D_Mesh_Near_Triangles)GetProcAddress(hModule, "CGAL_3D_Mesh_Near_Triangles");
+		CGAL_3D_Points_inside_Triangles_C1_C = (CGAL_3D_Points_inside_Triangles_C1)GetProcAddress(hModule, "CGAL_3D_Points_inside_Triangles_C1");
+		CGAL_3D_Points_inside_Triangles_C2_C = (CGAL_3D_Points_inside_Triangles_C2)GetProcAddress(hModule, "CGAL_3D_Points_inside_Triangles_C2");
+		CGAL_Mesh_Subdivision_C = (CGAL_Mesh_Subdivision)GetProcAddress(hModule, "CGAL_Mesh_Subdivision");
+		CGAL_Mesh_Loop_Subdivision_One_Step_C = (CGAL_Mesh_Loop_Subdivision_One_Step)GetProcAddress(hModule, "CGAL_Mesh_Loop_Subdivision_One_Step");
+		/////////////////////////////////////////////////////////////
 	};
 
 	static PL& Inst()
@@ -209,6 +261,12 @@ class PL
 	CGAL_Vector_Base CGAL_Vector_Base_C;
 	CGAL_Export_Path_Segment CGAL_Export_Path_Segment_C;
 	CGAL_Export_Path_Point CGAL_Export_Path_Point_C;
+	CGAL_Output_Obj_C1 CGAL_Output_Obj_C1_C;
+	CGAL_Output_Obj_C2 CGAL_Output_Obj_C2_C;
+	CGAL_Output_Obj_C3 CGAL_Output_Obj_C3_C;
+	CGAL_Output_Obj_C4 CGAL_Output_Obj_C4_C;
+	CGAL_Output_Obj_C5 CGAL_Output_Obj_C5_C;
+	CGAL_Output_Obj_C6 CGAL_Output_Obj_C6_C;
 	//implementation in "twoD.cpp"
 	//####################################################################################
 	CGAL_2D_Distance_Point_Point CGAL_2D_Distance_Point_Point_C;
@@ -255,7 +313,8 @@ class PL
 	CGAL_2D_Polygons_Simple CGAL_2D_Polygons_Simple_C;
 	CGAL_2D_Polygon_Simple CGAL_2D_Polygon_Simple_C;
 	CGAL_2D_Polygon_Simple_Inter CGAL_2D_Polygon_Simple_Inter_C;
-	CGAL_2D_Polygon_Offsets CGAL_2D_Polygon_Offsets_C;
+	CGAL_2D_Convex_Hulls CGAL_2D_Convex_Hulls_C;
+	CGAL_2D_OBB_Box CGAL_2D_OBB_Box_C;
 	//implementation in "threeD.cpp"
 	//####################################################################################
 	CGAL_3D_Distance_Point_Segment CGAL_3D_Distance_Point_Segment_C;
@@ -270,6 +329,14 @@ class PL
 	CGAL_3D_Distance_Point_Point CGAL_3D_Distance_Point_Point_C;
 	CGAL_3D_Distance_Point_Polygon CGAL_3D_Distance_Point_Polygon_C;
 	CGAL_2D_Polygon_Triangulation CGAL_2D_Polygon_Triangulation_C;
+	CGAL_3D_Distance_Point_Line CGAL_3D_Distance_Point_Line_C;
+	CGAL_3D_Projection_Point_Line CGAL_3D_Projection_Point_Line_C;
+	CGAL_3D_Distance_Segment_Segment CGAL_3D_Distance_Segment_Segment_C;
+	CGAL_3D_Distance_Point_Plane CGAL_3D_Distance_Point_Plane_C;
+	CGAL_3D_Intersection_Segment_Line CGAL_3D_Intersection_Segment_Line_C;
+	CGAL_3D_Intersection_Segment_Segment CGAL_3D_Intersection_Segment_Segment_C;
+	CGAL_3D_Intersection_Segment_Plane CGAL_3D_Intersection_Segment_Plane_C;
+	CGAL_3D_Intersection_Line_Plane CGAL_3D_Intersection_Line_Plane_C;
 	//implementation in "mesh.cpp"
 	//####################################################################################
 	CGAL_Remesh_Surface_by_Adding_Feature CGAL_Remesh_Surface_by_Adding_Feature_C;
@@ -294,5 +361,16 @@ class PL
 	CGAL_3D_Mesh_Regular_Sampling_C1 CGAL_3D_Mesh_Regular_Sampling_C1_C;
 	//d: percentage value of the length of the diagonal of the bounding box.
 	CGAL_3D_Mesh_Regular_Sampling_C2 CGAL_3D_Mesh_Regular_Sampling_C2_C;
+	CGAL_3D_Distance_Point_Triangle CGAL_3D_Distance_Point_Triangle_C;
+	CGAL_3D_Distance_Point_Triangles CGAL_3D_Distance_Point_Triangles_C;
+	CGAL_3D_Nearest_Point_Triangles CGAL_3D_Nearest_Point_Triangles_C;
+	CGAL_3D_Distance_Point_Mesh CGAL_3D_Distance_Point_Mesh_C;
+	CGAL_3D_Neareast_Point_Mesh CGAL_3D_Neareast_Point_Mesh_C;
+	CGAL_3D_Mesh_Near_Triangles CGAL_3D_Mesh_Near_Triangles_C;
+	CGAL_3D_Points_inside_Triangles_C1 CGAL_3D_Points_inside_Triangles_C1_C;
+	CGAL_3D_Points_inside_Triangles_C2 CGAL_3D_Points_inside_Triangles_C2_C;
+	CGAL_Mesh_Subdivision CGAL_Mesh_Subdivision_C;
+	CGAL_Mesh_Loop_Subdivision_One_Step CGAL_Mesh_Loop_Subdivision_One_Step_C;
+	/////////////////////////////////////////////////////////////
 };
 #endif

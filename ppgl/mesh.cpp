@@ -687,3 +687,384 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(const Vector
 		}
 	}
 }
+
+
+
+
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Triangle(const Vector3d & p, const Vector3d & t_0, const Vector3d & t_1, const Vector3d & t_2)
+{
+	KC::Point_3 a(t_0[0], t_0[1], t_0[2]);
+	KC::Point_3 b(t_1[0], t_1[1], t_1[2]);
+	KC::Point_3 c(t_2[0], t_2[1], t_2[2]);
+
+	std::list<Triangle_3> triangles;
+	triangles.push_back(Triangle_3(a, b, c));
+
+	Tree_3 tree(triangles.begin(), triangles.end());
+	KC::Point_3 point_query(p[0], p[1], p[2]);
+
+	return sqrt(tree.squared_distance(point_query));
+}
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Triangles(const Vector3d & p, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
+{
+	//build polyhedron
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
+
+	//build tree
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+	tree.accelerate_distance_queries();
+
+	return sqrt(tree.squared_distance(Point_3(p[0], p[1], p[2])));
+}
+extern "C" PPGL_EXPORT Vector3d CGAL_3D_Nearest_Point_Triangles(const Vector3d & p, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
+{
+	//build polyhedron
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
+
+	//build tree
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+	tree.accelerate_distance_queries();
+
+	Point_3 c_p = tree.closest_point(Point_3(p[0], p[1], p[2]));
+	return Vector3d(c_p[0], c_p[1], c_p[2]);
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Distance_Point_Mesh(const std::string & path, const Vector3d1 & query_points, std::vector<double>&distances)
+{
+	std::cout << "CGAL_3D_Distance_Point_Mesh" << std::endl;
+
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, path);
+
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+	tree.accelerate_distance_queries();
+
+	for (int i = 0; i < query_points.size(); i++)
+	{
+		if (i % (query_points.size() / 10) == 0)
+		{
+			std::cout << (double)i / (double)query_points.size() << std::endl;
+		}
+		distances.push_back(sqrt(tree.squared_distance(VectorPoint3d(query_points[i]))));
+	}
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Neareast_Point_Mesh(const std::string & path, const Vector3d1 & ves, Vector3d1 & ners)
+{
+	std::cout << "CGAL_3D_Distance_Point_Mesh" << std::endl;
+
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, path);
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+	tree.accelerate_distance_queries();
+
+	for (int i = 0; i < ves.size(); i++)
+	{
+		if (i % (ves.size() / 10) == 0)
+		{
+			std::cout << (double)i / (double)ves.size() << std::endl;
+		}
+		Point_3 p = tree.closest_point(Point_3(ves[i][0], ves[i][1], ves[i][2]));
+
+		ners.push_back(Vector3d(p[0], p[1], p[2]));
+	}
+}
+
+
+extern "C" PPGL_EXPORT void  CGAL_3D_Mesh_Near_Triangles(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const Vector3d1 & points, const double& d, std::vector<std::vector<int>>&triangles)
+{
+	//build polyhedron
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
+
+	//build tree
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+	tree.accelerate_distance_queries();
+
+	for (int i = 0; i < points.size(); i++)
+	{
+		std::vector<int> triangle;
+
+		Poly_point_3 query(points[i][0], points[i][1], points[i][2]);
+		Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
+
+		std::priority_queue<Polyhedron_3::Facet_handle> facets;
+		std::vector<int> save_index;
+		facets.push(pp.second);
+		save_index.push_back(pp.second->id());
+
+		while (facets.size() != 0)
+		{
+			Polyhedron_3::Facet_handle fh = facets.top();
+			triangle.push_back(fh->id());
+			facets.pop();
+
+			std::vector<Polyhedron_3::Facet_handle> neighbors;
+
+			if (!fh->halfedge()->is_border_edge())
+				neighbors.push_back(fh->halfedge()->opposite()->face());
+			if (!fh->halfedge()->next()->is_border_edge())
+				neighbors.push_back(fh->halfedge()->next()->opposite()->face());
+			if (!fh->halfedge()->next()->next()->is_border_edge())
+				neighbors.push_back(fh->halfedge()->next()->next()->opposite()->face());
+
+			for (int j = 0; j < neighbors.size(); j++)
+			{
+				Polyhedron_3::Facet_handle n_fh = neighbors[j];
+				std::vector<Poly_point_3> n_fh_vecs;
+				n_fh_vecs.push_back(n_fh->halfedge()->vertex()->point());
+				n_fh_vecs.push_back(n_fh->halfedge()->next()->vertex()->point());
+				n_fh_vecs.push_back(n_fh->halfedge()->next()->next()->vertex()->point());
+
+				bool add_bool = false;
+				for (int k = 0; k < 3; k++)
+				{
+					double distance = sqrt((double)CGAL::squared_distance(pp.first, n_fh_vecs[k]));
+					if (distance < d) {
+						add_bool = true;
+						break;
+					}
+				}
+				if (add_bool && !(std::find(save_index.begin(), save_index.end(), n_fh->id()) != save_index.end()))
+				{
+					facets.push(n_fh);
+					save_index.push_back(n_fh->id());
+				}
+			}
+		}
+
+		triangles.push_back(triangle);
+	}
+}
+
+
+
+extern "C" PPGL_EXPORT void CGAL_3D_Points_inside_Triangles_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const Vector3d1 & points, std::vector<bool>&insides)
+{
+	//build polyhedron
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
+
+	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> inside(polyhedron);
+
+	for (int i = 0; i < points.size(); i++)
+	{
+		CGAL::Bounded_side res = inside(Point_3(points[i][0], points[i][1], points[i][2]));
+		if (res == CGAL::ON_BOUNDED_SIDE)
+			insides.push_back(true);
+		else
+			insides.push_back(false);
+	}
+}
+
+extern "C" PPGL_EXPORT void CGAL_3D_Points_inside_Triangles_C2(const std::string & path, const Vector3d1 & points, std::vector<bool>&insides)
+{
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, path);
+
+	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> inside(polyhedron);
+
+	for (int i = 0; i < points.size(); i++)
+	{
+		CGAL::Bounded_side res = inside(Point_3(points[i][0], points[i][1], points[i][2]));
+		if (res == CGAL::ON_BOUNDED_SIDE)
+			insides.push_back(true);
+		else
+			insides.push_back(false);
+	}
+}
+
+
+
+extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2)
+{
+	Vector3d1 loop_vecs = vecs;
+	std::vector<int> loop_face_id_0;
+	std::vector<int> loop_face_id_1;
+	std::vector<int> loop_face_id_2;
+
+	//edges
+	std::vector<Edge> edges;
+
+	std::vector<std::vector<int>> vecs_neighbors(vecs.size(), std::vector<int>());
+	std::vector<std::vector<int>> vecs_neighbors_labels(vecs.size(), std::vector<int>());
+
+	for (int i = 0; i < face_id_0.size(); i++)
+	{
+		int index_0 = face_id_0[i];
+		int index_1 = face_id_1[i];
+		int index_2 = face_id_2[i];
+		edges.push_back(Edge(index_0, index_1));
+		edges.push_back(Edge(index_1, index_0));
+		edges.push_back(Edge(index_0, index_2));
+		edges.push_back(Edge(index_2, index_0));
+		edges.push_back(Edge(index_1, index_2));
+		edges.push_back(Edge(index_2, index_1));
+	}
+
+	for (int i = 0; i < edges.size(); i++)
+	{
+		int source = edges[i].source;
+		int end = edges[i].end;
+
+		bool b = false;
+		for (int j = 0; j < vecs_neighbors[source].size(); j++)
+		{
+			if (vecs_neighbors[source][j] == end)
+			{
+				b = true;
+				break;
+			}
+		}
+		if (!b)
+		{
+			vecs_neighbors[source].push_back(end);
+			vecs_neighbors_labels[source].push_back(-1);
+		}
+	}
+	std::vector<Edge>().swap(edges);
+
+	for (int i = 0; i < vecs.size(); i++)
+	{
+		int  source = i;
+		for (int j = 0; j < vecs_neighbors[i].size(); j++)
+		{
+			int end = vecs_neighbors[i][j];
+			if (vecs_neighbors_labels[i][j] < 0)
+			{
+				edges.push_back(Edge(source, end));
+				vecs_neighbors_labels[i][j] = edges.size() - 1;
+
+				for (int k = 0; k < vecs_neighbors[end].size(); k++)
+				{
+					if (vecs_neighbors[end][k] == source)
+					{
+						vecs_neighbors_labels[end][k] = edges.size() - 1;
+					}
+				}
+			}
+		}
+	}
+
+	//loop_vecs
+	Vector3d1 edge_middle_points;
+	for (int i = 0; i < edges.size(); i++)
+		edge_middle_points.push_back((vecs[edges[i].source] + vecs[edges[i].end]) / (double)2.0);
+	for (int i = 0; i < edge_middle_points.size(); i++) loop_vecs.push_back(edge_middle_points[i]);
+
+	//loop faces
+	std::vector<Edge> face_edges;
+	std::vector<int> face_edges_id;
+
+	for (int i = 0; i < face_id_0.size(); i++) {
+		int index_0 = face_id_0[i];
+		int index_1 = face_id_1[i];
+		int index_2 = face_id_2[i];
+		face_edges.push_back(Edge(index_0, index_1));
+		face_edges.push_back(Edge(index_1, index_2));
+		face_edges.push_back(Edge(index_2, index_0));
+	}
+	for (int i = 0; i < face_edges.size(); i++)
+	{
+		int source = face_edges[i].source;
+		int end = face_edges[i].end;
+
+		for (int j = 0; j < vecs_neighbors[source].size(); j++)
+		{
+			if (vecs_neighbors[source][j] == end)
+			{
+				face_edges_id.push_back(vecs_neighbors_labels[source][j]);
+				break;
+			}
+		}
+	}
+
+	//     0
+	//    2 0
+	//  2  1  1
+	for (int i = 0; i < face_edges.size(); i = i + 3)
+	{
+		int index_0 = face_edges[i].source;
+		int index_1 = face_edges[i + 1].source;
+		int index_2 = face_edges[i + 2].source;
+
+		int edge_id_0 = face_edges_id[i] + vecs.size();
+		int edge_id_1 = face_edges_id[i + 1] + vecs.size();
+		int edge_id_2 = face_edges_id[i + 2] + vecs.size();
+
+		loop_face_id_0.push_back(index_0);
+		loop_face_id_1.push_back(edge_id_0);
+		loop_face_id_2.push_back(edge_id_2);
+
+		loop_face_id_0.push_back(edge_id_0);
+		loop_face_id_1.push_back(index_1);
+		loop_face_id_2.push_back(edge_id_1);
+
+		loop_face_id_0.push_back(edge_id_2);
+		loop_face_id_1.push_back(edge_id_1);
+		loop_face_id_2.push_back(index_2);
+
+		loop_face_id_0.push_back(edge_id_2);
+		loop_face_id_1.push_back(edge_id_0);
+		loop_face_id_2.push_back(edge_id_1);
+	}
+
+	//release
+	Vector3d1().swap(vecs);
+	std::vector<int>().swap(face_id_0);
+	std::vector<int>().swap(face_id_1);
+	std::vector<int>().swap(face_id_2);
+
+	vecs = loop_vecs;
+	face_id_0 = loop_face_id_0;
+	face_id_1 = loop_face_id_1;
+	face_id_2 = loop_face_id_2;
+
+	Vector3d1().swap(loop_vecs);
+	std::vector<int>().swap(loop_face_id_0);
+	std::vector<int>().swap(loop_face_id_1);
+	std::vector<int>().swap(loop_face_id_2);
+
+	Vector3d1().swap(edge_middle_points);
+	std::vector<Edge>().swap(face_edges);
+	std::vector<int>().swap(face_edges_id);
+	std::vector<Edge>().swap(edges);
+}
+
+
+extern "C" PPGL_EXPORT void CGAL_Mesh_Subdivision(const std::string & in_path, const std::string & sub, const int& step, const std::string & out_path)
+{
+	//load the input obj
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, in_path);
+	//subdivision
+
+	if (sub == "Loop" || sub == "loop" || sub == "l" || sub == "L")
+		CGAL::Subdivision_method_3::Loop_subdivision(polyhedron, step);
+
+	if (sub == "Sqrt" || sub == "sqrt" || sub == "s" || sub == "S")
+		CGAL::Subdivision_method_3::Sqrt3_subdivision(polyhedron, step);
+
+	Vector3d1 vecs;
+	std::vector<int> face_id_0;
+	std::vector<int> face_id_1;
+	std::vector<int> face_id_2;
+
+	for (Polyhedron_3::Vertex_iterator iter = polyhedron.vertices_begin();
+		iter != polyhedron.vertices_end(); iter++)
+	{
+		Poly_point_3 p = iter->point();
+		vecs.push_back(Vector3d(p[0], p[1], p[2]));
+	}
+
+	for (Polyhedron_3::Face_iterator iter = polyhedron.facets_begin(); iter != polyhedron.facets_end(); iter++)
+	{
+		face_id_0.push_back(iter->halfedge()->next()->next()->vertex()->id());
+		face_id_1.push_back(iter->halfedge()->vertex()->id());
+		face_id_2.push_back(iter->halfedge()->next()->vertex()->id());
+	}
+
+	CGAL_Output_Obj_C2(out_path, vecs, face_id_0, face_id_1, face_id_2);
+}

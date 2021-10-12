@@ -35,6 +35,8 @@ void Check_Not_Included()
 	VectorStr1 sfc_lines;
 	Get_CGAL_Functions("E:\\Task2\\SmartCFS\\cgal\\cgalpackage.h",sfc_titles, sfc_lines);
 
+	int debug_int = 0;
+
 	ofstream file("E:\\out.txt");
 	int i = 0;
 	for (auto& sfc_title : sfc_titles)
@@ -42,16 +44,88 @@ void Check_Not_Included()
 		bool b = true;
 		for (auto& title : funct_titles)
 		{
-			if (sfc_title == title)
+			if (Functs::StringContain(title, sfc_title))
 			{
 				b = false;
 				break;
 			}
 		}
+
+		std::cerr << i << std::endl;
+
 		if (b)
 		{
-			std::cerr << sfc_title << std::endl;
-			file <<"extern \"C\" PPGL_EXPORT " << sfc_lines[i] << std::endl;
+			//void CGAL_2D_Convex_Hulls(Vector2d1 & vec, Vector2d1 & hull_points);
+			auto line = sfc_lines[i];
+
+			if (!Functs::StringContain(line, "(")|| !Functs::StringContain(line, ")"))
+			{
+				std::cerr << line << std::endl;
+				Functs::MAssert(line);
+			}
+
+			if (Functs::SplitStr(line, "(").size() != 2 || Functs::SplitStr(line, ")").size() != 2 || Functs::StringContain(line, "const"))
+			{
+				file << "extern \"C\" PPGL_EXPORT " << line << std::endl;
+			}
+			else
+			{
+				auto str_0 = Functs::SplitStr(line, "(")[0];
+				auto str_1 = Functs::SplitStr(line, "(")[1];
+				auto str_2 = Functs::SplitStr(str_1, ")")[0];
+				auto str_3 = Functs::SplitStr(str_1, ")")[1];
+
+				//std::string path, Vector3d1 &ves, Vector3d1 &ners
+
+				str_2 = Functs::StringReplace(str_2, "&", "");
+				str_2 = Functs::StringReplace(str_2, ",   ", ",");
+				str_2 = Functs::StringReplace(str_2, ",  ", ",");
+				str_2 = Functs::StringReplace(str_2, ", ", ",");
+				
+				auto paras = Functs::SplitStr(str_2,",");
+				str_2 = "";
+				int ii = 0;
+				for (auto para : paras)
+				{
+					auto defs=Functs::SplitStr(para, " ");
+
+					if (defs.size() == 2)
+					{
+						if (ii == paras.size() - 1)
+							str_2 += "const " + defs[0] + "& " + defs[1];
+						else
+							str_2 += "const " + defs[0] + "& " + defs[1] + ", ";
+					}
+					else
+					{
+						if (defs.size() == 1)
+						{
+							if (ii == paras.size() - 1)
+								str_2 += "const " + defs[0] + "& ";
+							else
+								str_2 += "const " + defs[0] + "& " + ", ";
+						}
+						else
+						{
+							if (ii == paras.size() - 1)
+								str_2 += "const " + para;
+							else
+								str_2 += "const " + para + ", ";
+						}
+					}
+
+					ii++;
+				}
+
+				//str_2 = Functs::StringReplace(str_2, ",", ", const");
+
+				auto str = str_0 + "(" + str_2 + ")" + str_3;
+				//const
+				//&
+				//line = Functs::StringReplace(line, "(", "(const ");
+				//line = Functs::StringReplace(line, ",", ", const");
+				file << "extern \"C\" PPGL_EXPORT " << str << std::endl;
+			}
 		}
 		i++;
 	}

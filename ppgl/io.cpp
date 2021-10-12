@@ -145,3 +145,182 @@ extern "C" PPGL_EXPORT void CGAL_Export_Path_Point
     }
     export_index += 8;
 }
+
+
+
+
+
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C1(const std::string & path, const Vector3d1 & vecs)
+{
+	if (vecs.size() < 3)
+	{
+		std::cout << "CGAL_Output_Obj error: vecs.size() < 3 " << std::endl;
+		return;
+	}
+
+	std::ofstream file(path);
+	for (int i = 0; i < vecs.size(); i++)
+	{
+		file << "v " << vecs[i][0] << " " << vecs[i][1] << " " << vecs[i][2] << std::endl;
+	}
+
+	file.close();
+}
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C2(const std::string & path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
+{
+
+	if (vecs.size() < 3 || face_id_0.size() < 1 || face_id_1.size() < 1 || face_id_2.size() < 1)
+	{
+		std::cout << "CGAL_Output_Obj error: vecs.size() < 3 || face_id_0.size() < 1 || face_id_1.size() < 1 || face_id_2.size() < 1" << std::endl;
+		return;
+	}
+
+	for (int i = 0; i < face_id_0.size(); i++)
+	{
+		int index_0 = face_id_0[i];
+		int index_1 = face_id_1[i];
+		int index_2 = face_id_2[i];
+
+		if (index_0 < 0 || index_0 >= vecs.size() || index_1 < 0 || index_1 >= vecs.size() || index_2 < 0 || index_2 >= vecs.size())
+		{
+			std::cout << "CGAL_Output_Obj error: index_0 < 0 || index_0 >= vecs.size() || index_1 < 0 || index_1 >= vecs.size() || index_2 < 0 || index_2 >= vecs.size()" << std::endl;
+			return;
+		}
+	}
+
+	std::ofstream file(path);
+	for (int i = 0; i < vecs.size(); i++)
+	{
+		Vector3d v = vecs[i];
+		//file << "v " << vecs[i][0] << " " << vecs[i][1] << " " << vecs[i][2] << std::endl;
+		file << "v " << v[0] << " " << v[1] << " " << v[2] << std::endl;
+	}
+
+	for (int i = 0; i < face_id_0.size(); i++)
+	{
+		int index_0 = face_id_0[i];
+		int index_1 = face_id_1[i];
+		int index_2 = face_id_2[i];
+
+		if (index_0 != index_1 && index_0 != index_2 && index_1 != index_2)
+			file << "f " << index_0 + 1 << " " << index_1 + 1 << " " << index_2 + 1 << std::endl;
+	}
+	file.close();
+}
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C3(const std::string & path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids)
+{
+	std::vector<int> face_id_0;
+	std::vector<int> face_id_1;
+	std::vector<int> face_id_2;
+
+	for (int i = 0; i < face_ids.size(); i++)
+	{
+		face_id_0.push_back(face_ids[i][0]);
+		face_id_1.push_back(face_ids[i][1]);
+		face_id_2.push_back(face_ids[i][2]);
+	}
+
+	CGAL_Output_Obj_C2(path, vecs, face_id_0, face_id_1, face_id_2);
+}
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C4(const std::string & path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<int>&triangles_lables, const int& index)
+{
+	std::vector<int> face_id_0;
+	std::vector<int> face_id_1;
+	std::vector<int> face_id_2;
+
+	std::vector<int> lables(vecs.size(), -1);
+	for (int i = 0; i < face_ids.size(); i++)
+	{
+		face_id_0.push_back(face_ids[i][0]);
+		face_id_1.push_back(face_ids[i][1]);
+		face_id_2.push_back(face_ids[i][2]);
+		if (triangles_lables[i] == index)
+		{
+			lables[face_ids[i][0]] = 0;
+			lables[face_ids[i][1]] = 0;
+			lables[face_ids[i][2]] = 0;
+		}
+	}
+	Vector3d1 new_vecs;
+	std::vector<int> new_face_id_0;
+	std::vector<int> new_face_id_1;
+	std::vector<int> new_face_id_2;
+
+	int vertices_nb = 0;
+	for (int i = 0; i < vecs.size(); i++)
+	{
+		if (lables[i] == 0)
+		{
+			Vector3d v = vecs[i];
+			new_vecs.push_back(v);
+			lables[i] = vertices_nb;
+			vertices_nb++;
+		}
+	}
+
+	for (int i = 0; i < face_id_0.size(); i++)
+	{
+		if (triangles_lables[i] == index)
+		{
+			new_face_id_0.push_back(lables[face_id_0[i]]);
+			new_face_id_1.push_back(lables[face_id_1[i]]);
+			new_face_id_2.push_back(lables[face_id_2[i]]);
+		}
+	}
+
+	CGAL_Output_Obj_C2(path, new_vecs, new_face_id_0, new_face_id_1, new_face_id_2);
+}
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C5(const std::string & path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
+{
+
+	if (vecs.size() < 3 || colors.size() < 3 || face_id_0.size() < 1 || face_id_1.size() < 1 || face_id_2.size() < 1)
+	{
+		std::cout << "CGAL_Output_Obj error: vecs.size() < 3 || face_id_0.size() < 1 || face_id_1.size() < 1 || face_id_2.size() < 1" << std::endl;
+		return;
+	}
+
+	for (int i = 0; i < face_id_0.size(); i++)
+	{
+		int index_0 = face_id_0[i];
+		int index_1 = face_id_1[i];
+		int index_2 = face_id_2[i];
+
+		if (index_0 < 0 || index_0 >= vecs.size() || index_1 < 0 || index_1 >= vecs.size() || index_2 < 0 || index_2 >= vecs.size())
+		{
+			std::cout << "CGAL_Output_Obj error: index_0 < 0 || index_0 >= vecs.size() || index_1 < 0 || index_1 >= vecs.size() || index_2 < 0 || index_2 >= vecs.size()" << std::endl;
+			return;
+		}
+	}
+
+	std::ofstream file(path);
+	for (int i = 0; i < vecs.size(); i++)
+	{
+		file << "v " << vecs[i][0] << " " << vecs[i][1] << " " << vecs[i][2] << " " << colors[i][0] << " " << colors[i][1] << " " << colors[i][2] << std::endl;
+	}
+
+	for (int i = 0; i < face_id_0.size(); i++)
+	{
+		int index_0 = face_id_0[i];
+		int index_1 = face_id_1[i];
+		int index_2 = face_id_2[i];
+
+		if (index_0 != index_1 && index_0 != index_2 && index_1 != index_2)
+			file << "f " << index_0 + 1 << " " << index_1 + 1 << " " << index_2 + 1 << std::endl;
+	}
+	file.close();
+}
+
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C6(const std::string & path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<std::vector<int>>&face_ids)
+{
+	std::vector<int> face_id_0;
+	std::vector<int> face_id_1;
+	std::vector<int> face_id_2;
+
+	for (int i = 0; i < face_ids.size(); i++)
+	{
+		face_id_0.push_back(face_ids[i][0]);
+		face_id_1.push_back(face_ids[i][1]);
+		face_id_2.push_back(face_ids[i][2]);
+	}
+	CGAL_Output_Obj_C5(path, vecs, colors, face_id_0, face_id_1, face_id_2);
+}

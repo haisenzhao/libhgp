@@ -325,3 +325,114 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const std::string& path, 
     }
 }
 
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Line(const Vector3d & p, const Vector3d & l_s, const Vector3d & l_e)
+{
+	return sqrt((double)CGAL::squared_distance(VectorPoint3d(p), Line_3(VectorPoint3d(l_s), VectorPoint3d(l_e))));
+}
+
+extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Line(const Vector3d & p, const Vector3d & l_s, const Vector3d & l_e)
+{
+	Line_3 l(VectorPoint3d(l_s), VectorPoint3d(l_e));
+	Point_3 o_p = l.projection(VectorPoint3d(p));
+	return PointVector3d(o_p);
+}
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Segment_Segment(const Vector3d & s_0_s, const Vector3d & s_0_e, const Vector3d & s_1_s, const Vector3d & s_1_e)
+{
+	return sqrt((double)CGAL::squared_distance(Segment_3(VectorPoint3d(s_0_s), VectorPoint3d(s_0_e)), Segment_3(VectorPoint3d(s_1_s), VectorPoint3d(s_1_e))));
+}
+
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Plane(const Vector3d & v, const Vector3d & plane_p, const Vector3d & plane_n)
+{
+	return sqrt((double)CGAL::squared_distance(VectorPoint3d(v), Plane_3(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]))));
+}
+
+
+
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Segment_Line(const Vector3d & s_s, const Vector3d & s_e, const Vector3d & l_s, const Vector3d & l_e, Vector3d & inter)
+{
+	double d = CGAL_3D_Distance_Point_Point(s_s, s_e);
+
+	if (!Functs::IsAlmostZero(d))
+	{
+		CGAL::Object result = CGAL::intersection(Segment_3(VectorPoint3d(s_s), VectorPoint3d(s_e)),
+			Line_3(VectorPoint3d(l_s), VectorPoint3d(l_e)));
+
+		if (const Point_3* ipoint = CGAL::object_cast<Point_3>(&result))
+		{
+			inter[0] = ipoint->x();
+			inter[1] = ipoint->y();
+			inter[2] = ipoint->z();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Segment_Segment(const Vector3d & s_0_s, const Vector3d & s_0_e, const Vector3d & s_1_s, const Vector3d & s_1_e, Vector3d & iter)
+{
+	double d0 = CGAL_3D_Distance_Point_Point(s_0_s, s_0_e);
+	double d1 = CGAL_3D_Distance_Point_Point(s_1_s, s_1_e);
+
+	if (!Functs::IsAlmostZero(d0) && !Functs::IsAlmostZero(d1))
+	{
+		CGAL::Object result = CGAL::intersection(Segment_3(VectorPoint3d(s_0_s), VectorPoint3d(s_0_e)),
+			Segment_3(VectorPoint3d(s_1_s), VectorPoint3d(s_1_e)));
+
+		if (const Point_3* ipoint = CGAL::object_cast<Point_3>(&result))
+		{
+			iter = PointVector3d(*ipoint);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Segment_Plane(const Vector3d & s_s, const Vector3d & s_e, const Vector3d & plane_p, const Vector3d & plane_n, Vector3d & inter)
+{
+	Segment_3 s(VectorPoint3d(s_s), VectorPoint3d(s_e));
+	Plane_3 p(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
+	CGAL::Object result = CGAL::intersection(s, p);
+	if (const Point_3* ipoint = CGAL::object_cast<Point_3>(&result))
+	{
+		inter[0] = ipoint->x();
+		inter[1] = ipoint->y();
+		inter[2] = ipoint->z();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Line_Plane(const Vector3d & l_s, const Vector3d & l_e, const Vector3d & plane_p, const Vector3d & plane_n, Vector3d & inter)
+{
+	Line_3 s(VectorPoint3d(l_s), VectorPoint3d(l_e));
+	Plane_3 p(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
+
+	CGAL::Object result = CGAL::intersection(s, p);
+
+	if (const Point_3* ipoint = CGAL::object_cast<Point_3>(&result))
+	{
+		inter[0] = ipoint->x();
+		inter[1] = ipoint->y();
+		inter[2] = ipoint->z();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}

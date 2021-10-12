@@ -1,5 +1,7 @@
 #include "geom.h"
 #include "clipper/clipper.hpp"
+#include <Mathematics/Vector2.h>
+
 
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Point(const Vector2d& p_0, const Vector2d& p_1)
 {
@@ -527,6 +529,45 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Simple_Inter(const Vector2d1 & poly)
 		}
 	}
 	return true;
+}
+
+
+extern "C" PPGL_EXPORT void CGAL_2D_Convex_Hulls(const Vector2d1 & vec, Vector2d1 & hull_points)
+{
+	std::vector<Point_2> points;
+	std::vector<Point_2> results;
+
+	for (int i = 0; i < vec.size(); i++)
+		points.push_back(VectorPoint2d(vec[i]));
+
+	CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(results));
+	std::cout << results.size() << " points on the convex hull" << std::endl;
+
+	for (int i = 0; i < results.size(); i++)
+		hull_points.push_back(PointVector2d(results[i]));
+}
+
+extern "C" PPGL_EXPORT void CGAL_2D_OBB_Box(const Vector2d1 & vec, Vector2d & center, Vector2d & axis_0, Vector2d & axis_1, double& entent_0, double& entent_1)
+{
+	gte::Vector2<double>* points = new gte::Vector2<double>[vec.size()];
+
+	for (int i = 0; i < vec.size(); i++)
+	{
+		points[i][0] = vec[i][0];
+		points[i][1] = vec[i][1];
+	}
+
+    gte::IntrinsicsVector2<double> iv(vec.size(), points, static_cast<double>(0));
+
+    center[0] = iv.origin[0];
+	center[1] = iv.origin[1];
+	axis_0[0] = iv.direction[0][0];
+	axis_0[1] = iv.direction[0][1];
+	axis_1[0] = iv.direction[1][0];
+	axis_1[1] = iv.direction[1][1];
+
+	entent_0 = iv.max[0 ]- iv.min[0];
+	entent_1 = iv.max[1] - iv.min[1];
 }
 
 extern "C" PPGL_EXPORT void

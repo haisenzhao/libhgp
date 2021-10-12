@@ -26,7 +26,6 @@ ExternalProject_Add(
     LOG_DOWNLOAD ON
     )
 ExternalProject_Get_Property(pgl source_dir)
-
 set(PglIncludeDir ${source_dir})
 
 ExternalProject_Add(
@@ -39,7 +38,6 @@ ExternalProject_Add(
     LOG_DOWNLOAD ON
     )
 ExternalProject_Get_Property(glm source_dir)
-
 set(GlmIncludeDir ${source_dir})
 
 ExternalProject_Add(
@@ -54,6 +52,19 @@ ExternalProject_Add(
 ExternalProject_Get_Property(eigen source_dir)
 set(EigenIncludeDir ${source_dir})
 
+
+ExternalProject_Add(
+    gte
+    PREFIX ${CMAKE_BINARY_DIR}/gte
+    GIT_REPOSITORY https://github.com/davideberly/GeometricTools.git
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    LOG_DOWNLOAD ON
+    )
+ExternalProject_Get_Property(gte source_dir)
+set(GteIncludeDir ${source_dir}/GTE)
+
 add_library(${PROJECT_NAME} SHARED geom.h twoD.cpp threeD.cpp mesh.cpp clipper/clipper.cpp io.cpp cgal.h include_cgal.h)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -61,11 +72,12 @@ add_library(${PROJECT_NAME} SHARED geom.h twoD.cpp threeD.cpp mesh.cpp clipper/c
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME})
 add_library(sub::pglib ALIAS ${PROJECT_NAME})
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_BINARY_DIR} PRIVATE ${GlmIncludeDir} ${PglIncludeDir} ${EigenIncludeDir})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_BINARY_DIR} PRIVATE ${GlmIncludeDir} ${PglIncludeDir} ${EigenIncludeDir} ${GteIncludeDir})
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 add_dependencies(${PROJECT_NAME} glm)
 add_dependencies(${PROJECT_NAME} pgl)
 add_dependencies(${PROJECT_NAME} eigen)
+add_dependencies(${PROJECT_NAME} gte)
 
 #add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 #    COMMAND ${CMAKE_COMMAND} -E copy
