@@ -39,6 +39,15 @@ extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(const Vector2d& p, 
     return distance;
 }
 
+extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygons(const Vector2d & p, const Vector2d2 & pys)
+{
+	double distance = 1000000000000.0;
+	for (int i = 0; i < pys.size(); i++)
+		distance = std::min(distance, CGAL_2D_Distance_Point_Polygon(p, pys[i]));
+	return distance;
+}
+
+
 extern "C" PPGL_EXPORT bool CGAL_2D_Is_Point_OutCGALPolygon(const Vector2d &p, const Polygon_2 &py) {
     return py.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_UNBOUNDED_SIDE;
 }
@@ -494,6 +503,20 @@ extern "C" PPGL_EXPORT double CGAL_Get_Angle_Kerf_Offset_Tan(const Vector2d &a, 
     auto na = normalize(a);
     auto nb = normalize(b);
     return glm::tan(glm::acos(glm::abs(dot(na, nb))));
+}
+
+extern "C" PPGL_EXPORT Vector2d CGAL_2D_Projection_Point_Segment(const Vector2d & p, const Vector2d & s, const Vector2d & e)
+{
+	Line_2 l(VectorPoint2d(s), VectorPoint2d(e));
+	Point_2 m_p = l.projection(VectorPoint2d(p));
+
+	double d_m_s = CGAL_2D_Distance_Point_Point(Vector2d(m_p[0], m_p[1]), s);
+	double d_m_e = CGAL_2D_Distance_Point_Point(Vector2d(m_p[0], m_p[1]), e);
+	double d_s_e = CGAL_2D_Distance_Point_Point(s,e);
+
+	if (d_m_s >= d_s_e) return e;
+	if (d_m_e >= d_s_e) return s;
+    return PointVector2d(m_p);
 }
 
 // This one is used to intersect a polygon with a line

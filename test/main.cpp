@@ -28,7 +28,8 @@ int main(int argc, char* argv[])
 	std::string cube_file = "1_cube.obj";
 	std::string micro_file = "1_micro.obj";
 	Vector3d1 sampling_points;
-	CGAL_3D_Mesh_Dart_Sampling_C2(root + "\\" + cube_file, root + "\\" + micro_file, 10, sampling_points, 10);
+	
+	(root + "\\" + cube_file, root + "\\" + micro_file, 10, sampling_points, 10);
 	Functs::CerrLine("Total sampling_points: " + std::to_string(sampling_points.size()), 2);
 
 #endif
