@@ -16,6 +16,8 @@ typedef  void (*CGAL_Output_Obj_C3)(const std::string & path, const Vector3d1 & 
 typedef  void (*CGAL_Output_Obj_C4)(const std::string & path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<int>&triangles_lables, const int& index);
 typedef  void (*CGAL_Output_Obj_C5)(const std::string & path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
 typedef  void (*CGAL_Output_Obj_C6)(const std::string & path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<std::vector<int>>&face_ids);
+typedef  void (*CGAL_Output_Off)(const std::string & path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
+typedef  void (*CGAL_Load_Obj)(const std::string & path, std::vector<double>&coords, std::vector<int>&tris);
 //implementation in "twoD.cpp"
 //####################################################################################
 typedef  double (*CGAL_2D_Distance_Point_Point)(const Vector2d & p_0, const Vector2d& p_1);
@@ -161,6 +163,8 @@ class PL
 		CGAL_Output_Obj_C4_C = (CGAL_Output_Obj_C4)GetProcAddress(hModule, "CGAL_Output_Obj_C4");
 		CGAL_Output_Obj_C5_C = (CGAL_Output_Obj_C5)GetProcAddress(hModule, "CGAL_Output_Obj_C5");
 		CGAL_Output_Obj_C6_C = (CGAL_Output_Obj_C6)GetProcAddress(hModule, "CGAL_Output_Obj_C6");
+		CGAL_Output_Off_C = (CGAL_Output_Off)GetProcAddress(hModule, "CGAL_Output_Off");
+		CGAL_Load_Obj_C = (CGAL_Load_Obj)GetProcAddress(hModule, "CGAL_Load_Obj");
 		//implementation in "twoD.cpp"
 		//####################################################################################
 		CGAL_2D_Distance_Point_Point_C = (CGAL_2D_Distance_Point_Point)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Point");
@@ -307,6 +311,8 @@ class PL
 	CGAL_Output_Obj_C4 CGAL_Output_Obj_C4_C;
 	CGAL_Output_Obj_C5 CGAL_Output_Obj_C5_C;
 	CGAL_Output_Obj_C6 CGAL_Output_Obj_C6_C;
+	CGAL_Output_Off CGAL_Output_Off_C;
+	CGAL_Load_Obj CGAL_Load_Obj_C;
 	//implementation in "twoD.cpp"
 	//####################################################################################
 	CGAL_2D_Distance_Point_Point CGAL_2D_Distance_Point_Point_C;
