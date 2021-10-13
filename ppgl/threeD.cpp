@@ -1,24 +1,56 @@
 #include "geom.h"
 
-Point_3 point_to_3d(const Point_2 &p, Plane_3 &pl) {
-    Vector_3 basis[2];
-    auto pop = pl.point();
-    const Vector_3 vpop(pop.x(), pop.y(), pop.z());
-    basis[0] = pl.base1() / CGAL::sqrt(pl.base1().squared_length());
-    basis[1] = pl.base2() / CGAL::sqrt(pl.base2().squared_length());
-    Vector_3 nr(pl.a(), pl.b(), pl.c());
-    const Point_3 vi = pop + (p.x() * basis[0] + p.y() * basis[1]);
-    return vi;
+
+
+
+Point_3 point_to_3d(const Point_2& p, Plane_3& pl) 
+{
+	Vector_3 basis[2];
+	auto pop = pl.point();
+	const Vector_3 vpop(pop.x(), pop.y(), pop.z());
+	basis[0] = pl.base1() / CGAL::sqrt(pl.base1().squared_length());
+	basis[1] = pl.base2() / CGAL::sqrt(pl.base2().squared_length());
+	Vector_3 nr(pl.a(), pl.b(), pl.c());
+	const Point_3 vi = pop + (p.x() * basis[0] + p.y() * basis[1]);
+	return vi;
 }
 
-Point_2 point_to_2d(const Point_3 &p, Plane_3 &pl) {
-    Vector_3 basis[2];
-    auto pop = pl.point();
-    const Vector_3 vpop(pop.x(), pop.y(), pop.z());
-    basis[0] = pl.base1() / CGAL::sqrt(pl.base1().squared_length());
-    basis[1] = pl.base2() / CGAL::sqrt(pl.base2().squared_length());
-    const Vector_3 ter(pop, p);
-    return Point_2(ter * basis[0], ter * basis[1]);
+Point_2 point_to_2d(const Point_3& p, Plane_3& pl) 
+{
+	Vector_3 basis[2];
+	auto pop = pl.point();
+	const Vector_3 vpop(pop.x(), pop.y(), pop.z());
+	basis[0] = pl.base1() / CGAL::sqrt(pl.base1().squared_length());
+	basis[1] = pl.base2() / CGAL::sqrt(pl.base2().squared_length());
+	const Vector_3 ter(pop, p);
+	return Point_2(ter * basis[0], ter * basis[1]);
+}
+
+
+Poly_point_3 Minus(Poly_point_3 a, Poly_point_3 b)
+{
+	return Poly_point_3(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+}
+float Dot(Poly_point_3 a, Poly_point_3 b)
+{
+	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+// Compute barycentric coordinates (u, v, w) for
+// point p with respect to triangle (a, b, c)
+void Barycentric(Poly_point_3 p, Poly_point_3 a, Poly_point_3 b, Poly_point_3 c, double& u, double& v, double& w)
+{
+	Poly_point_3 v0 = Minus(b, a), v1 = Minus(c, a), v2 = Minus(p, a);
+
+	double d00 = Dot(v0, v0);
+	double d01 = Dot(v0, v1);
+	double d11 = Dot(v1, v1);
+	double d20 = Dot(v2, v0);
+	double d21 = Dot(v2, v1);
+	double denom = d00 * d11 - d01 * d01;
+	v = (d11 * d20 - d01 * d21) / denom;
+	w = (d00 * d21 - d01 * d20) / denom;
+	u = 1.0f - v - w;
 }
 
 extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment(const Vector3d& p, const Vector3d & s_s, const Vector3d & s_e) {
@@ -198,8 +230,7 @@ mark_domains(CDT& cdt)
 	}
 }
 
-extern "C" PPGL_EXPORT
-void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys, Vector1i2 &faces)
+extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Triangulation_C1(const Vector2d2 &polys, Vector1i2 &faces)
 {
 	int nb = 0;
 	CDT cdt;
@@ -223,6 +254,42 @@ void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys, Vector1i2 &faces)
 		fit != cdt.finite_faces_end(); ++fit)
 	if (fit->info().in_domain())
 		faces.emplace_back(std::vector<int>{fit->vertex(2)->index, fit->vertex(1)->index, fit->vertex(0)->index});
+}
+
+extern "C" PPGL_EXPORT std::vector<std::vector<int>> CGAL_2D_Polygon_Triangulation_C2(const Vector2d2 & polys)
+{
+	int nb = 0;
+	CDT cdt;
+	for (int i = 0; i < polys.size(); i++)
+	{
+		Polygon_2 polygon;
+		std::vector<int> indexInt;
+		for (int j = 0; j < polys[i].size(); j++)
+		{
+			polygon.push_back(Point_2(polys[i][j][0], polys[i][j][1]));
+			indexInt.emplace_back(j + nb);
+		}
+		nb += polys[i].size();
+		insert_polygon(cdt, polygon, indexInt);
+	}
+
+	//Mark facets that are inside the domain bounded by the polygon
+	mark_domains(cdt);
+
+	std::vector<std::vector<int>> faces;
+	for (CDT::Finite_faces_iterator fit = cdt.finite_faces_begin();
+		fit != cdt.finite_faces_end(); ++fit)
+		if (fit->info().in_domain())
+			faces.emplace_back(std::vector<int>{fit->vertex(2)->index, fit->vertex(1)->index, fit->vertex(0)->index});
+
+	return faces;
+}
+
+
+extern "C" PPGL_EXPORT std::vector<std::vector<int>> CGAL_2D_Polygon_Triangulation_C3(const Vector2d1 & poly)
+{
+	Vector2d2 polys(1, poly);
+	return CGAL_2D_Polygon_Triangulation_C2(polys);
 }
 
 
@@ -428,4 +495,67 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Line_Plane(const Vector3d & l_s
 	{
 		return false;
 	}
+}
+
+
+extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Plane_C1(const Vector3d & p, const Vector3d & plane_p, const Vector3d & plane_n)
+{
+	Plane_3 plane(Point_3(plane_p[0], plane_p[1], plane_p[2]), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
+	Point_3 project = plane.projection(Point_3(p[0], p[1], p[1]));
+	Vector3d result(project[0], project[1], project[2]);
+	return result;
+}
+extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Plane_C2(const Vector3d & p, const Vector3d & plane_p_0, const Vector3d & plane_p_1, const Vector3d & plane_p_2)
+{
+	Point_3 p0 = VectorPoint3d(plane_p_0);
+	Point_3 p1 = VectorPoint3d(plane_p_1);
+	Point_3 p2 = VectorPoint3d(plane_p_2);
+
+	Plane_3 plane(p1, CGAL::cross_product(p2 - p1, p0 - p1));
+	Point_3 project = plane.projection(VectorPoint3d(p));
+	Vector3d result(project[0], project[1], project[2]);
+	return result;
+
+}
+extern "C" PPGL_EXPORT Vector2d CGAL_3D_Projection_3D_Point_Plane_2D_C1(const Vector3d & p, const Vector3d & plane_p, const Vector3d & plane_n)
+{
+	Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
+	Point_2 r = point_to_2d(VectorPoint3d(p), plane);
+	return Vector2d(r[0], r[1]);
+}
+extern "C" PPGL_EXPORT Vector2d CGAL_3D_Projection_3D_Point_Plane_2D_C2(const Vector3d & p, const Vector3d & plane_p_0, const Vector3d & plane_p_1, const Vector3d & plane_p_2)
+{
+	Point_3 p0 = VectorPoint3d(plane_p_0);
+	Point_3 p1 = VectorPoint3d(plane_p_1);
+	Point_3 p2 = VectorPoint3d(plane_p_2);
+
+	Plane_3 plane(p1, CGAL::cross_product(p2 - p1, p0 - p1));
+	Point_2 r = point_to_2d(VectorPoint3d(p), plane);
+	return Vector2d(r[0], r[1]);
+}
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_ABCD(const Vector3d & plane_p, const Vector3d & plane_n, double& a, double& b, double& c, double& d)
+{
+	Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
+	a = plane.a();
+	b = plane.b();
+	c = plane.c();
+	d = plane.d();
+}
+extern "C" PPGL_EXPORT Vector3d CGAL_3D_Plane_Base_1(const Vector3d & plane_p, const Vector3d & plane_n)
+{
+	Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
+	Vector_3 v = plane.base1();
+	return Vector3d(v[0], v[1], v[2]);
+}
+
+extern "C" PPGL_EXPORT Vector3d CGAL_Face_Normal(const Vector3d & source, const Vector3d & tri_0, const Vector3d & tri_1, const Vector3d & tri_2, Vector3d & normal_0, Vector3d & normal_1, Vector3d & normal_2)
+{
+	double u, v, w;
+	CGAL_Barycentric(source, tri_0, tri_1, tri_2, u, v, w);
+	return (double)u * normal_0 + (double)v * normal_1 + (double)w * normal_2;
+}
+
+extern "C" PPGL_EXPORT void CGAL_Barycentric(const Vector3d & p, const Vector3d & a, const Vector3d & b, const Vector3d & c, double& u, double& v, double& w)
+{
+	Barycentric(Poly_point_3(p[0], p[1], p[2]), Poly_point_3(a[0], a[1], a[2]), Poly_point_3(b[0], b[1], b[2]), Poly_point_3(c[0], c[1], c[2]), u, v, w);
 }

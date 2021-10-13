@@ -4,6 +4,14 @@
 #include <pgl_functs.hpp>
 using namespace std;
 using namespace PGL;
+// Compute barycentric coordinates (u, v, w) for
+// point p with respect to triangle (a, b, c)
+//Project p onto the planar surface of 3d triangle
+//Checking the position relationship between the p and 3d triangle
+//face: 3d triangle
+//p: 3d point
+//return true: inside
+//return false: outside
 typedef  void (*CGAL_Test_PGL)(const Vector3d& n);
 //implementation in "io.cpp"
 //####################################################################################
@@ -66,6 +74,10 @@ typedef  bool (*CGAL_2D_Polygon_Simple)(const Vector2d1 & poly);
 typedef  bool (*CGAL_2D_Polygon_Simple_Inter)(const Vector2d1& poly);
 typedef  void (*CGAL_2D_Convex_Hulls)(const Vector2d1 & vec, Vector2d1 & hull_points);
 typedef  void (*CGAL_2D_OBB_Box)(const Vector2d1 & vec, Vector2d & center, Vector2d & axis_0, Vector2d & axis_1, double& entent_0, double& entent_1);
+typedef  void (*CGAL_Image_Grid_Decomposition_C1)(std::vector<std::vector<int>>&image, std::vector<std::vector<double>>&boundary_xs, std::vector<std::vector<double>>&boundary_ys);
+typedef  void (*CGAL_Image_Grid_Decomposition_Conservative_C1)(std::vector<std::vector<int>>&image, std::vector<std::vector<double>>&boundary_xs, std::vector<std::vector<double>>&boundary_ys);
+typedef  void (*CGAL_Image_Grid_Decomposition_C2)(std::vector<std::vector<int>>&image, Vector2d2 & boundaries);
+typedef  void (*CGAL_Image_Grid_Decomposition_Conservative_C2)(std::vector<std::vector<int>>&image, Vector2d2 & boundaries);
 //implementation in "threeD.cpp"
 //####################################################################################
 typedef  double (*CGAL_3D_Distance_Point_Segment)(const Vector3d & p, const Vector3d & s_s, const Vector3d & s_e);
@@ -79,7 +91,9 @@ typedef  void (*CGAL_3D_Plane_2D_to_3D_Points)(const Vector3d & plane_p, const V
 typedef  Vector3d (*CGAL_3D_Projection_Point_Segment)(const Vector3d & p, const Vector3d & s_s, const Vector3d & s_e);
 typedef  double (*CGAL_3D_Distance_Point_Point)(const Vector3d & v0, const Vector3d & v1);
 typedef  double (*CGAL_3D_Distance_Point_Polygon)(const Vector3d1 &py, const Vector3d &p);
-typedef  void (*CGAL_2D_Polygon_Triangulation)(const Vector2d2 &polys, Vector1i2 &faces);
+typedef  void (*CGAL_2D_Polygon_Triangulation_C1)(const Vector2d2 &polys, Vector1i2 &faces);
+typedef  std::vector<std::vector<int>> (*CGAL_2D_Polygon_Triangulation_C2)(const Vector2d2& polys);
+typedef  std::vector<std::vector<int>> (*CGAL_2D_Polygon_Triangulation_C3)(const Vector2d1& poly);
 typedef  double (*CGAL_3D_Distance_Point_Line)(const Vector3d & p, const Vector3d & l_s, const Vector3d & l_e);
 typedef  Vector3d (*CGAL_3D_Projection_Point_Line)(const Vector3d & p, const Vector3d & l_s, const Vector3d & l_e);
 typedef  double (*CGAL_3D_Distance_Segment_Segment)(const Vector3d & s_0_s, const Vector3d & s_0_e, const Vector3d & s_1_s, const Vector3d & s_1_e);
@@ -88,6 +102,14 @@ typedef  bool (*CGAL_3D_Intersection_Segment_Line)(const Vector3d & s_s, const V
 typedef  bool (*CGAL_3D_Intersection_Segment_Segment)(const Vector3d & s_0_s, const Vector3d & s_0_e, const Vector3d & s_1_s, const Vector3d & s_1_e, Vector3d & iter);
 typedef  bool (*CGAL_3D_Intersection_Segment_Plane)(const Vector3d & s_s, const Vector3d & s_e, const Vector3d & plane_p, const Vector3d & plane_n, Vector3d & inter);
 typedef  bool (*CGAL_3D_Intersection_Line_Plane)(const Vector3d & l_s, const Vector3d & l_e, const Vector3d & plane_p, const Vector3d & plane_n, Vector3d & inter);
+typedef  Vector3d (*CGAL_3D_Projection_Point_Plane_C1)(const Vector3d & p, const Vector3d & plane_p, const Vector3d & plane_n);
+typedef  Vector3d (*CGAL_3D_Projection_Point_Plane_C2)(const Vector3d & p, const Vector3d & plane_p_0, const Vector3d & plane_p_1, const Vector3d & plane_p_2);
+typedef  Vector2d (*CGAL_3D_Projection_3D_Point_Plane_2D_C1)(const Vector3d & p, const Vector3d & plane_p, const Vector3d & plane_n);
+typedef  Vector2d (*CGAL_3D_Projection_3D_Point_Plane_2D_C2)(const Vector3d & p, const Vector3d & plane_p_0, const Vector3d & plane_p_1, const Vector3d & plane_p_2);
+typedef  void (*CGAL_3D_Plane_ABCD)(const Vector3d & plane_p, const Vector3d & plane_n, double& a, double& b, double& c, double& d);
+typedef  Vector3d (*CGAL_3D_Plane_Base_1)(const Vector3d & plane_p, const Vector3d & plane_n);
+typedef  Vector3d (*CGAL_Face_Normal)(const Vector3d & source, const Vector3d & tri_0, const Vector3d & tri_1, const Vector3d & tri_2, Vector3d & normal_0, Vector3d & normal_1, Vector3d & normal_2);
+typedef  void (*CGAL_Barycentric)(const Vector3d& p, const Vector3d & a, const Vector3d & b, const Vector3d & c, double& u, double& v, double& w);
 //implementation in "mesh.cpp"
 //####################################################################################
 typedef  void (*CGAL_Remesh_Surface_by_Adding_Feature)(const Vector3d1 &feature,const Vector1i1 &face_ids, const Vector3d1 &vecs, const Vector1i1 &face_id_0,const Vector1i1 &face_id_1,const Vector1i1 &face_id_2, Vector1i1 &igl_cutting_0_edges,Vector1i1 &igl_cutting_1_edges, Vector3d1 &igl_cutting_points,Vector1i2 &cutting_faces);
@@ -142,7 +164,43 @@ typedef  void (*CGAL_3D_Triangle_Mesh_Vecs_Faces)(Vector3d1 & vecs, std::vector<
 typedef  void (*CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2,std::vector<std::vector<std::vector<int>>>&surface_vectices_to_neighbor_edges);
 typedef  void (*CGAL_Mesh_Laplace_Smooth_by_Curvature)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, double& low_curvature);
 typedef  void (*CGAL_Mesh_Loop_Subdivision_Own_Version)(const std::string & in_path, const int& step, const std::string & out_path, const int& laplace_nb = 0);
+typedef  void (*CGAL_Rotation_Obj)(const std::string & path, const double& angle, const Vector3d & axis);
+typedef  void (*CGAL_Slicer_Mesh)(const std::string & path, const Vector3d & plane_normal, const std::vector<double> & plane_d, Vector3d3 & offsetses, Vector3d2 & offsets);
+typedef  void (*CGAL_Shortest_Geodesic_Path_C1)(const std::string & path, Vector3d1 & xyzs);
+typedef  void (*CGAL_Shortest_Geodesic_Path_C2)(Polyhedron_3 & polyhedron, const Tree & tree, Vector3d & source, Vector3d & target, Vector3d1 & xyzs);
+typedef  void (*CGAL_Shortest_Geodesic_Path_C3)(std::string path, Vector3d source, Vector3d target, Vector3d1 & output);
+typedef  void (*CGAL_Shortest_Geodesic_Path_C4)(std::string path, Vector3d1 sources, Vector3d1 targets, Vector3d2 & xyzes);
+typedef  double (*CGAL_Geodesic_Distance)(const std::string & path, const Vector3d & source, const Vector3d & target);
+typedef  Vector3d1 (*CGAL_Project_Points_Onto_Surface_C1)(const Vector3d1 & vecs, const std::vector<int> &face_id_0, const std::vector<int> &face_id_1, const std::vector<int> &face_id_2, const Vector3d1 & points);
+typedef  Vector3d1 (*CGAL_Project_Points_Onto_Surface_C2)(const std::string & path, const Vector3d1 & points);
+typedef  void (*CGAL_3D_Triangel_Mesh_Most_Inside_Point)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, Vector3d & inside);
+typedef  double (*CGAL_3D_One_Triangle_Area)(const Vector3d & v0, const Vector3d & v1, const Vector3d & v2);
+typedef  double (*CGAL_3D_Triangle_Mesh_Area)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
+typedef  void (*CGAL_3D_Convex_Hulls_C1)(const Vector3d1 & vec, Vector3d1 & hull_points);
+typedef  void (*CGAL_3D_Convex_Hulls_C2)(const Vector3d1 & vec, Vector3d1 & hull_points, std::vector<int>&hulls_surface_0, std::vector<int>&hulls_surface_1, std::vector<int>&hulls_surface_2);
+typedef  void (*CGAL_3D_Convex_Hulls_C3)(const Vector3d1 & vec, Vector3d1 & hull_points, Vector3d1 & plane_p, Vector3d1 & plane_n);
+typedef  void (*CGAL_3D_Convex_Hulls_C4)(const Vector3d1 & vec, Vector3d1 & hull_points, std::vector<int>&hulls_surface_0, std::vector<int>&hulls_surface_1, std::vector<int>&hulls_surface_2, Vector3d1 & plane_p, Vector3d1 & plane_n);
+typedef  void (*CGAL_Mesh_Field_Query_C1)(const std::string & path, const Vector3d1 & gradients, const Vector3d1 & input_points, Vector3d1 & points_gradients);
+typedef  void (*CGAL_Mesh_Field_Query_C2)(const std::string & path, const std::vector<double>&gradient_values, const Vector3d1 & input_points, std::vector<double>&points_gradient_values);
+typedef  void (*CGAL_Mesh_Field_Query_C3)(const std::string & path, const std::vector<double>&gradient_values, const Vector3d2 & input_point_es, std::vector<std::vector<double>>&points_gradient_value_es);
+typedef  void (*CGAL_Curvature_Mesh)(const std::string & path, const Vector3d1 & input_points, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions);
+typedef  void (*CGAL_Normal_Mesh_C1)(const std::string & path, const Vector3d1 & mesh_points, Vector3d1 & mesh_normals);
+typedef  void (*CGAL_Normal_Mesh_C2)(const std::string & path, const Vector3d2 & mesh_pointses, Vector3d2 & mesh_normalses);
+typedef  void (*CGAL_3D_Mesh_Normal_C1)(const Vector3d1 & ps, const std::vector<std::vector<int>>&face_ids, Vector3d1 & normals);
+typedef  void (*CGAL_3D_Mesh_Normal_C2)(const Vector3d1 & ps, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, Vector3d1 & normals);
+typedef  Vector3d (*CGAL_3D_Mesh_Center_C1)(const Vector3d2 & ps);
+typedef  Vector3d (*CGAL_3D_Mesh_Center_C2)(const Vector3d1 & ps);
+typedef  void (*CGAL_3D_Mesh_Boundingbox_C1)(const Vector3d2 & ps, Vector3d & min_corner, Vector3d & max_corner);
+typedef  void (*CGAL_3D_Mesh_Boundingbox_C2)(const Vector3d1 & ps, Vector3d & min_corner, Vector3d & max_corner);
+typedef  void (*CGAL_Surface_Decomposition)(const std::string & path, std::vector<double>&face_sdf, int& regions_nb, std::vector<int>&face_segments);
 /////////////////////////////////////////////////////////////
+//
+typedef  void (*CGAL_3D_Mesh_Gradient)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&psd, Vector3d1 & vecs_gradients, Vector3d1 & faces_gradients);
+typedef  void (*CGAL_Intergral_Curvature)(const Vector2d1 & input_points, const int& sampling_points_nb, const double& radius, const double& thresholder, Vector2d1 & output_points, std::vector<double>&output_rates);
+typedef  bool (*CGAL_3D_Mesh_Extract_Isoline)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&psd, const double& d, Vector3d2 & isolines);
+typedef  void (*CGAL_BSplineCurveFit)(const Vector3d1 & samples,  Vector3d1 & output);
+typedef  void (*CGAL_Cut_Surface)(const Vector3d1 & boundary, const Vector3d & inside_point, const std::string & full_path,  std::string & output_path);
+typedef  void (*CGAL_Cut_Surface_by_Multi_Boundaries)(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const std::string & full_path,  std::string & output_path);
 
 
 class PL
@@ -213,6 +271,10 @@ class PL
 		CGAL_2D_Polygon_Simple_Inter_C = (CGAL_2D_Polygon_Simple_Inter)GetProcAddress(hModule, "CGAL_2D_Polygon_Simple_Inter");
 		CGAL_2D_Convex_Hulls_C = (CGAL_2D_Convex_Hulls)GetProcAddress(hModule, "CGAL_2D_Convex_Hulls");
 		CGAL_2D_OBB_Box_C = (CGAL_2D_OBB_Box)GetProcAddress(hModule, "CGAL_2D_OBB_Box");
+		CGAL_Image_Grid_Decomposition_C1_C = (CGAL_Image_Grid_Decomposition_C1)GetProcAddress(hModule, "CGAL_Image_Grid_Decomposition_C1");
+		CGAL_Image_Grid_Decomposition_Conservative_C1_C = (CGAL_Image_Grid_Decomposition_Conservative_C1)GetProcAddress(hModule, "CGAL_Image_Grid_Decomposition_Conservative_C1");
+		CGAL_Image_Grid_Decomposition_C2_C = (CGAL_Image_Grid_Decomposition_C2)GetProcAddress(hModule, "CGAL_Image_Grid_Decomposition_C2");
+		CGAL_Image_Grid_Decomposition_Conservative_C2_C = (CGAL_Image_Grid_Decomposition_Conservative_C2)GetProcAddress(hModule, "CGAL_Image_Grid_Decomposition_Conservative_C2");
 		//implementation in "threeD.cpp"
 		//####################################################################################
 		CGAL_3D_Distance_Point_Segment_C = (CGAL_3D_Distance_Point_Segment)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Segment");
@@ -226,7 +288,9 @@ class PL
 		CGAL_3D_Projection_Point_Segment_C = (CGAL_3D_Projection_Point_Segment)GetProcAddress(hModule, "CGAL_3D_Projection_Point_Segment");
 		CGAL_3D_Distance_Point_Point_C = (CGAL_3D_Distance_Point_Point)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Point");
 		CGAL_3D_Distance_Point_Polygon_C = (CGAL_3D_Distance_Point_Polygon)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Polygon");
-		CGAL_2D_Polygon_Triangulation_C = (CGAL_2D_Polygon_Triangulation)GetProcAddress(hModule, "CGAL_2D_Polygon_Triangulation");
+		CGAL_2D_Polygon_Triangulation_C1_C = (CGAL_2D_Polygon_Triangulation_C1)GetProcAddress(hModule, "CGAL_2D_Polygon_Triangulation_C1");
+		CGAL_2D_Polygon_Triangulation_C2_C = (CGAL_2D_Polygon_Triangulation_C2)GetProcAddress(hModule, "CGAL_2D_Polygon_Triangulation_C2");
+		CGAL_2D_Polygon_Triangulation_C3_C = (CGAL_2D_Polygon_Triangulation_C3)GetProcAddress(hModule, "CGAL_2D_Polygon_Triangulation_C3");
 		CGAL_3D_Distance_Point_Line_C = (CGAL_3D_Distance_Point_Line)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Line");
 		CGAL_3D_Projection_Point_Line_C = (CGAL_3D_Projection_Point_Line)GetProcAddress(hModule, "CGAL_3D_Projection_Point_Line");
 		CGAL_3D_Distance_Segment_Segment_C = (CGAL_3D_Distance_Segment_Segment)GetProcAddress(hModule, "CGAL_3D_Distance_Segment_Segment");
@@ -235,6 +299,14 @@ class PL
 		CGAL_3D_Intersection_Segment_Segment_C = (CGAL_3D_Intersection_Segment_Segment)GetProcAddress(hModule, "CGAL_3D_Intersection_Segment_Segment");
 		CGAL_3D_Intersection_Segment_Plane_C = (CGAL_3D_Intersection_Segment_Plane)GetProcAddress(hModule, "CGAL_3D_Intersection_Segment_Plane");
 		CGAL_3D_Intersection_Line_Plane_C = (CGAL_3D_Intersection_Line_Plane)GetProcAddress(hModule, "CGAL_3D_Intersection_Line_Plane");
+		CGAL_3D_Projection_Point_Plane_C1_C = (CGAL_3D_Projection_Point_Plane_C1)GetProcAddress(hModule, "CGAL_3D_Projection_Point_Plane_C1");
+		CGAL_3D_Projection_Point_Plane_C2_C = (CGAL_3D_Projection_Point_Plane_C2)GetProcAddress(hModule, "CGAL_3D_Projection_Point_Plane_C2");
+		CGAL_3D_Projection_3D_Point_Plane_2D_C1_C = (CGAL_3D_Projection_3D_Point_Plane_2D_C1)GetProcAddress(hModule, "CGAL_3D_Projection_3D_Point_Plane_2D_C1");
+		CGAL_3D_Projection_3D_Point_Plane_2D_C2_C = (CGAL_3D_Projection_3D_Point_Plane_2D_C2)GetProcAddress(hModule, "CGAL_3D_Projection_3D_Point_Plane_2D_C2");
+		CGAL_3D_Plane_ABCD_C = (CGAL_3D_Plane_ABCD)GetProcAddress(hModule, "CGAL_3D_Plane_ABCD");
+		CGAL_3D_Plane_Base_1_C = (CGAL_3D_Plane_Base_1)GetProcAddress(hModule, "CGAL_3D_Plane_Base_1");
+		CGAL_Face_Normal_C = (CGAL_Face_Normal)GetProcAddress(hModule, "CGAL_Face_Normal");
+		CGAL_Barycentric_C = (CGAL_Barycentric)GetProcAddress(hModule, "CGAL_Barycentric");
 		//implementation in "mesh.cpp"
 		//####################################################################################
 		CGAL_Remesh_Surface_by_Adding_Feature_C = (CGAL_Remesh_Surface_by_Adding_Feature)GetProcAddress(hModule, "CGAL_Remesh_Surface_by_Adding_Feature");
@@ -289,7 +361,43 @@ class PL
 		CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges_C = (CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges)GetProcAddress(hModule, "CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges");
 		CGAL_Mesh_Laplace_Smooth_by_Curvature_C = (CGAL_Mesh_Laplace_Smooth_by_Curvature)GetProcAddress(hModule, "CGAL_Mesh_Laplace_Smooth_by_Curvature");
 		CGAL_Mesh_Loop_Subdivision_Own_Version_C = (CGAL_Mesh_Loop_Subdivision_Own_Version)GetProcAddress(hModule, "CGAL_Mesh_Loop_Subdivision_Own_Version");
+		CGAL_Rotation_Obj_C = (CGAL_Rotation_Obj)GetProcAddress(hModule, "CGAL_Rotation_Obj");
+		CGAL_Slicer_Mesh_C = (CGAL_Slicer_Mesh)GetProcAddress(hModule, "CGAL_Slicer_Mesh");
+		CGAL_Shortest_Geodesic_Path_C1_C = (CGAL_Shortest_Geodesic_Path_C1)GetProcAddress(hModule, "CGAL_Shortest_Geodesic_Path_C1");
+		CGAL_Shortest_Geodesic_Path_C2_C = (CGAL_Shortest_Geodesic_Path_C2)GetProcAddress(hModule, "CGAL_Shortest_Geodesic_Path_C2");
+		CGAL_Shortest_Geodesic_Path_C3_C = (CGAL_Shortest_Geodesic_Path_C3)GetProcAddress(hModule, "CGAL_Shortest_Geodesic_Path_C3");
+		CGAL_Shortest_Geodesic_Path_C4_C = (CGAL_Shortest_Geodesic_Path_C4)GetProcAddress(hModule, "CGAL_Shortest_Geodesic_Path_C4");
+		CGAL_Geodesic_Distance_C = (CGAL_Geodesic_Distance)GetProcAddress(hModule, "CGAL_Geodesic_Distance");
+		CGAL_Project_Points_Onto_Surface_C1_C = (CGAL_Project_Points_Onto_Surface_C1)GetProcAddress(hModule, "CGAL_Project_Points_Onto_Surface_C1");
+		CGAL_Project_Points_Onto_Surface_C2_C = (CGAL_Project_Points_Onto_Surface_C2)GetProcAddress(hModule, "CGAL_Project_Points_Onto_Surface_C2");
+		CGAL_3D_Triangel_Mesh_Most_Inside_Point_C = (CGAL_3D_Triangel_Mesh_Most_Inside_Point)GetProcAddress(hModule, "CGAL_3D_Triangel_Mesh_Most_Inside_Point");
+		CGAL_3D_One_Triangle_Area_C = (CGAL_3D_One_Triangle_Area)GetProcAddress(hModule, "CGAL_3D_One_Triangle_Area");
+		CGAL_3D_Triangle_Mesh_Area_C = (CGAL_3D_Triangle_Mesh_Area)GetProcAddress(hModule, "CGAL_3D_Triangle_Mesh_Area");
+		CGAL_3D_Convex_Hulls_C1_C = (CGAL_3D_Convex_Hulls_C1)GetProcAddress(hModule, "CGAL_3D_Convex_Hulls_C1");
+		CGAL_3D_Convex_Hulls_C2_C = (CGAL_3D_Convex_Hulls_C2)GetProcAddress(hModule, "CGAL_3D_Convex_Hulls_C2");
+		CGAL_3D_Convex_Hulls_C3_C = (CGAL_3D_Convex_Hulls_C3)GetProcAddress(hModule, "CGAL_3D_Convex_Hulls_C3");
+		CGAL_3D_Convex_Hulls_C4_C = (CGAL_3D_Convex_Hulls_C4)GetProcAddress(hModule, "CGAL_3D_Convex_Hulls_C4");
+		CGAL_Mesh_Field_Query_C1_C = (CGAL_Mesh_Field_Query_C1)GetProcAddress(hModule, "CGAL_Mesh_Field_Query_C1");
+		CGAL_Mesh_Field_Query_C2_C = (CGAL_Mesh_Field_Query_C2)GetProcAddress(hModule, "CGAL_Mesh_Field_Query_C2");
+		CGAL_Mesh_Field_Query_C3_C = (CGAL_Mesh_Field_Query_C3)GetProcAddress(hModule, "CGAL_Mesh_Field_Query_C3");
+		CGAL_Curvature_Mesh_C = (CGAL_Curvature_Mesh)GetProcAddress(hModule, "CGAL_Curvature_Mesh");
+		CGAL_Normal_Mesh_C1_C = (CGAL_Normal_Mesh_C1)GetProcAddress(hModule, "CGAL_Normal_Mesh_C1");
+		CGAL_Normal_Mesh_C2_C = (CGAL_Normal_Mesh_C2)GetProcAddress(hModule, "CGAL_Normal_Mesh_C2");
+		CGAL_3D_Mesh_Normal_C1_C = (CGAL_3D_Mesh_Normal_C1)GetProcAddress(hModule, "CGAL_3D_Mesh_Normal_C1");
+		CGAL_3D_Mesh_Normal_C2_C = (CGAL_3D_Mesh_Normal_C2)GetProcAddress(hModule, "CGAL_3D_Mesh_Normal_C2");
+		CGAL_3D_Mesh_Center_C1_C = (CGAL_3D_Mesh_Center_C1)GetProcAddress(hModule, "CGAL_3D_Mesh_Center_C1");
+		CGAL_3D_Mesh_Center_C2_C = (CGAL_3D_Mesh_Center_C2)GetProcAddress(hModule, "CGAL_3D_Mesh_Center_C2");
+		CGAL_3D_Mesh_Boundingbox_C1_C = (CGAL_3D_Mesh_Boundingbox_C1)GetProcAddress(hModule, "CGAL_3D_Mesh_Boundingbox_C1");
+		CGAL_3D_Mesh_Boundingbox_C2_C = (CGAL_3D_Mesh_Boundingbox_C2)GetProcAddress(hModule, "CGAL_3D_Mesh_Boundingbox_C2");
+		CGAL_Surface_Decomposition_C = (CGAL_Surface_Decomposition)GetProcAddress(hModule, "CGAL_Surface_Decomposition");
 		/////////////////////////////////////////////////////////////
+		//
+		CGAL_3D_Mesh_Gradient_C = (CGAL_3D_Mesh_Gradient)GetProcAddress(hModule, "CGAL_3D_Mesh_Gradient");
+		CGAL_Intergral_Curvature_C = (CGAL_Intergral_Curvature)GetProcAddress(hModule, "CGAL_Intergral_Curvature");
+		CGAL_3D_Mesh_Extract_Isoline_C = (CGAL_3D_Mesh_Extract_Isoline)GetProcAddress(hModule, "CGAL_3D_Mesh_Extract_Isoline");
+		CGAL_BSplineCurveFit_C = (CGAL_BSplineCurveFit)GetProcAddress(hModule, "CGAL_BSplineCurveFit");
+		CGAL_Cut_Surface_C = (CGAL_Cut_Surface)GetProcAddress(hModule, "CGAL_Cut_Surface");
+		CGAL_Cut_Surface_by_Multi_Boundaries_C = (CGAL_Cut_Surface_by_Multi_Boundaries)GetProcAddress(hModule, "CGAL_Cut_Surface_by_Multi_Boundaries");
 	};
 
 	static PL& Inst()
@@ -361,6 +469,10 @@ class PL
 	CGAL_2D_Polygon_Simple_Inter CGAL_2D_Polygon_Simple_Inter_C;
 	CGAL_2D_Convex_Hulls CGAL_2D_Convex_Hulls_C;
 	CGAL_2D_OBB_Box CGAL_2D_OBB_Box_C;
+	CGAL_Image_Grid_Decomposition_C1 CGAL_Image_Grid_Decomposition_C1_C;
+	CGAL_Image_Grid_Decomposition_Conservative_C1 CGAL_Image_Grid_Decomposition_Conservative_C1_C;
+	CGAL_Image_Grid_Decomposition_C2 CGAL_Image_Grid_Decomposition_C2_C;
+	CGAL_Image_Grid_Decomposition_Conservative_C2 CGAL_Image_Grid_Decomposition_Conservative_C2_C;
 	//implementation in "threeD.cpp"
 	//####################################################################################
 	CGAL_3D_Distance_Point_Segment CGAL_3D_Distance_Point_Segment_C;
@@ -374,7 +486,9 @@ class PL
 	CGAL_3D_Projection_Point_Segment CGAL_3D_Projection_Point_Segment_C;
 	CGAL_3D_Distance_Point_Point CGAL_3D_Distance_Point_Point_C;
 	CGAL_3D_Distance_Point_Polygon CGAL_3D_Distance_Point_Polygon_C;
-	CGAL_2D_Polygon_Triangulation CGAL_2D_Polygon_Triangulation_C;
+	CGAL_2D_Polygon_Triangulation_C1 CGAL_2D_Polygon_Triangulation_C1_C;
+	CGAL_2D_Polygon_Triangulation_C2 CGAL_2D_Polygon_Triangulation_C2_C;
+	CGAL_2D_Polygon_Triangulation_C3 CGAL_2D_Polygon_Triangulation_C3_C;
 	CGAL_3D_Distance_Point_Line CGAL_3D_Distance_Point_Line_C;
 	CGAL_3D_Projection_Point_Line CGAL_3D_Projection_Point_Line_C;
 	CGAL_3D_Distance_Segment_Segment CGAL_3D_Distance_Segment_Segment_C;
@@ -383,6 +497,14 @@ class PL
 	CGAL_3D_Intersection_Segment_Segment CGAL_3D_Intersection_Segment_Segment_C;
 	CGAL_3D_Intersection_Segment_Plane CGAL_3D_Intersection_Segment_Plane_C;
 	CGAL_3D_Intersection_Line_Plane CGAL_3D_Intersection_Line_Plane_C;
+	CGAL_3D_Projection_Point_Plane_C1 CGAL_3D_Projection_Point_Plane_C1_C;
+	CGAL_3D_Projection_Point_Plane_C2 CGAL_3D_Projection_Point_Plane_C2_C;
+	CGAL_3D_Projection_3D_Point_Plane_2D_C1 CGAL_3D_Projection_3D_Point_Plane_2D_C1_C;
+	CGAL_3D_Projection_3D_Point_Plane_2D_C2 CGAL_3D_Projection_3D_Point_Plane_2D_C2_C;
+	CGAL_3D_Plane_ABCD CGAL_3D_Plane_ABCD_C;
+	CGAL_3D_Plane_Base_1 CGAL_3D_Plane_Base_1_C;
+	CGAL_Face_Normal CGAL_Face_Normal_C;
+	CGAL_Barycentric CGAL_Barycentric_C;
 	//implementation in "mesh.cpp"
 	//####################################################################################
 	CGAL_Remesh_Surface_by_Adding_Feature CGAL_Remesh_Surface_by_Adding_Feature_C;
@@ -437,6 +559,42 @@ class PL
 	CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges_C;
 	CGAL_Mesh_Laplace_Smooth_by_Curvature CGAL_Mesh_Laplace_Smooth_by_Curvature_C;
 	CGAL_Mesh_Loop_Subdivision_Own_Version CGAL_Mesh_Loop_Subdivision_Own_Version_C;
+	CGAL_Rotation_Obj CGAL_Rotation_Obj_C;
+	CGAL_Slicer_Mesh CGAL_Slicer_Mesh_C;
+	CGAL_Shortest_Geodesic_Path_C1 CGAL_Shortest_Geodesic_Path_C1_C;
+	CGAL_Shortest_Geodesic_Path_C2 CGAL_Shortest_Geodesic_Path_C2_C;
+	CGAL_Shortest_Geodesic_Path_C3 CGAL_Shortest_Geodesic_Path_C3_C;
+	CGAL_Shortest_Geodesic_Path_C4 CGAL_Shortest_Geodesic_Path_C4_C;
+	CGAL_Geodesic_Distance CGAL_Geodesic_Distance_C;
+	CGAL_Project_Points_Onto_Surface_C1 CGAL_Project_Points_Onto_Surface_C1_C;
+	CGAL_Project_Points_Onto_Surface_C2 CGAL_Project_Points_Onto_Surface_C2_C;
+	CGAL_3D_Triangel_Mesh_Most_Inside_Point CGAL_3D_Triangel_Mesh_Most_Inside_Point_C;
+	CGAL_3D_One_Triangle_Area CGAL_3D_One_Triangle_Area_C;
+	CGAL_3D_Triangle_Mesh_Area CGAL_3D_Triangle_Mesh_Area_C;
+	CGAL_3D_Convex_Hulls_C1 CGAL_3D_Convex_Hulls_C1_C;
+	CGAL_3D_Convex_Hulls_C2 CGAL_3D_Convex_Hulls_C2_C;
+	CGAL_3D_Convex_Hulls_C3 CGAL_3D_Convex_Hulls_C3_C;
+	CGAL_3D_Convex_Hulls_C4 CGAL_3D_Convex_Hulls_C4_C;
+	CGAL_Mesh_Field_Query_C1 CGAL_Mesh_Field_Query_C1_C;
+	CGAL_Mesh_Field_Query_C2 CGAL_Mesh_Field_Query_C2_C;
+	CGAL_Mesh_Field_Query_C3 CGAL_Mesh_Field_Query_C3_C;
+	CGAL_Curvature_Mesh CGAL_Curvature_Mesh_C;
+	CGAL_Normal_Mesh_C1 CGAL_Normal_Mesh_C1_C;
+	CGAL_Normal_Mesh_C2 CGAL_Normal_Mesh_C2_C;
+	CGAL_3D_Mesh_Normal_C1 CGAL_3D_Mesh_Normal_C1_C;
+	CGAL_3D_Mesh_Normal_C2 CGAL_3D_Mesh_Normal_C2_C;
+	CGAL_3D_Mesh_Center_C1 CGAL_3D_Mesh_Center_C1_C;
+	CGAL_3D_Mesh_Center_C2 CGAL_3D_Mesh_Center_C2_C;
+	CGAL_3D_Mesh_Boundingbox_C1 CGAL_3D_Mesh_Boundingbox_C1_C;
+	CGAL_3D_Mesh_Boundingbox_C2 CGAL_3D_Mesh_Boundingbox_C2_C;
+	CGAL_Surface_Decomposition CGAL_Surface_Decomposition_C;
 	/////////////////////////////////////////////////////////////
+	//
+	CGAL_3D_Mesh_Gradient CGAL_3D_Mesh_Gradient_C;
+	CGAL_Intergral_Curvature CGAL_Intergral_Curvature_C;
+	CGAL_3D_Mesh_Extract_Isoline CGAL_3D_Mesh_Extract_Isoline_C;
+	CGAL_BSplineCurveFit CGAL_BSplineCurveFit_C;
+	CGAL_Cut_Surface CGAL_Cut_Surface_C;
+	CGAL_Cut_Surface_by_Multi_Boundaries CGAL_Cut_Surface_by_Multi_Boundaries_C;
 };
 #endif

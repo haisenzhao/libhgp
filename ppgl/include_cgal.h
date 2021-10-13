@@ -103,11 +103,11 @@ typedef CGAL::AABB_tree<Traits_poly> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
 typedef boost::optional< Tree::Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection;
 
-//typedef CGAL::Surface_mesh_shortest_path_traits<K, Polyhedron_3> Traits;
-//typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
-//typedef boost::graph_traits<Polyhedron_3> Graph_traits;
-//typedef Graph_traits::vertex_iterator vertex_iterator;
-//typedef Graph_traits::face_iterator face_iterator;
+typedef CGAL::Surface_mesh_shortest_path_traits<K, Polyhedron_3> Traits;
+typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
+typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+typedef Graph_traits::vertex_iterator vertex_iterator;
+typedef Graph_traits::face_iterator face_iterator;
 
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 typedef std::vector<K::Point_3> Polyline_type;
@@ -213,5 +213,8 @@ struct Edge
 		end = e;
 	}
 };
+
+
+
 
 #endif

@@ -1328,3 +1328,494 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon,const
     // 	}
     return true;
 }
+
+struct GridIndex {
+	int i;
+	int j;
+	GridIndex(int i0, int j0) {
+		i = i0;
+		j = j0;
+	}
+	GridIndex() {
+	}
+};
+
+struct GridEdge {
+	int s_i, s_j;
+	int e_i, e_j;
+	int type;
+	GridEdge(int s_i_0, int s_j_0, int e_i_0, int e_j_0, int t) {
+		s_i = s_i_0;
+		s_j = s_j_0;
+		e_i = e_i_0;
+		e_j = e_j_0;
+		type = t;
+	}
+};
+
+struct GridEdgeRelation {
+	std::vector<int> ids;
+};
+
+int GetIndex(std::vector<GridEdge>& grid_edges, GridIndex i_0, GridIndex i_1)
+{
+	int s_i = i_0.i;
+	int s_j = i_0.j;
+	int e_i = i_1.i;
+	int e_j = i_1.j;
+	for (int i = 0; i < grid_edges.size(); i++) {
+		if (grid_edges[i].s_i == s_i && grid_edges[i].s_j == s_j && grid_edges[i].e_i == e_i && grid_edges[i].e_j == e_j) {
+			return i;
+		}
+		if (grid_edges[i].s_i == e_i && grid_edges[i].s_j == e_j && grid_edges[i].e_i == s_i && grid_edges[i].e_j == s_j) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+void Decomposition_Mapping(std::vector<GridIndex>& one_boundary,
+	std::vector<std::vector<double>>& boundary_xs, std::vector<std::vector<double>>& boundary_ys, bool remove_b = false)
+{
+	//remove multi grid index
+	if (remove_b) {
+		std::vector<GridIndex> new_one_boundary(1, one_boundary[0]);
+		for (int i = 0; i < one_boundary.size(); i++) {
+			GridIndex& last = new_one_boundary[new_one_boundary.size() - 1];
+			if (!(one_boundary[i].i == last.i && one_boundary[i].j == last.j)) {
+				new_one_boundary.push_back(one_boundary[i]);
+			}
+		}
+		std::vector<GridIndex>().swap(one_boundary);
+		one_boundary = new_one_boundary;
+		std::vector<GridIndex>().swap(new_one_boundary);
+	}
+
+	if (one_boundary.size() <= 2) return;
+
+	//find repeating index
+	bool run = false;
+	int index_0 = -1;
+	int index_1 = -1;
+	for (int i = 0; i < one_boundary.size() - 1 && !run; i++) {
+		GridIndex& current = one_boundary[i];
+		for (int j = i + 1; j < one_boundary.size() && !run; j++) {
+			GridIndex& next = one_boundary[j];
+			if (current.i == next.i && current.j == next.j) {
+				index_0 = i;
+				index_1 = j;
+				run = true;
+			}
+		}
+	}
+
+	if (!run) {
+		std::vector<double> xs;
+		std::vector<double> ys;
+		for (int i = 0; i < one_boundary.size(); i++) {
+			xs.push_back(one_boundary[i].i - 1.0);
+			ys.push_back(one_boundary[i].j - 1.0);
+		}
+		boundary_xs.push_back(xs);
+		boundary_ys.push_back(ys);
+		std::vector<double>().swap(xs);
+		std::vector<double>().swap(ys);
+	}
+	else {
+		std::vector<GridIndex> one_boundary_0;
+		std::vector<GridIndex> one_boundary_1;
+		for (int i = index_0; i < index_1; i++) {
+			one_boundary_0.push_back(one_boundary[i]);
+		}
+		for (int i = index_1; i < one_boundary.size(); i++) {
+			one_boundary_1.push_back(one_boundary[i]);
+		}
+		for (int i = 0; i < index_0; i++) {
+			one_boundary_1.push_back(one_boundary[i]);
+		}
+		Decomposition_Mapping(one_boundary_0, boundary_xs, boundary_ys);
+		Decomposition_Mapping(one_boundary_1, boundary_xs, boundary_ys);
+	}
+}
+
+extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::vector<int>>&image, std::vector<std::vector<double>>&boundary_xs, std::vector<std::vector<double>>&boundary_ys)
+{
+	//refine  lables
+	std::vector<std::vector<int>> grid;
+	for (int i = 0; i < image.size() + 2; i++) {
+		std::vector<int> one_grid_raw;
+		for (int j = 0; j < image[0].size() + 2; j++) {
+			if (i >= 1 && i < image.size() + 1 && j >= 1 && j < image.size() + 1) {
+				one_grid_raw.push_back(image[i - 1][j - 1]);
+			}
+			else {
+				one_grid_raw.push_back(0);
+			}
+		}
+		grid.push_back(one_grid_raw);
+	}
+
+
+	//std::ofstream lable_file("D:\\123.lable");
+	//for (int j = 0; j < grid.size(); j++)
+	//{
+	//	for (int k = 0; k < grid[j].size(); k++)
+	//	{
+	//		lable_file << grid[j][k] << " ";
+	//	}
+	//	lable_file << "" << std::endl;
+	//}
+	//lable_file.clear();
+	//lable_file.close();
+
+
+	//get grid edges
+	std::vector<GridEdge> grid_edges;
+	for (int i = 0; i < grid.size(); i++) {
+		for (int j = 0; j < grid[i].size(); j++) {
+			if (i + 1 < grid.size()) {
+				if (grid[i][j] != grid[i + 1][j]) {
+					grid_edges.push_back(GridEdge(i, j, i + 1, j, 0));
+				}
+			}
+			if (j + 1 < grid[i].size()) {
+				if (grid[i][j] != grid[i][j + 1]) {
+					grid_edges.push_back(GridEdge(i, j, i, j + 1, 1));
+				}
+			}
+		}
+	}
+
+	//connect cut edges
+	//GridIndex 1 2
+	//GridIndex s e
+	//GridIndex 3 4
+	std::vector<GridEdgeRelation> grid_relations;
+	std::vector<bool> grid_edges_used;
+	for (int i = 0; i < grid_edges.size(); i++) {
+		grid_edges_used.push_back(false);
+		GridIndex index_1;
+		GridIndex index_2;
+		GridIndex index_3;
+		GridIndex index_4;
+		GridIndex index_s(grid_edges[i].s_i, grid_edges[i].s_j);
+		GridIndex index_e(grid_edges[i].e_i, grid_edges[i].e_j);
+
+		if (grid_edges[i].type == 0) {
+			index_1.i = grid_edges[i].s_i;
+			index_1.j = grid_edges[i].s_j - 1;
+			index_2.i = grid_edges[i].e_i;
+			index_2.j = grid_edges[i].e_j - 1;
+			index_3.i = grid_edges[i].s_i;
+			index_3.j = grid_edges[i].s_j + 1;
+			index_4.i = grid_edges[i].e_i;
+			index_4.j = grid_edges[i].e_j + 1;
+		}
+
+		if (grid_edges[i].type == 1) {
+			index_1.i = grid_edges[i].s_i - 1;
+			index_1.j = grid_edges[i].s_j;
+			index_2.i = grid_edges[i].e_i - 1;
+			index_2.j = grid_edges[i].e_j;
+			index_3.i = grid_edges[i].s_i + 1;
+			index_3.j = grid_edges[i].s_j;
+			index_4.i = grid_edges[i].e_i + 1;
+			index_4.j = grid_edges[i].e_j;
+		}
+
+		int lable_0 = GetIndex(grid_edges, index_1, index_2);
+		int lable_1 = GetIndex(grid_edges, index_1, index_s);
+		int lable_2 = GetIndex(grid_edges, index_2, index_e);
+		int lable_3 = GetIndex(grid_edges, index_3, index_4);
+		int lable_4 = GetIndex(grid_edges, index_3, index_s);
+		int lable_5 = GetIndex(grid_edges, index_4, index_e);
+
+		GridEdgeRelation gr;
+		if (lable_1 >= 0 && (grid[index_s.i][index_s.j] == 0 || (grid[index_s.i][index_s.j] == 1 && grid[index_2.i][index_2.j] == 0))) {
+			gr.ids.push_back(lable_1);
+		}
+		if (lable_2 >= 0 && (grid[index_e.i][index_e.j] == 0 || (grid[index_e.i][index_e.j] == 1 && grid[index_1.i][index_1.j] == 0))) {
+			gr.ids.push_back(lable_2);
+		}
+		if (lable_4 >= 0 && (grid[index_s.i][index_s.j] == 0 || (grid[index_s.i][index_s.j] == 1 && grid[index_4.i][index_4.j] == 0))) {
+			gr.ids.push_back(lable_4);
+		}
+		if (lable_5 >= 0 && (grid[index_e.i][index_e.j] == 0 || (grid[index_e.i][index_e.j] == 1 && grid[index_3.i][index_3.j] == 0))) {
+			gr.ids.push_back(lable_5);
+		}
+		if (lable_0 >= 0 && lable_1 < 0 && lable_2 < 0) {
+			gr.ids.push_back(lable_0);
+		}
+		if (lable_3 >= 0 && lable_4 < 0 && lable_5 < 0) {
+			gr.ids.push_back(lable_3);
+		}
+		grid_relations.push_back(gr);
+		//if ((grid_edges[i].s_i == 11+1 && grid_edges[i].s_j == 15+1) ||
+		//	(grid_edges[i].e_i == 11+1 && grid_edges[i].e_j == 15+1))
+		//{
+		//	std::cout << "Edge: (" << grid_edges[i].s_i - 1 << ", " << grid_edges[i].s_j - 1 << ")_("
+		//		<< grid_edges[i].e_i - 1 << ", " << grid_edges[i].e_j - 1 << ")" << std::endl;
+		//	for (int j = 0; j < gr.ids.size(); j++)
+		//	{
+		//		int index = gr.ids[j];
+		//		std::cout << "(" << grid_edges[index].s_i - 1 << ", " << grid_edges[index].s_j - 1 << ")_("
+		//			<< grid_edges[index].e_i - 1 << ", " << grid_edges[index].e_j - 1 << ")" << std::endl;
+		//	}
+		//}
+	}
+
+	//std::vector<GridEdgeRelation> grid_relations;
+	//std::vector<bool> grid_edges_used;
+	//for (int i = 0; i < grid_edges.size(); i++)
+	std::vector<std::vector<int>> grid_boundaries;
+	while (true) {
+		int start_edge_index = -1;
+
+		for (int i = 0; i < grid_edges_used.size(); i++) {
+			if (!grid_edges_used[i]) {
+				start_edge_index = i;
+				break;
+			}
+		}
+		if (start_edge_index < 0) break;
+		grid_edges_used[start_edge_index] = true;
+		std::vector<int> one_boundary(1, start_edge_index);
+		while (true) {
+			int next_edge_index = -1;
+			for (int i = 0; i < grid_relations[start_edge_index].ids.size(); i++) {
+				if (!grid_edges_used[grid_relations[start_edge_index].ids[i]]) {
+					next_edge_index = grid_relations[start_edge_index].ids[i];
+					break;
+				}
+			}
+			if (next_edge_index < 0) break;
+			grid_edges_used[next_edge_index] = true;
+			one_boundary.push_back(next_edge_index);
+			start_edge_index = next_edge_index;
+		}
+		grid_boundaries.push_back(one_boundary);
+	}
+
+	//transform back
+
+#if 0
+	{
+		for (int i = 0; i < grid_boundaries.size(); i++) {
+			std::vector<double> xs;
+			std::vector<double> ys;
+			for (int j = 0; j < grid_boundaries[i].size(); j++) {
+				GridIndex index_s(grid_edges[grid_boundaries[i][j]].s_i, grid_edges[grid_boundaries[i][j]].s_j);
+				GridIndex index_e(grid_edges[grid_boundaries[i][j]].e_i, grid_edges[grid_boundaries[i][j]].e_j);
+				xs.push_back((index_s.i + index_e.i) / 2.0 - 1.0);
+				ys.push_back((index_s.j + index_e.j) / 2.0 - 1.0);
+			}
+			boundary_xs.push_back(xs);
+			boundary_ys.push_back(ys);
+		}
+	}
+#else
+	{
+		for (int i = 0; i < grid_boundaries.size(); i++) {
+			std::vector<GridIndex> one_boundary;
+			for (int j = 0; j < grid_boundaries[i].size(); j++) {
+				GridIndex index_s(grid_edges[grid_boundaries[i][j]].s_i, grid_edges[grid_boundaries[i][j]].s_j);
+				GridIndex index_e(grid_edges[grid_boundaries[i][j]].e_i, grid_edges[grid_boundaries[i][j]].e_j);
+				if (grid[index_s.i][index_s.j] == 1) {
+					one_boundary.push_back(index_s);
+				}
+				else {
+					one_boundary.push_back(index_e);
+				}
+			}
+			Decomposition_Mapping(one_boundary, boundary_xs, boundary_ys, true);
+			std::vector<GridIndex>().swap(one_boundary);
+		}
+	}
+#endif
+
+	std::vector<std::vector<int>>().swap(grid);
+	std::vector<GridEdge>().swap(grid_edges);
+	std::vector<GridEdgeRelation>().swap(grid_relations);
+	std::vector<bool>().swap(grid_edges_used);
+	std::vector<std::vector<int>>().swap(grid_boundaries);
+}
+
+
+
+extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::vector<std::vector<int>>&image, std::vector<std::vector<double>>&boundary_xs, std::vector<std::vector<double>>&boundary_ys)
+{
+	std::vector<std::vector<Index>> boundaries;
+
+	//#pragma omp parallel 
+	{
+		//2
+		for (int i = 0; i < image.size(); i++)
+		{
+			for (int j = 0; j < image[i].size(); j++)
+			{
+				if (image[i][j] == 1)
+				{
+					bool run = true;
+					for (int k = -1; k < 2 && run; k++)
+					{
+						for (int m = -1; m < 2 && run; m++)
+						{
+							int index_0 = i + k;
+							int index_1 = j + m;
+							if (index_0 < 0 || index_1 < 0 || index_0 >= image.size() || index_1 >= image[i].size() || image[index_0][index_1] == 0)
+							{
+								image[i][j] = 2;
+								run = false;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		//3
+		std::vector<Index> lables_3;
+		std::vector<bool> lables_3_used;
+		for (int i = 0; i < image.size(); i++)
+		{
+			for (int j = 0; j < image[i].size(); j++)
+			{
+				if (image[i][j] == 2)
+				{
+					bool run = true;
+					for (int k = -1; k < 2 && run; k++)
+					{
+						for (int m = -1; m < 2 && run; m++)
+						{
+							int index_0 = i + k;
+							int index_1 = j + m;
+							if (!(index_0 < 0 || index_1 < 0 || index_0 >= image.size() || index_1 >= image[i].size()) && image[index_0][index_1] == 1)
+							{
+								image[i][j] = 3 + lables_3.size();
+								lables_3.push_back(Index(i, j));
+								lables_3_used.push_back(true);
+								run = false;
+							}
+						}
+					}
+
+				}
+			}
+		}
+
+		//order
+		while (true)
+		{
+			//start_index
+			Index start_index(-1, -1);
+			for (int i = 0; i < lables_3_used.size(); i++)
+			{
+				if (lables_3_used[i])
+				{
+					start_index.x = lables_3[i].x;
+					start_index.y = lables_3[i].y;
+					break;
+				}
+			}
+
+			if (start_index.x < 0 || start_index.y < 0) break;
+
+			std::vector<Index> one_boundary;
+			one_boundary.push_back(start_index);
+			lables_3_used[image[start_index.x][start_index.y] - 3] = false;
+			image[start_index.x][start_index.y] = 2;
+
+
+			while (true)
+			{
+				Index next_index(-1, -1);
+
+				//next_index
+				bool run = true;
+				for (int k = -1; k < 2 && run; k++)
+				{
+					for (int m = -1; m < 2 && run; m++)
+					{
+						if (abs(k) + abs(m) == 1)
+						{
+							int index_0 = start_index.x + k;
+							int index_1 = start_index.y + m;
+							if (!(index_0 < 0 || index_1 < 0 || index_0 >= image.size() || index_1 >= image[0].size()))
+							{
+								if (image[index_0][index_1] >= 3)
+								{
+									next_index.x = index_0;
+									next_index.y = index_1;
+									run = false;
+								}
+							}
+						}
+
+					}
+				}
+
+				if (next_index.x < 0 || next_index.y < 0) break;
+
+				one_boundary.push_back(next_index);
+				lables_3_used[image[next_index.x][next_index.y] - 3] = false;
+				image[next_index.x][next_index.y] = 2;
+
+				start_index.x = next_index.x;
+				start_index.y = next_index.y;
+			}
+
+			if (abs(one_boundary[0].x - one_boundary[one_boundary.size() - 1].x) <= 1 && abs(one_boundary[0].y - one_boundary[one_boundary.size() - 1].y) <= 1 && one_boundary.size() >= 3)
+				boundaries.push_back(one_boundary);
+		}
+	}
+
+	for (int i = 0; i < boundaries.size(); i++)
+	{
+		std::vector<double> xs;
+		std::vector<double> ys;
+		for (int j = 0; j < boundaries[i].size(); j++)
+		{
+			xs.push_back(boundaries[i][j].x);
+			ys.push_back(boundaries[i][j].y);
+		}
+
+		boundary_xs.push_back(xs);
+		boundary_ys.push_back(ys);
+	}
+
+	std::vector<std::vector<Index>>().swap(boundaries);
+}
+extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C2(std::vector<std::vector<int>>&image, Vector2d2 & boundaries)
+{
+	std::vector<std::vector<double>> xs;
+	std::vector<std::vector<double>> ys;
+
+	CGAL_Image_Grid_Decomposition_C1(image, xs, ys);
+
+	for (int i = 0; i < xs.size(); i++)
+	{
+		Vector2d1 one_boundary;
+		for (int j = 0; j < xs[i].size(); j++)
+		{
+			one_boundary.push_back(Vector2d(xs[i][j], ys[i][j]));
+		}
+		boundaries.push_back(one_boundary);
+	}
+}
+extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C2(std::vector<std::vector<int>>&image, Vector2d2 & boundaries)
+{
+	std::vector<std::vector<double>> xs;
+	std::vector<std::vector<double>> ys;
+
+	CGAL_Image_Grid_Decomposition_Conservative_C1(image, xs, ys);
+
+	for (int i = 0; i < xs.size(); i++)
+	{
+		Vector2d1 one_boundary;
+		for (int j = 0; j < xs[i].size(); j++)
+		{
+			one_boundary.push_back(Vector2d(xs[i][j], ys[i][j]));
+		}
+		boundaries.push_back(one_boundary);
+	}
+}
