@@ -228,14 +228,7 @@ void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys, Vector1i2 &faces)
 
 //IO mesh
 /***************************************************************************************************/
-//int get_first_integer(const char *v) {
-//    int ival;
-//    std::string s(v);
-//    std::replace(s.begin(), s.end(), '/', ' ');
-//    sscanf(s.c_str(), "%d", &ival);
-//    return ival;
-//}
-//
+
 //void CGAL_Load_Obj(std::string path, std::vector<double> &coords,Vector1i1 &tris) {
 //    double x, y, z;
 //    char line[1024], v0[1024], v1[1024], v2[1024];
