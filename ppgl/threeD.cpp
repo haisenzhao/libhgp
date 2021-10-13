@@ -228,39 +228,33 @@ void CGAL_2D_Polygon_Triangulation(const Vector2d2 &polys, Vector1i2 &faces)
 
 //IO mesh
 /***************************************************************************************************/
-int get_first_integer(const char *v) {
-    int ival;
-    std::string s(v);
-    std::replace(s.begin(), s.end(), '/', ' ');
-    sscanf(s.c_str(), "%d", &ival);
-    return ival;
-}
 
-void CGAL_Load_Obj(std::string path, std::vector<double> &coords,Vector1i1 &tris) {
-    double x, y, z;
-    char line[1024], v0[1024], v1[1024], v2[1024];
 
-    // open the file, return if open fails
-    if (!Functs::DetectExisting(path))
-        Functs::MAssert("Path does not exist: "+ path);
-    FILE *fp = fopen(path.c_str(), "r");
-    if (!fp) return;
-
-    while (fgets(line, 1024, fp)) {
-        if (line[0] == 'v') {
-            sscanf(line, "%*s%lf%lf%lf", &x, &y, &z);
-            coords.push_back(x);
-            coords.push_back(y);
-            coords.push_back(z);
-        } else if (line[0] == 'f') {
-            sscanf(line, "%*s%s%s%s", v0, v1, v2);
-            tris.push_back(get_first_integer(v0) - 1);
-            tris.push_back(get_first_integer(v1) - 1);
-            tris.push_back(get_first_integer(v2) - 1);
-        }
-    }
-    fclose(fp);
-}
+//void CGAL_Load_Obj(std::string path, std::vector<double> &coords,Vector1i1 &tris) {
+//    double x, y, z;
+//    char line[1024], v0[1024], v1[1024], v2[1024];
+//
+//    // open the file, return if open fails
+//    if (!Functs::DetectExisting(path))
+//        Functs::MAssert("Path does not exist: "+ path);
+//    FILE *fp = fopen(path.c_str(), "r");
+//    if (!fp) return;
+//
+//    while (fgets(line, 1024, fp)) {
+//        if (line[0] == 'v') {
+//            sscanf(line, "%*s%lf%lf%lf", &x, &y, &z);
+//            coords.push_back(x);
+//            coords.push_back(y);
+//            coords.push_back(z);
+//        } else if (line[0] == 'f') {
+//            sscanf(line, "%*s%s%s%s", v0, v1, v2);
+//            tris.push_back(get_first_integer(v0) - 1);
+//            tris.push_back(get_first_integer(v1) - 1);
+//            tris.push_back(get_first_integer(v2) - 1);
+//        }
+//    }
+//    fclose(fp);
+//}
 
 extern "C" PPGL_EXPORT void CGAL_3D_Output_Triangle_Mesh
 (const std::string& path, const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2)
