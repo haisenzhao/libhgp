@@ -764,10 +764,6 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C5(const Vector2d2 & o
 	return true;
 }
 
-
-
-
-
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Polygon_Polygon(const Vector2d1 & poly_0, const Vector2d1 & poly_1)
 {
 	double min_d = 1000000000.0;
@@ -1329,17 +1325,6 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon,const
     return true;
 }
 
-struct GridIndex {
-	int i;
-	int j;
-	GridIndex(int i0, int j0) {
-		i = i0;
-		j = j0;
-	}
-	GridIndex() {
-	}
-};
-
 struct GridEdge {
 	int s_i, s_j;
 	int e_i, e_j;
@@ -1357,12 +1342,12 @@ struct GridEdgeRelation {
 	std::vector<int> ids;
 };
 
-int GetIndex(std::vector<GridEdge>& grid_edges, GridIndex i_0, GridIndex i_1)
+int GetIndex(std::vector<GridEdge>& grid_edges, std::pair<int,int> i_0, std::pair<int,int> i_1)
 {
-	int s_i = i_0.i;
-	int s_j = i_0.j;
-	int e_i = i_1.i;
-	int e_j = i_1.j;
+	int s_i = i_0.first;
+	int s_j = i_0.second;
+	int e_i = i_1.first;
+	int e_j = i_1.second;
 	for (int i = 0; i < grid_edges.size(); i++) {
 		if (grid_edges[i].s_i == s_i && grid_edges[i].s_j == s_j && grid_edges[i].e_i == e_i && grid_edges[i].e_j == e_j) {
 			return i;
@@ -1374,21 +1359,21 @@ int GetIndex(std::vector<GridEdge>& grid_edges, GridIndex i_0, GridIndex i_1)
 	return -1;
 }
 
-void Decomposition_Mapping(std::vector<GridIndex>& one_boundary,
+void Decomposition_Mapping(VectorPI1& one_boundary,
 	std::vector<std::vector<double>>& boundary_xs, std::vector<std::vector<double>>& boundary_ys, bool remove_b = false)
 {
 	//remove multi grid index
 	if (remove_b) {
-		std::vector<GridIndex> new_one_boundary(1, one_boundary[0]);
+		VectorPI1 new_one_boundary(1, one_boundary[0]);
 		for (int i = 0; i < one_boundary.size(); i++) {
-			GridIndex& last = new_one_boundary[new_one_boundary.size() - 1];
-			if (!(one_boundary[i].i == last.i && one_boundary[i].j == last.j)) {
+			std::pair<int,int>& last = new_one_boundary[new_one_boundary.size() - 1];
+			if (!(one_boundary[i].first == last.first && one_boundary[i].second == last.second)) {
 				new_one_boundary.push_back(one_boundary[i]);
 			}
 		}
-		std::vector<GridIndex>().swap(one_boundary);
+		VectorPI1().swap(one_boundary);
 		one_boundary = new_one_boundary;
-		std::vector<GridIndex>().swap(new_one_boundary);
+		VectorPI1().swap(new_one_boundary);
 	}
 
 	if (one_boundary.size() <= 2) return;
@@ -1398,10 +1383,10 @@ void Decomposition_Mapping(std::vector<GridIndex>& one_boundary,
 	int index_0 = -1;
 	int index_1 = -1;
 	for (int i = 0; i < one_boundary.size() - 1 && !run; i++) {
-		GridIndex& current = one_boundary[i];
+		std::pair<int,int>& current = one_boundary[i];
 		for (int j = i + 1; j < one_boundary.size() && !run; j++) {
-			GridIndex& next = one_boundary[j];
-			if (current.i == next.i && current.j == next.j) {
+			std::pair<int,int>& next = one_boundary[j];
+			if (current.first == next.first && current.second == next.second) {
 				index_0 = i;
 				index_1 = j;
 				run = true;
@@ -1413,8 +1398,8 @@ void Decomposition_Mapping(std::vector<GridIndex>& one_boundary,
 		std::vector<double> xs;
 		std::vector<double> ys;
 		for (int i = 0; i < one_boundary.size(); i++) {
-			xs.push_back(one_boundary[i].i - 1.0);
-			ys.push_back(one_boundary[i].j - 1.0);
+			xs.push_back(one_boundary[i].first - 1.0);
+			ys.push_back(one_boundary[i].second - 1.0);
 		}
 		boundary_xs.push_back(xs);
 		boundary_ys.push_back(ys);
@@ -1422,8 +1407,8 @@ void Decomposition_Mapping(std::vector<GridIndex>& one_boundary,
 		std::vector<double>().swap(ys);
 	}
 	else {
-		std::vector<GridIndex> one_boundary_0;
-		std::vector<GridIndex> one_boundary_1;
+		VectorPI1 one_boundary_0;
+		VectorPI1 one_boundary_1;
 		for (int i = index_0; i < index_1; i++) {
 			one_boundary_0.push_back(one_boundary[i]);
 		}
@@ -1487,40 +1472,40 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 	}
 
 	//connect cut edges
-	//GridIndex 1 2
-	//GridIndex s e
-	//GridIndex 3 4
+	//std::pair<int,int> 1 2
+	//std::pair<int,int> s e
+	//std::pair<int,int> 3 4
 	std::vector<GridEdgeRelation> grid_relations;
 	std::vector<bool> grid_edges_used;
 	for (int i = 0; i < grid_edges.size(); i++) {
 		grid_edges_used.push_back(false);
-		GridIndex index_1;
-		GridIndex index_2;
-		GridIndex index_3;
-		GridIndex index_4;
-		GridIndex index_s(grid_edges[i].s_i, grid_edges[i].s_j);
-		GridIndex index_e(grid_edges[i].e_i, grid_edges[i].e_j);
+		std::pair<int,int> index_1;
+		std::pair<int,int> index_2;
+		std::pair<int,int> index_3;
+		std::pair<int,int> index_4;
+		std::pair<int,int> index_s(grid_edges[i].s_i, grid_edges[i].s_j);
+		std::pair<int,int> index_e(grid_edges[i].e_i, grid_edges[i].e_j);
 
 		if (grid_edges[i].type == 0) {
-			index_1.i = grid_edges[i].s_i;
-			index_1.j = grid_edges[i].s_j - 1;
-			index_2.i = grid_edges[i].e_i;
-			index_2.j = grid_edges[i].e_j - 1;
-			index_3.i = grid_edges[i].s_i;
-			index_3.j = grid_edges[i].s_j + 1;
-			index_4.i = grid_edges[i].e_i;
-			index_4.j = grid_edges[i].e_j + 1;
+			index_1.first = grid_edges[i].s_i;
+			index_1.second = grid_edges[i].s_j - 1;
+			index_2.first = grid_edges[i].e_i;
+			index_2.second = grid_edges[i].e_j - 1;
+			index_3.first = grid_edges[i].s_i;
+			index_3.second = grid_edges[i].s_j + 1;
+			index_4.first = grid_edges[i].e_i;
+			index_4.second = grid_edges[i].e_j + 1;
 		}
 
 		if (grid_edges[i].type == 1) {
-			index_1.i = grid_edges[i].s_i - 1;
-			index_1.j = grid_edges[i].s_j;
-			index_2.i = grid_edges[i].e_i - 1;
-			index_2.j = grid_edges[i].e_j;
-			index_3.i = grid_edges[i].s_i + 1;
-			index_3.j = grid_edges[i].s_j;
-			index_4.i = grid_edges[i].e_i + 1;
-			index_4.j = grid_edges[i].e_j;
+			index_1.first = grid_edges[i].s_i - 1;
+			index_1.second = grid_edges[i].s_j;
+			index_2.first = grid_edges[i].e_i - 1;
+			index_2.second = grid_edges[i].e_j;
+			index_3.first = grid_edges[i].s_i + 1;
+			index_3.second = grid_edges[i].s_j;
+			index_4.first = grid_edges[i].e_i + 1;
+			index_4.second = grid_edges[i].e_j;
 		}
 
 		int lable_0 = GetIndex(grid_edges, index_1, index_2);
@@ -1531,16 +1516,16 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 		int lable_5 = GetIndex(grid_edges, index_4, index_e);
 
 		GridEdgeRelation gr;
-		if (lable_1 >= 0 && (grid[index_s.i][index_s.j] == 0 || (grid[index_s.i][index_s.j] == 1 && grid[index_2.i][index_2.j] == 0))) {
+		if (lable_1 >= 0 && (grid[index_s.first][index_s.second] == 0 || (grid[index_s.first][index_s.second] == 1 && grid[index_2.first][index_2.second] == 0))) {
 			gr.ids.push_back(lable_1);
 		}
-		if (lable_2 >= 0 && (grid[index_e.i][index_e.j] == 0 || (grid[index_e.i][index_e.j] == 1 && grid[index_1.i][index_1.j] == 0))) {
+		if (lable_2 >= 0 && (grid[index_e.first][index_e.second] == 0 || (grid[index_e.first][index_e.second] == 1 && grid[index_1.first][index_1.second] == 0))) {
 			gr.ids.push_back(lable_2);
 		}
-		if (lable_4 >= 0 && (grid[index_s.i][index_s.j] == 0 || (grid[index_s.i][index_s.j] == 1 && grid[index_4.i][index_4.j] == 0))) {
+		if (lable_4 >= 0 && (grid[index_s.first][index_s.second] == 0 || (grid[index_s.first][index_s.second] == 1 && grid[index_4.first][index_4.second] == 0))) {
 			gr.ids.push_back(lable_4);
 		}
-		if (lable_5 >= 0 && (grid[index_e.i][index_e.j] == 0 || (grid[index_e.i][index_e.j] == 1 && grid[index_3.i][index_3.j] == 0))) {
+		if (lable_5 >= 0 && (grid[index_e.first][index_e.second] == 0 || (grid[index_e.first][index_e.second] == 1 && grid[index_3.first][index_3.second] == 0))) {
 			gr.ids.push_back(lable_5);
 		}
 		if (lable_0 >= 0 && lable_1 < 0 && lable_2 < 0) {
@@ -1604,10 +1589,10 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 			std::vector<double> xs;
 			std::vector<double> ys;
 			for (int j = 0; j < grid_boundaries[i].size(); j++) {
-				GridIndex index_s(grid_edges[grid_boundaries[i][j]].s_i, grid_edges[grid_boundaries[i][j]].s_j);
-				GridIndex index_e(grid_edges[grid_boundaries[i][j]].e_i, grid_edges[grid_boundaries[i][j]].e_j);
-				xs.push_back((index_s.i + index_e.i) / 2.0 - 1.0);
-				ys.push_back((index_s.j + index_e.j) / 2.0 - 1.0);
+				std::pair<int,int> index_s(grid_edges[grid_boundaries[i][j]].s_i, grid_edges[grid_boundaries[i][j]].s_j);
+				std::pair<int,int> index_e(grid_edges[grid_boundaries[i][j]].e_i, grid_edges[grid_boundaries[i][j]].e_j);
+				xs.push_back((index_s.first + index_e.first) / 2.0 - 1.0);
+				ys.push_back((index_s.second + index_e.second) / 2.0 - 1.0);
 			}
 			boundary_xs.push_back(xs);
 			boundary_ys.push_back(ys);
@@ -1616,11 +1601,11 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 #else
 	{
 		for (int i = 0; i < grid_boundaries.size(); i++) {
-			std::vector<GridIndex> one_boundary;
+			VectorPI1 one_boundary;
 			for (int j = 0; j < grid_boundaries[i].size(); j++) {
-				GridIndex index_s(grid_edges[grid_boundaries[i][j]].s_i, grid_edges[grid_boundaries[i][j]].s_j);
-				GridIndex index_e(grid_edges[grid_boundaries[i][j]].e_i, grid_edges[grid_boundaries[i][j]].e_j);
-				if (grid[index_s.i][index_s.j] == 1) {
+				std::pair<int,int> index_s(grid_edges[grid_boundaries[i][j]].s_i, grid_edges[grid_boundaries[i][j]].s_j);
+				std::pair<int,int> index_e(grid_edges[grid_boundaries[i][j]].e_i, grid_edges[grid_boundaries[i][j]].e_j);
+				if (grid[index_s.first][index_s.second] == 1) {
 					one_boundary.push_back(index_s);
 				}
 				else {
@@ -1628,7 +1613,7 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 				}
 			}
 			Decomposition_Mapping(one_boundary, boundary_xs, boundary_ys, true);
-			std::vector<GridIndex>().swap(one_boundary);
+			VectorPI1().swap(one_boundary);
 		}
 	}
 #endif
@@ -1644,7 +1629,7 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 
 extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::vector<std::vector<int>>&image, std::vector<std::vector<double>>&boundary_xs, std::vector<std::vector<double>>&boundary_ys)
 {
-	std::vector<std::vector<Index>> boundaries;
+	VectorPI2 boundaries;
 
 	//#pragma omp parallel 
 	{
@@ -1674,7 +1659,7 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::v
 		}
 
 		//3
-		std::vector<Index> lables_3;
+		VectorPI1 lables_3;
 		std::vector<bool> lables_3_used;
 		for (int i = 0; i < image.size(); i++)
 		{
@@ -1692,7 +1677,7 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::v
 							if (!(index_0 < 0 || index_1 < 0 || index_0 >= image.size() || index_1 >= image[i].size()) && image[index_0][index_1] == 1)
 							{
 								image[i][j] = 3 + lables_3.size();
-								lables_3.push_back(Index(i, j));
+								lables_3.push_back(std::pair<int,int>(i, j));
 								lables_3_used.push_back(true);
 								run = false;
 							}
@@ -1707,28 +1692,28 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::v
 		while (true)
 		{
 			//start_index
-			Index start_index(-1, -1);
+			std::pair<int, int> start_index(-1, -1);
 			for (int i = 0; i < lables_3_used.size(); i++)
 			{
 				if (lables_3_used[i])
 				{
-					start_index.x = lables_3[i].x;
-					start_index.y = lables_3[i].y;
+					start_index.first = lables_3[i].first;
+					start_index.second = lables_3[i].second;
 					break;
 				}
 			}
 
-			if (start_index.x < 0 || start_index.y < 0) break;
+			if (start_index.first < 0 || start_index.second < 0) break;
 
-			std::vector<Index> one_boundary;
+			VectorPI1 one_boundary;
 			one_boundary.push_back(start_index);
-			lables_3_used[image[start_index.x][start_index.y] - 3] = false;
-			image[start_index.x][start_index.y] = 2;
+			lables_3_used[image[start_index.first][start_index.second] - 3] = false;
+			image[start_index.first][start_index.second] = 2;
 
 
 			while (true)
 			{
-				Index next_index(-1, -1);
+				std::pair<int,int> next_index(-1, -1);
 
 				//next_index
 				bool run = true;
@@ -1738,14 +1723,14 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::v
 					{
 						if (abs(k) + abs(m) == 1)
 						{
-							int index_0 = start_index.x + k;
-							int index_1 = start_index.y + m;
+							int index_0 = start_index.first + k;
+							int index_1 = start_index.second + m;
 							if (!(index_0 < 0 || index_1 < 0 || index_0 >= image.size() || index_1 >= image[0].size()))
 							{
 								if (image[index_0][index_1] >= 3)
 								{
-									next_index.x = index_0;
-									next_index.y = index_1;
+									next_index.first = index_0;
+									next_index.second = index_1;
 									run = false;
 								}
 							}
@@ -1754,17 +1739,17 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::v
 					}
 				}
 
-				if (next_index.x < 0 || next_index.y < 0) break;
+				if (next_index.first < 0 || next_index.second < 0) break;
 
 				one_boundary.push_back(next_index);
-				lables_3_used[image[next_index.x][next_index.y] - 3] = false;
-				image[next_index.x][next_index.y] = 2;
+				lables_3_used[image[next_index.first][next_index.second] - 3] = false;
+				image[next_index.first][next_index.second] = 2;
 
-				start_index.x = next_index.x;
-				start_index.y = next_index.y;
+				start_index.first = next_index.first;
+				start_index.second = next_index.second;
 			}
 
-			if (abs(one_boundary[0].x - one_boundary[one_boundary.size() - 1].x) <= 1 && abs(one_boundary[0].y - one_boundary[one_boundary.size() - 1].y) <= 1 && one_boundary.size() >= 3)
+			if (abs(one_boundary[0].first - one_boundary[one_boundary.size() - 1].first) <= 1 && abs(one_boundary[0].second - one_boundary[one_boundary.size() - 1].second) <= 1 && one_boundary.size() >= 3)
 				boundaries.push_back(one_boundary);
 		}
 	}
@@ -1775,15 +1760,15 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::v
 		std::vector<double> ys;
 		for (int j = 0; j < boundaries[i].size(); j++)
 		{
-			xs.push_back(boundaries[i][j].x);
-			ys.push_back(boundaries[i][j].y);
+			xs.push_back(boundaries[i][j].first);
+			ys.push_back(boundaries[i][j].second);
 		}
 
 		boundary_xs.push_back(xs);
 		boundary_ys.push_back(ys);
 	}
 
-	std::vector<std::vector<Index>>().swap(boundaries);
+	VectorPI2().swap(boundaries);
 }
 extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C2(std::vector<std::vector<int>>&image, Vector2d2 & boundaries)
 {

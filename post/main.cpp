@@ -149,7 +149,7 @@ void Generate_CGAL_H()
 			{
 				if (!Functs::StringContain(line, "(") || !Functs::StringContain(line, ")"))
 				{
-					Functs::MAssert("Does not include bothe ( and )");
+					Functs::MAssert("Does not include both ( and )");
 				}
 
 				auto value = line.substr(line.find("PPGL_EXPORT") + 11, line.find("CGAL") - line.find("PPGL_EXPORT") - 12);

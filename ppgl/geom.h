@@ -14,21 +14,7 @@
 #include "pgl_functs.hpp"
 #include "include_cgal.h"
 
-#include "NewtonApple_hull3D.h"
-
 using namespace PGL;
-
-struct Index
-{
-	int x;
-	int y;
-	Index() {}
-	Index(int x0, int y0)
-	{
-		x = x0;
-		y = y0;
-	}
-};
 
 Vector3d PointVector3d(Point_3 p);
 Point_3 VectorPoint3d(Vector3d p);
@@ -43,12 +29,6 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const std::string& path, Ve
 Point_3 point_to_3d(const Point_2& p, Plane_3& pl);
 Point_2 point_to_2d(const Point_3& p, Plane_3& pl);
 
-
-Poly_point_3 Minus(Poly_point_3 a, Poly_point_3 b);
-float Dot(Poly_point_3 a, Poly_point_3 b);
-// Compute barycentric coordinates (u, v, w) for
-// point p with respect to triangle (a, b, c)
-void Barycentric(Poly_point_3 p, Poly_point_3 a, Poly_point_3 b, Poly_point_3 c, double& u, double& v, double& w);
 //Project p onto the planar surface of 3d triangle
 //Checking the position relationship between the p and 3d triangle
 //face: 3d triangle
@@ -56,11 +36,20 @@ void Barycentric(Poly_point_3 p, Poly_point_3 a, Poly_point_3 b, Poly_point_3 c,
 //return true: inside
 //return false: outside
 bool OutsidePointInsideTriangle(Poly_facet_iterator& face, Vector3d p);
-
 bool Intersection(Halfedge_handle& hh, int nb, Vector3d inside, Vector3d outside, Halfedge_handle& handle, Vector3d& intersection);
-
-
 Vector3d RelatedFaceNormal(Polyhedron_3& polyhedron, Tree& tree, Vector3d1& normals, Vector3d source);
+void RelatedFaceAndBarycentric(const Polyhedron_3& polyhedron, const Tree& tree, const Vector3d& source, double& u, double& v, double& w, Point_3& nearest_point, face_iterator& face_it);
+Vector3d RelatedFaceNormal(Polyhedron_3& polyhedron, Tree& tree, Vector3d1& normals, Vector3d source);
+
+bool DebugInformation();
+void ComputeEdgeLables(const int size_of_vertice, Halfedge_handle& start_hh, std::vector<std::pair<int, int>>& edges, std::vector<int>& lables);
+void CGAL_2D_Polygon_Simple_0(Vector2d1 points_2d);
+void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_id_0, const std::vector<int>& face_id_1, const std::vector<int>& face_id_2,
+	const std::vector<std::pair<int, int>>& edges, const Vector3d1& cutting_points, const std::vector<int>& multi_cps, const std::vector<int>& two_class_lables, const std::string output_path);
+void insert_polygon(CDT& cdt, const Polygon_2& polygon, Vector1i1& indexInt);
+void mark_domains(CDT& ct, CDT::Face_handle start, int index, std::list<CDT::Edge>& border);
+void mark_domains(CDT& cdt);
+
 
 extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n);
 
@@ -69,7 +58,6 @@ extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n);
 extern "C" PPGL_EXPORT void CGAL_Vector_Base(const Vector3d& n, Vector3d &);
 extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream & export_file_output, int& export_index,const std::string s_name, const double r, const double g, const double b,const Vector3d & start, const Vector3d & end, const double radius);
 extern "C" PPGL_EXPORT void CGAL_Export_Path_Point(std::ofstream & export_file_output, int& export_index, const std::string s_name, const double r, const double g, const double b, const Vector3d point, const double radius);
-
 
 extern "C" PPGL_EXPORT void CGAL_Output_Obj_C1(const std::string & path, const Vector3d1 & vecs);
 extern "C" PPGL_EXPORT void CGAL_Output_Obj_C2(const std::string & path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
@@ -184,7 +172,6 @@ extern "C" PPGL_EXPORT Vector3d CGAL_3D_Plane_Base_1(const Vector3d & plane_p, c
 
 
 extern "C" PPGL_EXPORT Vector3d CGAL_Face_Normal(const Vector3d & source, const Vector3d & tri_0, const Vector3d & tri_1, const Vector3d & tri_2, Vector3d & normal_0, Vector3d & normal_1, Vector3d & normal_2);
-extern "C" PPGL_EXPORT void CGAL_Barycentric(const Vector3d& p, const Vector3d & a, const Vector3d & b, const Vector3d & c, double& u, double& v, double& w);
 
 
 //implementation in "mesh.cpp"
@@ -247,7 +234,6 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & ve
 extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_Own_Version(const std::string & in_path, const int& step, const std::string & out_path, const int& laplace_nb);
 extern "C" PPGL_EXPORT void CGAL_Rotation_Obj(const std::string & path, const double& angle, const Vector3d & axis);
 extern "C" PPGL_EXPORT void CGAL_Slicer_Mesh(const std::string & path, const Vector3d & plane_normal, const std::vector<double> & plane_d, Vector3d3 & offsetses, Vector3d2 & offsets);
-void RelatedFaceAndBarycentric(const Polyhedron_3& polyhedron, const Tree& tree, const Vector3d& source, double& u, double& v, double& w, Poly_point_3& nearest_point, face_iterator& face_it);
 extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C1(const std::string & path, Vector3d1 & xyzs);
 extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C3(std::string path, Vector3d source, Vector3d target, Vector3d1 & output);
 extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C4(std::string path, Vector3d1 sources, Vector3d1 targets, Vector3d2 & xyzes);

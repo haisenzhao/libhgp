@@ -1,8 +1,5 @@
 #include "geom.h"
 
-
-
-
 Point_3 point_to_3d(const Point_2& p, Plane_3& pl) 
 {
 	Vector_3 basis[2];
@@ -26,32 +23,6 @@ Point_2 point_to_2d(const Point_3& p, Plane_3& pl)
 	return Point_2(ter * basis[0], ter * basis[1]);
 }
 
-
-Poly_point_3 Minus(Poly_point_3 a, Poly_point_3 b)
-{
-	return Poly_point_3(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
-}
-float Dot(Poly_point_3 a, Poly_point_3 b)
-{
-	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-}
-
-// Compute barycentric coordinates (u, v, w) for
-// point p with respect to triangle (a, b, c)
-void Barycentric(Poly_point_3 p, Poly_point_3 a, Poly_point_3 b, Poly_point_3 c, double& u, double& v, double& w)
-{
-	Poly_point_3 v0 = Minus(b, a), v1 = Minus(c, a), v2 = Minus(p, a);
-
-	double d00 = Dot(v0, v0);
-	double d01 = Dot(v0, v1);
-	double d11 = Dot(v1, v1);
-	double d20 = Dot(v2, v0);
-	double d21 = Dot(v2, v1);
-	double denom = d00 * d11 - d01 * d01;
-	v = (d11 * d20 - d01 * d21) / denom;
-	w = (d00 * d21 - d01 * d20) / denom;
-	u = 1.0f - v - w;
-}
 
 extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment(const Vector3d& p, const Vector3d & s_s, const Vector3d & s_e) {
     return sqrt((double) CGAL::squared_distance(VectorPoint3d(p), Segment_3(VectorPoint3d(s_s), VectorPoint3d(s_e))));
@@ -153,8 +124,7 @@ extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Segment_Ref(const Vector3d 
                                                           Point_3(s_1[0], s_1[1], s_1[2]))));
 }
 
-extern "C" PPGL_EXPORT double
-CGAL_3D_Distance_Point_Polygon(const Vector3d1 &py, const Vector3d &p) {
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Polygon(const Vector3d1 &py, const Vector3d &p) {
     double distance = 1000000000000.0;
     for (int i = 0; i < py.size(); i++)
         distance = std::min(distance, CGAL_3D_Distance_Point_Segment_Ref(p, py[i], py[(i + 1) % py.size()]));
@@ -162,7 +132,8 @@ CGAL_3D_Distance_Point_Polygon(const Vector3d1 &py, const Vector3d &p) {
 }
 
 
-void insert_polygon(CDT& cdt, const Polygon_2& polygon,Vector1i1 &indexInt){
+void insert_polygon(CDT& cdt, const Polygon_2& polygon,Vector1i1 &indexInt)
+{
 	if (polygon.is_empty()) return;
 	int index = 0;
 
@@ -179,11 +150,7 @@ void insert_polygon(CDT& cdt, const Polygon_2& polygon,Vector1i1 &indexInt){
 	}
 }
 
-void
-mark_domains(CDT& ct,
-CDT::Face_handle start,
-int index,
-std::list<CDT::Edge>& border)
+void mark_domains(CDT& ct, CDT::Face_handle start, int index, std::list<CDT::Edge>& border)
 {
 	if (start->info().nesting_level != -1){
 		return;
@@ -212,8 +179,7 @@ std::list<CDT::Edge>& border)
 //level of 0. Then we recursively consider the non-explored facets incident 
 //to constrained edges bounding the former set and increase the nesting level by 1.
 //Facets in the domain are those with an odd nesting level.
-void
-mark_domains(CDT& cdt)
+void mark_domains(CDT& cdt)
 {
 	for (CDT::All_faces_iterator it = cdt.all_faces_begin(); it != cdt.all_faces_end(); ++it){
 		it->info().nesting_level = -1;
@@ -348,15 +314,15 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const std::string& path, 
     //	for (Polyhedron_3::Vertex_iterator iter = polyhedron.vertices_begin();
     //		iter != polyhedron.vertices_end(); iter++)
     //	{
-    //		Poly_point_3 p = iter->point();
+    //		Point_3 p = iter->point();
     //		vecs.push_back(Vector3d(p[0], p[1], p[2]));
     //	}
 
     //	for (Polyhedron_3::Face_iterator iter = polyhedron.facets_begin(); iter != polyhedron.facets_end(); iter++)
     //	{
-    //		//Poly_point_3 p0 = iter->halfedge()->next()->next()->vertex()->point();
-    //		//Poly_point_3 p1 = iter->halfedge()->vertex()->point();
-    //		//Poly_point_3 p2 = iter->halfedge()->next()->vertex()->point();
+    //		//Point_3 p0 = iter->halfedge()->next()->next()->vertex()->point();
+    //		//Point_3 p1 = iter->halfedge()->vertex()->point();
+    //		//Point_3 p2 = iter->halfedge()->next()->vertex()->point();
     //		face_id_0.push_back(iter->halfedge()->next()->next()->vertex()->id());
     //		face_id_1.push_back(iter->halfedge()->vertex()->id());
     //		face_id_2.push_back(iter->halfedge()->next()->vertex()->id());
@@ -551,11 +517,8 @@ extern "C" PPGL_EXPORT Vector3d CGAL_3D_Plane_Base_1(const Vector3d & plane_p, c
 extern "C" PPGL_EXPORT Vector3d CGAL_Face_Normal(const Vector3d & source, const Vector3d & tri_0, const Vector3d & tri_1, const Vector3d & tri_2, Vector3d & normal_0, Vector3d & normal_1, Vector3d & normal_2)
 {
 	double u, v, w;
-	CGAL_Barycentric(source, tri_0, tri_1, tri_2, u, v, w);
+	Functs::Barycentric(source, tri_0, tri_1, tri_2, u, v, w);
 	return (double)u * normal_0 + (double)v * normal_1 + (double)w * normal_2;
 }
 
-extern "C" PPGL_EXPORT void CGAL_Barycentric(const Vector3d & p, const Vector3d & a, const Vector3d & b, const Vector3d & c, double& u, double& v, double& w)
-{
-	Barycentric(Poly_point_3(p[0], p[1], p[2]), Poly_point_3(a[0], a[1], a[2]), Poly_point_3(b[0], b[1], b[2]), Poly_point_3(c[0], c[1], c[2]), u, v, w);
-}
+

@@ -2,6 +2,7 @@
 
 #include <Mathematics/MeshCurvature.h>
 #include <Mathematics/BSplineCurveFit.h>
+#include "NewtonApple_hull3D.h"
 
 #include "kdtree.h"
 
@@ -79,7 +80,7 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const std::string& path, Ve
 
 		for (Polyhedron_3::Vertex_iterator iter = polyhedron.vertices_begin(); iter != polyhedron.vertices_end(); iter++)
 		{
-			Poly_point_3 p = iter->point();
+			Point_3 p = iter->point();
 			vecs.push_back(Vector3d(p[0], p[1], p[2]));
 		}
 
@@ -105,8 +106,9 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const std::string& path, Ve
 //p: 3d point
 //return true: inside
 //return false: outside
-bool OutsidePointInsideTriangle(Poly_facet_iterator &face, Vector3d p) {
-    Point_3 p0 = face->halfedge()->next()->next()->vertex()->point();
+bool OutsidePointInsideTriangle(Poly_facet_iterator &face, Vector3d p) 
+{
+	Point_3 p0 = face->halfedge()->next()->next()->vertex()->point();
     Point_3 p1 = face->halfedge()->vertex()->point();
     Point_3 p2 = face->halfedge()->next()->vertex()->point();
     Plane_3 plane(p1, CGAL::cross_product(p2 - p1, p0 - p1));
@@ -118,7 +120,7 @@ bool OutsidePointInsideTriangle(Poly_facet_iterator &face, Vector3d p) {
     Vector3d vp = PointVector3d(project);
 
     double u, v, w;
-    CGAL_Barycentric(vp, v0, v1, v2, u, v, w);
+	Functs::Barycentric(vp, v0, v1, v2, u, v, w);
 
     if ((u >= 0.0 && u <= 1.0) && (v >= 0.0 && v <= 1.0) && (w >= 0.0 && w <= 1.0)) {
         return true;
@@ -154,6 +156,26 @@ bool Intersection(Halfedge_handle &hh, int nb, Vector3d inside, Vector3d outside
         }
     }
     return false;
+}
+
+
+
+Vector3d RelatedFaceNormal(Polyhedron_3& polyhedron, Tree& tree, Vector3d1& normals, Vector3d source)
+{
+	Point_3 query(source[0], source[1], source[2]);
+	Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
+
+	Point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
+	Point_3 p1 = pp.second->halfedge()->vertex()->point();
+	Point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
+
+	int point_id_0 = pp.second->halfedge()->next()->next()->vertex()->id();
+	int point_id_1 = pp.second->halfedge()->vertex()->id();
+	int point_id_2 = pp.second->halfedge()->next()->vertex()->id();
+
+	double u, v, w;
+	Functs::Barycentric(PointVector3d(query), PointVector3d(p0), PointVector3d(p1), PointVector3d(p2), u, v, w);
+	return (double)u * normals[point_id_0] + (double)v * normals[point_id_1] + (double)w * normals[point_id_2];
 }
 
 extern "C" PPGL_EXPORT  void
@@ -662,9 +684,6 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(const Vector
 	}
 }
 
-
-
-
 extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Triangle(const Vector3d & p, const Vector3d & t_0, const Vector3d & t_1, const Vector3d & t_2)
 {
 	KC::Point_3 a(t_0[0], t_0[1], t_0[2]);
@@ -761,7 +780,7 @@ extern "C" PPGL_EXPORT void  CGAL_3D_Mesh_Near_Triangles(const Vector3d1 & vecs,
 	{
 		std::vector<int> triangle;
 
-		Poly_point_3 query(points[i][0], points[i][1], points[i][2]);
+		Point_3 query(points[i][0], points[i][1], points[i][2]);
 		Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
 
 		std::priority_queue<Polyhedron_3::Facet_handle> facets;
@@ -787,7 +806,7 @@ extern "C" PPGL_EXPORT void  CGAL_3D_Mesh_Near_Triangles(const Vector3d1 & vecs,
 			for (int j = 0; j < neighbors.size(); j++)
 			{
 				Polyhedron_3::Facet_handle n_fh = neighbors[j];
-				std::vector<Poly_point_3> n_fh_vecs;
+				std::vector<Point_3> n_fh_vecs;
 				n_fh_vecs.push_back(n_fh->halfedge()->vertex()->point());
 				n_fh_vecs.push_back(n_fh->halfedge()->next()->vertex()->point());
 				n_fh_vecs.push_back(n_fh->halfedge()->next()->next()->vertex()->point());
@@ -1029,7 +1048,7 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Subdivision(const std::string & in_path, c
 	for (Polyhedron_3::Vertex_iterator iter = polyhedron.vertices_begin();
 		iter != polyhedron.vertices_end(); iter++)
 	{
-		Poly_point_3 p = iter->point();
+		Point_3 p = iter->point();
 		vecs.push_back(Vector3d(p[0], p[1], p[2]));
 	}
 
@@ -2036,18 +2055,18 @@ extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C1(const std::string & p
 }
 
 
-void RelatedFaceAndBarycentric(const Polyhedron_3& polyhedron, const Tree& tree, const Vector3d& source, double& u, double& v, double& w, Poly_point_3& nearest_point, face_iterator& face_it)
+void RelatedFaceAndBarycentric(const Polyhedron_3& polyhedron, const Tree& tree, const Vector3d& source, double& u, double& v, double& w, Point_3& nearest_point, face_iterator& face_it)
 {
-	Poly_point_3 query(source[0], source[1], source[2]);
+	Point_3 query(source[0], source[1], source[2]);
 	Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
 	nearest_point = pp.first;
 	face_it = pp.second;
 
-	Poly_point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
-	Poly_point_3 p1 = pp.second->halfedge()->vertex()->point();
-	Poly_point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
+	Point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
+	Point_3 p1 = pp.second->halfedge()->vertex()->point();
+	Point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
 
-	Barycentric(pp.first, p0, p1, p2, u, v, w);
+	Functs::Barycentric(PointVector3d(pp.first), PointVector3d(p0), PointVector3d(p1), PointVector3d(p2), u,v , w);
 }
 
 
@@ -2063,7 +2082,7 @@ extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C3(std::string path, Vec
 	face_iterator source_face, target_face;
 	double source_x_w, source_y_w, source_z_w;
 	double target_x_w, target_y_w, target_z_w;
-	Poly_point_3 source_nearest_point, target_nearest_point;
+	Point_3 source_nearest_point, target_nearest_point;
 
 	RelatedFaceAndBarycentric(polyhedron, tree, source, source_x_w, source_y_w, source_z_w, source_nearest_point, source_face);
 	RelatedFaceAndBarycentric(polyhedron, tree, target, target_x_w, target_y_w, target_z_w, target_nearest_point, target_face);
@@ -2093,7 +2112,7 @@ extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C4(std::string path, Vec
 		face_iterator source_face, target_face;
 		double source_x_w, source_y_w, source_z_w;
 		double target_x_w, target_y_w, target_z_w;
-		Poly_point_3 source_nearest_point, target_nearest_point;
+		Point_3 source_nearest_point, target_nearest_point;
 
 		RelatedFaceAndBarycentric(polyhedron, tree, source, source_x_w, source_y_w, source_z_w, source_nearest_point, source_face);
 		RelatedFaceAndBarycentric(polyhedron, tree, target, target_x_w, target_y_w, target_z_w, target_nearest_point, target_face);
@@ -2144,7 +2163,7 @@ extern "C" PPGL_EXPORT double CGAL_Geodesic_Distance(const std::string & path, c
 	face_iterator source_face, target_face;
 	double source_x_w, source_y_w, source_z_w;
 	double target_x_w, target_y_w, target_z_w;
-	Poly_point_3 source_nearest_point, target_nearest_point;
+	Point_3 source_nearest_point, target_nearest_point;
 
 	RelatedFaceAndBarycentric(polyhedron, tree, source, source_x_w, source_y_w, source_z_w, source_nearest_point, source_face);
 	RelatedFaceAndBarycentric(polyhedron, tree, target, target_x_w, target_y_w, target_z_w, target_nearest_point, target_face);
@@ -2163,7 +2182,7 @@ extern "C" PPGL_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface_C1(const Vecto
 {
 	auto NearestPoint=[](const Polyhedron_3 & polyhedron, const Tree & tree, const Vector3d & source)
 	{
-		Poly_point_3 query(source[0], source[1], source[2]);
+		Point_3 query(source[0], source[1], source[2]);
 		Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
 		return Vector3d(pp.first.x(), pp.first.y(), pp.first.z());
 	};
@@ -2187,7 +2206,7 @@ extern "C" PPGL_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface_C2(const std::
 {
 	auto NearestPoint = [](const Polyhedron_3& polyhedron, const Tree& tree, const Vector3d& source)
 	{
-		Poly_point_3 query(source[0], source[1], source[2]);
+		Point_3 query(source[0], source[1], source[2]);
 		Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
 		return Vector3d(pp.first.x(), pp.first.y(), pp.first.z());
 	};
@@ -2476,19 +2495,20 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C1(const std::string & path, c
 
 	for (int i = 0; i < input_points.size(); i++)
 	{
-		Poly_point_3 query(input_points[i][0], input_points[i][1], input_points[i][2]);
+		Point_3 query(input_points[i][0], input_points[i][1], input_points[i][2]);
 		Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
 
-		Poly_point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
-		Poly_point_3 p1 = pp.second->halfedge()->vertex()->point();
-		Poly_point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
+		Point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
+		Point_3 p1 = pp.second->halfedge()->vertex()->point();
+		Point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
 
 		int point_id_0 = pp.second->halfedge()->next()->next()->vertex()->id();
 		int point_id_1 = pp.second->halfedge()->vertex()->id();
 		int point_id_2 = pp.second->halfedge()->next()->vertex()->id();
 
 		double u, v, w;
-		Barycentric(query, p0, p1, p2, u, v, w);
+		Functs::Barycentric(PointVector3d(query), PointVector3d(p0), PointVector3d(p1), PointVector3d(p2), u, v, w);
+
 		points_gradients.push_back((double)u * gradients[point_id_0] + (double)v * gradients[point_id_1] + (double)w * gradients[point_id_2]);
 	}
 }
@@ -2501,19 +2521,19 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C2(const std::string & path, c
 
 	for (int i = 0; i < input_points.size(); i++)
 	{
-		Poly_point_3 query(input_points[i][0], input_points[i][1], input_points[i][2]);
+		Point_3 query(input_points[i][0], input_points[i][1], input_points[i][2]);
 		Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
 
-		Poly_point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
-		Poly_point_3 p1 = pp.second->halfedge()->vertex()->point();
-		Poly_point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
+		Point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
+		Point_3 p1 = pp.second->halfedge()->vertex()->point();
+		Point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
 
 		int point_id_0 = pp.second->halfedge()->next()->next()->vertex()->id();
 		int point_id_1 = pp.second->halfedge()->vertex()->id();
 		int point_id_2 = pp.second->halfedge()->next()->vertex()->id();
 
 		double u, v, w;
-		Barycentric(query, p0, p1, p2, u, v, w);
+		Functs::Barycentric(PointVector3d(query), PointVector3d(p0), PointVector3d(p1), PointVector3d(p2), u, v, w);
 		points_gradient_values.push_back((double)u * gradient_values[point_id_0] + (double)v * gradient_values[point_id_1] + (double)w * gradient_values[point_id_2]);
 	}
 }
@@ -2529,19 +2549,20 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C3(const std::string & path, c
 		std::vector<double> values;
 		for (int j = 0; j < input_point_es[i].size(); j++)
 		{
-			Poly_point_3 query(input_point_es[i][j][0], input_point_es[i][j][1], input_point_es[i][j][2]);
+			Point_3 query(input_point_es[i][j][0], input_point_es[i][j][1], input_point_es[i][j][2]);
 			Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
 
-			Poly_point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
-			Poly_point_3 p1 = pp.second->halfedge()->vertex()->point();
-			Poly_point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
+			Point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
+			Point_3 p1 = pp.second->halfedge()->vertex()->point();
+			Point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
 
 			int point_id_0 = pp.second->halfedge()->next()->next()->vertex()->id();
 			int point_id_1 = pp.second->halfedge()->vertex()->id();
 			int point_id_2 = pp.second->halfedge()->next()->vertex()->id();
 
 			double u, v, w;
-			Barycentric(query, p0, p1, p2, u, v, w);
+			Functs::Barycentric(PointVector3d(query), PointVector3d(p0), PointVector3d(p1), PointVector3d(p2), u, v, w);
+
 			values.push_back((double)u * gradient_values[point_id_0] + (double)v * gradient_values[point_id_1] + (double)w * gradient_values[point_id_2]);
 		}
 		points_gradient_value_es.push_back(values);
@@ -2607,7 +2628,7 @@ extern "C" PPGL_EXPORT void CGAL_Curvature_Mesh(const std::string & path, const 
 		for (Polyhedron_3::Vertex_iterator iter = polyhedron.vertices_begin();
 			iter != polyhedron.vertices_end(); iter++)
 		{
-			Poly_point_3 p = iter->point();
+			Point_3 p = iter->point();
 			vecs.push_back(Vector3d(p[0], p[1], p[2]));
 		}
 		for (Polyhedron_3::Face_iterator iter = polyhedron.facets_begin(); iter != polyhedron.facets_end(); iter++)
@@ -2663,19 +2684,19 @@ extern "C" PPGL_EXPORT void CGAL_Curvature_Mesh(const std::string & path, const 
 
 		for (int i = 0; i < input_points.size(); i++)
 		{
-			Poly_point_3 query(input_points[i][0], input_points[i][1], input_points[i][2]);
+			Point_3 query(input_points[i][0], input_points[i][1], input_points[i][2]);
 			Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
 
-			Poly_point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
-			Poly_point_3 p1 = pp.second->halfedge()->vertex()->point();
-			Poly_point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
+			Point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
+			Point_3 p1 = pp.second->halfedge()->vertex()->point();
+			Point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
 
 			int point_id_0 = pp.second->halfedge()->next()->next()->vertex()->id();
 			int point_id_1 = pp.second->halfedge()->vertex()->id();
 			int point_id_2 = pp.second->halfedge()->next()->vertex()->id();
 
 			double u, v, w;
-			Barycentric(query, p0, p1, p2, u, v, w);
+			Functs::Barycentric(PointVector3d(query), PointVector3d(p0), PointVector3d(p1), PointVector3d(p2), u, v, w);
 
 			max_curs.push_back(u * mesh_max_curs[point_id_0] + v * mesh_max_curs[point_id_1] + w * mesh_max_curs[point_id_2]);
 			min_curs.push_back(u * mesh_min_curs[point_id_0] + v * mesh_min_curs[point_id_1] + w * mesh_min_curs[point_id_2]);
@@ -2692,25 +2713,6 @@ extern "C" PPGL_EXPORT void CGAL_Curvature_Mesh(const std::string & path, const 
 	}
 }
 
-
-Vector3d RelatedFaceNormal(Polyhedron_3& polyhedron, Tree& tree, Vector3d1& normals, Vector3d source)
-{
-	Poly_point_3 query(source[0], source[1], source[2]);
-	Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
-
-	Poly_point_3 p0 = pp.second->halfedge()->next()->next()->vertex()->point();
-	Poly_point_3 p1 = pp.second->halfedge()->vertex()->point();
-	Poly_point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
-
-	int point_id_0 = pp.second->halfedge()->next()->next()->vertex()->id();
-	int point_id_1 = pp.second->halfedge()->vertex()->id();
-	int point_id_2 = pp.second->halfedge()->next()->vertex()->id();
-
-	double u, v, w;
-	Barycentric(query, p0, p1, p2, u, v, w);
-
-	return (double)u * normals[point_id_0] + (double)v * normals[point_id_1] + (double)w * normals[point_id_2];
-}
 
 
 extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C1(const std::string & path, const Vector3d1 & mesh_points, Vector3d1 & mesh_normals)
@@ -2730,7 +2732,7 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C1(const std::string & path, const 
 		for (Polyhedron_3::Vertex_iterator iter = polyhedron.vertices_begin();
 			iter != polyhedron.vertices_end(); iter++)
 		{
-			Poly_point_3 p = iter->point();
+			Point_3 p = iter->point();
 			mesh_xs.push_back(p[0]);
 			mesh_ys.push_back(p[1]);
 			mesh_zs.push_back(p[2]);
@@ -2801,9 +2803,9 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C1(const std::string & path, const 
 		for (int i = 0; i < face_id_0.size(); i++)
 		{
 			double area = CGAL_3D_One_Triangle_Area(vecs[face_id_0[i]], vecs[face_id_1[i]], vecs[face_id_2[i]]);
-			Poly_point_3 p0(vecs[face_id_0[i]][0], vecs[face_id_0[i]][1], vecs[face_id_0[i]][2]);
-			Poly_point_3 p1(vecs[face_id_1[i]][0], vecs[face_id_1[i]][1], vecs[face_id_1[i]][2]);
-			Poly_point_3 p2(vecs[face_id_2[i]][0], vecs[face_id_2[i]][1], vecs[face_id_2[i]][2]);
+			Point_3 p0(vecs[face_id_0[i]][0], vecs[face_id_0[i]][1], vecs[face_id_0[i]][2]);
+			Point_3 p1(vecs[face_id_1[i]][0], vecs[face_id_1[i]][1], vecs[face_id_1[i]][2]);
+			Point_3 p2(vecs[face_id_2[i]][0], vecs[face_id_2[i]][1], vecs[face_id_2[i]][2]);
 			Vector_3   n = CGAL::cross_product(p2 - p1, p0 - p1);
 
 			Vector3d n0(n[0], n[1], n[2]);
@@ -2846,7 +2848,7 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C2(const std::string & path, const 
 		for (Polyhedron_3::Vertex_iterator iter = polyhedron.vertices_begin();
 			iter != polyhedron.vertices_end(); iter++)
 		{
-			Poly_point_3 p = iter->point();
+			Point_3 p = iter->point();
 			mesh_xs.push_back(p[0]);
 			mesh_ys.push_back(p[1]);
 			mesh_zs.push_back(p[2]);
@@ -2923,9 +2925,9 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C2(const std::string & path, const 
 		for (int i = 0; i < face_id_0.size(); i++)
 		{
 			double area = CGAL_3D_One_Triangle_Area(vecs[face_id_0[i]], vecs[face_id_1[i]], vecs[face_id_2[i]]);
-			Poly_point_3 p0(vecs[face_id_0[i]][0], vecs[face_id_0[i]][1], vecs[face_id_0[i]][2]);
-			Poly_point_3 p1(vecs[face_id_1[i]][0], vecs[face_id_1[i]][1], vecs[face_id_1[i]][2]);
-			Poly_point_3 p2(vecs[face_id_2[i]][0], vecs[face_id_2[i]][1], vecs[face_id_2[i]][2]);
+			Point_3 p0(vecs[face_id_0[i]][0], vecs[face_id_0[i]][1], vecs[face_id_0[i]][2]);
+			Point_3 p1(vecs[face_id_1[i]][0], vecs[face_id_1[i]][1], vecs[face_id_1[i]][2]);
+			Point_3 p2(vecs[face_id_2[i]][0], vecs[face_id_2[i]][1], vecs[face_id_2[i]][2]);
 			Vector_3   n = CGAL::cross_product(p2 - p1, p0 - p1);
 
 			Vector3d n0(n[0], n[1], n[2]);
@@ -3614,7 +3616,7 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs,
 	CGAL_3D_Mesh_Gradient(vecs, face_id_0, face_id_1, face_id_2, psd, vecs_gradients, faces_gradients);
 
 	Vector3d2 segments;
-	std::vector<std::vector<Index>> edges;
+	VectorPI2 edges;
 
 	for (int i = 0; i < face_id_0.size(); i++)
 	{
@@ -3643,9 +3645,9 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs,
 			segment.push_back(inter_0_1);
 			segment.push_back(inter_1_2);
 
-			std::vector<Index> endedge;
-			endedge.push_back(Index(index_0, index_1));
-			endedge.push_back(Index(index_1, index_2));
+			VectorPI1 endedge;
+			endedge.push_back(std::pair<int,int>(index_0, index_1));
+			endedge.push_back(std::pair<int, int>(index_1, index_2));
 
 			if (!Functs::IsAlmostZero(CGAL_3D_Distance_Point_Point(segment[0], segment[1])))
 			{
@@ -3664,9 +3666,9 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs,
 			segment.push_back(inter_1_2);
 			segment.push_back(inter_2_0);
 
-			std::vector<Index> endedge;
-			endedge.push_back(Index(index_1, index_2));
-			endedge.push_back(Index(index_2, index_0));
+			VectorPI1 endedge;
+			endedge.push_back(std::pair<int,int>(index_1, index_2));
+			endedge.push_back(std::pair<int, int>(index_2, index_0));
 
 			if (!Functs::IsAlmostZero(CGAL_3D_Distance_Point_Point(segment[0], segment[1])))
 			{
@@ -3685,9 +3687,9 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs,
 			segment.push_back(inter_2_0);
 			segment.push_back(inter_0_1);
 
-			std::vector<Index> endedge;
-			endedge.push_back(Index(index_2, index_0));
-			endedge.push_back(Index(index_0, index_1));
+			VectorPI1 endedge;
+			endedge.push_back(std::pair<int,int>(index_2, index_0));
+			endedge.push_back(std::pair<int,int>(index_0, index_1));
 
 			if (!Functs::IsAlmostZero(CGAL_3D_Distance_Point_Point(segment[0], segment[1])))
 			{
@@ -4796,7 +4798,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		for (int j = 0; j < multi_boundary[i].size(); j++)
 		{
 			std::cerr << i << " " << j << std::endl;
-			Poly_point_3 query(multi_boundary[i][j][0], multi_boundary[i][j][1], multi_boundary[i][j][2]);
+			Point_3 query(multi_boundary[i][j][0], multi_boundary[i][j][1], multi_boundary[i][j][2]);
 			auto fid = KD_Close_Query_0(kd_tree, multi_boundary[i][j], full_vecs, full_face_id_0, full_face_id_1, full_face_id_2, surface_vectices_to_face);
 			one_projects.push_back(multi_boundary[i][j]);
 			one_project_faces.push_back(full_face_iters[fid]);

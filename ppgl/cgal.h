@@ -4,14 +4,13 @@
 #include <pgl_functs.hpp>
 using namespace std;
 using namespace PGL;
-// Compute barycentric coordinates (u, v, w) for
-// point p with respect to triangle (a, b, c)
 //Project p onto the planar surface of 3d triangle
 //Checking the position relationship between the p and 3d triangle
 //face: 3d triangle
 //p: 3d point
 //return true: inside
 //return false: outside
+typedef 2D_Polygon_Simple_0(Vector2d1 points_2d); (*CGAL_2D_Polygon_Simple_0)(Vector2d1 points_2d);
 typedef  void (*CGAL_Test_PGL)(const Vector3d& n);
 //implementation in "io.cpp"
 //####################################################################################
@@ -109,7 +108,6 @@ typedef  Vector2d (*CGAL_3D_Projection_3D_Point_Plane_2D_C2)(const Vector3d & p,
 typedef  void (*CGAL_3D_Plane_ABCD)(const Vector3d & plane_p, const Vector3d & plane_n, double& a, double& b, double& c, double& d);
 typedef  Vector3d (*CGAL_3D_Plane_Base_1)(const Vector3d & plane_p, const Vector3d & plane_n);
 typedef  Vector3d (*CGAL_Face_Normal)(const Vector3d & source, const Vector3d & tri_0, const Vector3d & tri_1, const Vector3d & tri_2, Vector3d & normal_0, Vector3d & normal_1, Vector3d & normal_2);
-typedef  void (*CGAL_Barycentric)(const Vector3d& p, const Vector3d & a, const Vector3d & b, const Vector3d & c, double& u, double& v, double& w);
 //implementation in "mesh.cpp"
 //####################################################################################
 typedef  void (*CGAL_Remesh_Surface_by_Adding_Feature)(const Vector3d1 &feature,const Vector1i1 &face_ids, const Vector3d1 &vecs, const Vector1i1 &face_id_0,const Vector1i1 &face_id_1,const Vector1i1 &face_id_2, Vector1i1 &igl_cutting_0_edges,Vector1i1 &igl_cutting_1_edges, Vector3d1 &igl_cutting_points,Vector1i2 &cutting_faces);
@@ -208,6 +206,7 @@ class PL
 	PL()
 	{
 		hModule = Functs::LoadHMODULE("ppgl.dll");
+		CGAL_2D_Polygon_Simple_0_C = (CGAL_2D_Polygon_Simple_0)GetProcAddress(hModule, "CGAL_2D_Polygon_Simple_0");
 		CGAL_Test_PGL_C = (CGAL_Test_PGL)GetProcAddress(hModule, "CGAL_Test_PGL");
 		//implementation in "io.cpp"
 		//####################################################################################
@@ -305,7 +304,6 @@ class PL
 		CGAL_3D_Plane_ABCD_C = (CGAL_3D_Plane_ABCD)GetProcAddress(hModule, "CGAL_3D_Plane_ABCD");
 		CGAL_3D_Plane_Base_1_C = (CGAL_3D_Plane_Base_1)GetProcAddress(hModule, "CGAL_3D_Plane_Base_1");
 		CGAL_Face_Normal_C = (CGAL_Face_Normal)GetProcAddress(hModule, "CGAL_Face_Normal");
-		CGAL_Barycentric_C = (CGAL_Barycentric)GetProcAddress(hModule, "CGAL_Barycentric");
 		//implementation in "mesh.cpp"
 		//####################################################################################
 		CGAL_Remesh_Surface_by_Adding_Feature_C = (CGAL_Remesh_Surface_by_Adding_Feature)GetProcAddress(hModule, "CGAL_Remesh_Surface_by_Adding_Feature");
@@ -405,6 +403,7 @@ class PL
 	};
 
 	HMODULE hModule;
+	CGAL_2D_Polygon_Simple_0 CGAL_2D_Polygon_Simple_0_C;
 	CGAL_Test_PGL CGAL_Test_PGL_C;
 	//implementation in "io.cpp"
 	//####################################################################################
@@ -502,7 +501,6 @@ class PL
 	CGAL_3D_Plane_ABCD CGAL_3D_Plane_ABCD_C;
 	CGAL_3D_Plane_Base_1 CGAL_3D_Plane_Base_1_C;
 	CGAL_Face_Normal CGAL_Face_Normal_C;
-	CGAL_Barycentric CGAL_Barycentric_C;
 	//implementation in "mesh.cpp"
 	//####################################################################################
 	CGAL_Remesh_Surface_by_Adding_Feature CGAL_Remesh_Surface_by_Adding_Feature_C;
