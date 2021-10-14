@@ -2051,33 +2051,6 @@ void RelatedFaceAndBarycentric(const Polyhedron_3& polyhedron, const Tree& tree,
 }
 
 
-extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C2(Polyhedron_3 & polyhedron, const Tree & tree, Vector3d & source, Vector3d & target, Vector3d1 & xyzs)
-{
-	////////////////////////////////////////
-	face_iterator source_face, target_face;
-	double source_x_w, source_y_w, source_z_w;
-	double target_x_w, target_y_w, target_z_w;
-	Poly_point_3 source_nearest_point, target_nearest_point;
-
-	RelatedFaceAndBarycentric(polyhedron, tree, source, source_x_w, source_y_w, source_z_w, source_nearest_point, source_face);
-	RelatedFaceAndBarycentric(polyhedron, tree, target, target_x_w, target_y_w, target_z_w, target_nearest_point, target_face);
-
-	Traits::Barycentric_coordinate source_face_location = { { source_x_w, source_y_w, source_z_w } };
-	Traits::Barycentric_coordinate target_face_location = { { target_x_w, target_y_w, target_z_w } };
-	//////////////////////////////////////////////////////////////
-
-	Surface_mesh_shortest_path shortest_paths(polyhedron);
-	shortest_paths.add_source_point(*source_face, source_face_location);
-
-	std::vector<Traits::Point_3> points;
-	shortest_paths.shortest_path_points_to_source_points(*target_face, target_face_location, std::back_inserter(points));
-
-	for (int i = points.size() - 1; i >= 0; i--)
-	{
-		xyzs.push_back(Vector3d(points[i][0], points[i][1], points[i][2]));
-	}
-}
-
 extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C3(std::string path, Vector3d source, Vector3d target, Vector3d1 & output)
 {
 	Polyhedron_3 polyhedron;
@@ -2114,13 +2087,37 @@ extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C3(std::string path, Vec
 extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C4(std::string path, Vector3d1 sources,
 	Vector3d1 targets, Vector3d2 & xyzes)
 {
+	auto CGAL_Shortest_Geodesic_Path_C2=[](Polyhedron_3 & polyhedron, const Tree & tree, Vector3d & source, Vector3d & target, Vector3d1 & xyzs)
+	{
+		////////////////////////////////////////
+		face_iterator source_face, target_face;
+		double source_x_w, source_y_w, source_z_w;
+		double target_x_w, target_y_w, target_z_w;
+		Poly_point_3 source_nearest_point, target_nearest_point;
+
+		RelatedFaceAndBarycentric(polyhedron, tree, source, source_x_w, source_y_w, source_z_w, source_nearest_point, source_face);
+		RelatedFaceAndBarycentric(polyhedron, tree, target, target_x_w, target_y_w, target_z_w, target_nearest_point, target_face);
+
+		Traits::Barycentric_coordinate source_face_location = { { source_x_w, source_y_w, source_z_w } };
+		Traits::Barycentric_coordinate target_face_location = { { target_x_w, target_y_w, target_z_w } };
+		//////////////////////////////////////////////////////////////
+
+		Surface_mesh_shortest_path shortest_paths(polyhedron);
+		shortest_paths.add_source_point(*source_face, source_face_location);
+
+		std::vector<Traits::Point_3> points;
+		shortest_paths.shortest_path_points_to_source_points(*target_face, target_face_location, std::back_inserter(points));
+
+		for (int i = points.size() - 1; i >= 0; i--)
+		{
+			xyzs.push_back(Vector3d(points[i][0], points[i][1], points[i][2]));
+		}
+	};
+
 	Polyhedron_3 polyhedron;
-
 	Construct_Polyhedron(polyhedron, path);
-
 	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
 	tree.accelerate_distance_queries();
-
 	std::cout << "Start to compute the geodesic path..." << std::endl;
 
 	for (int i = 0; i < sources.size(); i++)

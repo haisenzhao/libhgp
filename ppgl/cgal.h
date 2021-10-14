@@ -167,7 +167,6 @@ typedef  void (*CGAL_Mesh_Loop_Subdivision_Own_Version)(const std::string & in_p
 typedef  void (*CGAL_Rotation_Obj)(const std::string & path, const double& angle, const Vector3d & axis);
 typedef  void (*CGAL_Slicer_Mesh)(const std::string & path, const Vector3d & plane_normal, const std::vector<double> & plane_d, Vector3d3 & offsetses, Vector3d2 & offsets);
 typedef  void (*CGAL_Shortest_Geodesic_Path_C1)(const std::string & path, Vector3d1 & xyzs);
-typedef  void (*CGAL_Shortest_Geodesic_Path_C2)(Polyhedron_3 & polyhedron, const Tree & tree, Vector3d & source, Vector3d & target, Vector3d1 & xyzs);
 typedef  void (*CGAL_Shortest_Geodesic_Path_C3)(std::string path, Vector3d source, Vector3d target, Vector3d1 & output);
 typedef  void (*CGAL_Shortest_Geodesic_Path_C4)(std::string path, Vector3d1 sources, Vector3d1 targets, Vector3d2 & xyzes);
 typedef  double (*CGAL_Geodesic_Distance)(const std::string & path, const Vector3d & source, const Vector3d & target);
@@ -364,7 +363,6 @@ class PL
 		CGAL_Rotation_Obj_C = (CGAL_Rotation_Obj)GetProcAddress(hModule, "CGAL_Rotation_Obj");
 		CGAL_Slicer_Mesh_C = (CGAL_Slicer_Mesh)GetProcAddress(hModule, "CGAL_Slicer_Mesh");
 		CGAL_Shortest_Geodesic_Path_C1_C = (CGAL_Shortest_Geodesic_Path_C1)GetProcAddress(hModule, "CGAL_Shortest_Geodesic_Path_C1");
-		CGAL_Shortest_Geodesic_Path_C2_C = (CGAL_Shortest_Geodesic_Path_C2)GetProcAddress(hModule, "CGAL_Shortest_Geodesic_Path_C2");
 		CGAL_Shortest_Geodesic_Path_C3_C = (CGAL_Shortest_Geodesic_Path_C3)GetProcAddress(hModule, "CGAL_Shortest_Geodesic_Path_C3");
 		CGAL_Shortest_Geodesic_Path_C4_C = (CGAL_Shortest_Geodesic_Path_C4)GetProcAddress(hModule, "CGAL_Shortest_Geodesic_Path_C4");
 		CGAL_Geodesic_Distance_C = (CGAL_Geodesic_Distance)GetProcAddress(hModule, "CGAL_Geodesic_Distance");
@@ -562,7 +560,6 @@ class PL
 	CGAL_Rotation_Obj CGAL_Rotation_Obj_C;
 	CGAL_Slicer_Mesh CGAL_Slicer_Mesh_C;
 	CGAL_Shortest_Geodesic_Path_C1 CGAL_Shortest_Geodesic_Path_C1_C;
-	CGAL_Shortest_Geodesic_Path_C2 CGAL_Shortest_Geodesic_Path_C2_C;
 	CGAL_Shortest_Geodesic_Path_C3 CGAL_Shortest_Geodesic_Path_C3_C;
 	CGAL_Shortest_Geodesic_Path_C4 CGAL_Shortest_Geodesic_Path_C4_C;
 	CGAL_Geodesic_Distance CGAL_Geodesic_Distance_C;

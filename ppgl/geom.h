@@ -249,7 +249,6 @@ extern "C" PPGL_EXPORT void CGAL_Rotation_Obj(const std::string & path, const do
 extern "C" PPGL_EXPORT void CGAL_Slicer_Mesh(const std::string & path, const Vector3d & plane_normal, const std::vector<double> & plane_d, Vector3d3 & offsetses, Vector3d2 & offsets);
 void RelatedFaceAndBarycentric(const Polyhedron_3& polyhedron, const Tree& tree, const Vector3d& source, double& u, double& v, double& w, Poly_point_3& nearest_point, face_iterator& face_it);
 extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C1(const std::string & path, Vector3d1 & xyzs);
-extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C2(Polyhedron_3 & polyhedron, const Tree & tree, Vector3d & source, Vector3d & target, Vector3d1 & xyzs);
 extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C3(std::string path, Vector3d source, Vector3d target, Vector3d1 & output);
 extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C4(std::string path, Vector3d1 sources, Vector3d1 targets, Vector3d2 & xyzes);
 extern "C" PPGL_EXPORT double CGAL_Geodesic_Distance(const std::string & path, const Vector3d & source, const Vector3d & target);
