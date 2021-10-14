@@ -147,13 +147,18 @@ void Generate_CGAL_H()
 		{
 			if (Functs::StringContain(line, "CGAL"))
 			{
+				if (!Functs::StringContain(line, "(") || !Functs::StringContain(line, ")"))
+				{
+					Functs::MAssert("Does not include bothe ( and )");
+				}
+
 				auto value = line.substr(line.find("PPGL_EXPORT") + 11, line.find("CGAL") - line.find("PPGL_EXPORT") - 12);
 				auto title = line.substr(line.find("CGAL"), line.find("(") - line.find("CGAL"));
 				auto para = line.substr(line.find("("));
 				funct_values.push_back(value);
 				funct_titles.push_back(title);
 				funct_paras.push_back(para);
-				std::cerr << "Function: " << title << " para: " << para.substr(0,6) << std::endl;
+				std::cerr << "Function: " << title  << std::endl;
 			}
 			else
 			{

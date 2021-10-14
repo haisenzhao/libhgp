@@ -163,7 +163,7 @@ typedef  void (*CGAL_Mesh_Laplace_Smooth_C2)(Vector3d1 & vecs, std::vector<int>&
 typedef  void (*CGAL_3D_Triangle_Mesh_Vecs_Faces)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2,std::vector<std::vector<int>>&surface_vectices_to_face);
 typedef  void (*CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2,std::vector<std::vector<std::vector<int>>>&surface_vectices_to_neighbor_edges);
 typedef  void (*CGAL_Mesh_Laplace_Smooth_by_Curvature)(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, double& low_curvature);
-typedef  void (*CGAL_Mesh_Loop_Subdivision_Own_Version)(const std::string & in_path, const int& step, const std::string & out_path, const int& laplace_nb = 0);
+typedef  void (*CGAL_Mesh_Loop_Subdivision_Own_Version)(const std::string & in_path, const int& step, const std::string & out_path, const int& laplace_nb);
 typedef  void (*CGAL_Rotation_Obj)(const std::string & path, const double& angle, const Vector3d & axis);
 typedef  void (*CGAL_Slicer_Mesh)(const std::string & path, const Vector3d & plane_normal, const std::vector<double> & plane_d, Vector3d3 & offsetses, Vector3d2 & offsets);
 typedef  void (*CGAL_Shortest_Geodesic_Path_C1)(const std::string & path, Vector3d1 & xyzs);
