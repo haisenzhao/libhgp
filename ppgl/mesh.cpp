@@ -2271,11 +2271,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangel_Mesh_Most_Inside_Point(const Vector
 
 extern "C" PPGL_EXPORT double CGAL_3D_One_Triangle_Area(const Vector3d & v0, const Vector3d & v1, const Vector3d & v2)
 {
-	double a = CGAL_3D_Distance_Point_Point(v0, v1);
-	double b = CGAL_3D_Distance_Point_Point(v2, v1);
-	double c = CGAL_3D_Distance_Point_Point(v0, v2);
-	double p = (a + b + c) / 2.0;
-	return sqrt(p * (p - a) * (p - b) * (p - c));
+	return Functs::GetTriangleArea(v0, v1, v2);
 }
 
 extern "C" PPGL_EXPORT double CGAL_3D_Triangle_Mesh_Area(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)

@@ -1325,23 +1325,6 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon,const
     return true;
 }
 
-struct GridEdge {
-	int s_i, s_j;
-	int e_i, e_j;
-	int type;
-	GridEdge(int s_i_0, int s_j_0, int e_i_0, int e_j_0, int t) {
-		s_i = s_i_0;
-		s_j = s_j_0;
-		e_i = e_i_0;
-		e_j = e_j_0;
-		type = t;
-	}
-};
-
-struct GridEdgeRelation {
-	std::vector<int> ids;
-};
-
 int GetIndex(std::vector<GridEdge>& grid_edges, std::pair<int,int> i_0, std::pair<int,int> i_1)
 {
 	int s_i = i_0.first;
@@ -1475,7 +1458,7 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 	//std::pair<int,int> 1 2
 	//std::pair<int,int> s e
 	//std::pair<int,int> 3 4
-	std::vector<GridEdgeRelation> grid_relations;
+	Vector1i2 grid_relations;
 	std::vector<bool> grid_edges_used;
 	for (int i = 0; i < grid_edges.size(); i++) {
 		grid_edges_used.push_back(false);
@@ -1515,24 +1498,24 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 		int lable_4 = GetIndex(grid_edges, index_3, index_s);
 		int lable_5 = GetIndex(grid_edges, index_4, index_e);
 
-		GridEdgeRelation gr;
+		Vector1i1 gr;
 		if (lable_1 >= 0 && (grid[index_s.first][index_s.second] == 0 || (grid[index_s.first][index_s.second] == 1 && grid[index_2.first][index_2.second] == 0))) {
-			gr.ids.push_back(lable_1);
+			gr.push_back(lable_1);
 		}
 		if (lable_2 >= 0 && (grid[index_e.first][index_e.second] == 0 || (grid[index_e.first][index_e.second] == 1 && grid[index_1.first][index_1.second] == 0))) {
-			gr.ids.push_back(lable_2);
+			gr.push_back(lable_2);
 		}
 		if (lable_4 >= 0 && (grid[index_s.first][index_s.second] == 0 || (grid[index_s.first][index_s.second] == 1 && grid[index_4.first][index_4.second] == 0))) {
-			gr.ids.push_back(lable_4);
+			gr.push_back(lable_4);
 		}
 		if (lable_5 >= 0 && (grid[index_e.first][index_e.second] == 0 || (grid[index_e.first][index_e.second] == 1 && grid[index_3.first][index_3.second] == 0))) {
-			gr.ids.push_back(lable_5);
+			gr.push_back(lable_5);
 		}
 		if (lable_0 >= 0 && lable_1 < 0 && lable_2 < 0) {
-			gr.ids.push_back(lable_0);
+			gr.push_back(lable_0);
 		}
 		if (lable_3 >= 0 && lable_4 < 0 && lable_5 < 0) {
-			gr.ids.push_back(lable_3);
+			gr.push_back(lable_3);
 		}
 		grid_relations.push_back(gr);
 		//if ((grid_edges[i].s_i == 11+1 && grid_edges[i].s_j == 15+1) ||
@@ -1540,9 +1523,9 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 		//{
 		//	std::cout << "Edge: (" << grid_edges[i].s_i - 1 << ", " << grid_edges[i].s_j - 1 << ")_("
 		//		<< grid_edges[i].e_i - 1 << ", " << grid_edges[i].e_j - 1 << ")" << std::endl;
-		//	for (int j = 0; j < gr.ids.size(); j++)
+		//	for (int j = 0; j < gr.size(); j++)
 		//	{
-		//		int index = gr.ids[j];
+		//		int index = gr[j];
 		//		std::cout << "(" << grid_edges[index].s_i - 1 << ", " << grid_edges[index].s_j - 1 << ")_("
 		//			<< grid_edges[index].e_i - 1 << ", " << grid_edges[index].e_j - 1 << ")" << std::endl;
 		//	}
@@ -1567,9 +1550,9 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 		std::vector<int> one_boundary(1, start_edge_index);
 		while (true) {
 			int next_edge_index = -1;
-			for (int i = 0; i < grid_relations[start_edge_index].ids.size(); i++) {
-				if (!grid_edges_used[grid_relations[start_edge_index].ids[i]]) {
-					next_edge_index = grid_relations[start_edge_index].ids[i];
+			for (int i = 0; i < grid_relations[start_edge_index].size(); i++) {
+				if (!grid_edges_used[grid_relations[start_edge_index][i]]) {
+					next_edge_index = grid_relations[start_edge_index][i];
 					break;
 				}
 			}
@@ -1620,7 +1603,7 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 
 	std::vector<std::vector<int>>().swap(grid);
 	std::vector<GridEdge>().swap(grid_edges);
-	std::vector<GridEdgeRelation>().swap(grid_relations);
+	Vector1i2().swap(grid_relations);
 	std::vector<bool>().swap(grid_edges_used);
 	std::vector<std::vector<int>>().swap(grid_boundaries);
 }

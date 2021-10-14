@@ -16,6 +16,20 @@
 
 using namespace PGL;
 
+struct GridEdge {
+	int s_i, s_j;
+	int e_i, e_j;
+	int type;
+	GridEdge(int s_i_0, int s_j_0, int e_i_0, int e_j_0, int t) {
+		s_i = s_i_0;
+		s_j = s_j_0;
+		e_i = e_i_0;
+		e_j = e_j_0;
+		type = t;
+	}
+};
+
+
 Vector3d PointVector3d(Point_3 p);
 Point_3 VectorPoint3d(Vector3d p);
 Vector2d PointVector2d(Point_2 p);
@@ -50,6 +64,8 @@ void insert_polygon(CDT& cdt, const Polygon_2& polygon, Vector1i1& indexInt);
 void mark_domains(CDT& ct, CDT::Face_handle start, int index, std::list<CDT::Edge>& border);
 void mark_domains(CDT& cdt);
 
+
+int GetIndex(std::vector<GridEdge>& grid_edges, std::pair<int, int> i_0, std::pair<int, int> i_1);
 
 extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n);
 
