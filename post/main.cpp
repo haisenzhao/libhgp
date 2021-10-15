@@ -267,7 +267,7 @@ int main(int argc, char* argv[])
 	else
 		Check_Not_Included();
 
-	//Functs::MAssert("Successfully finishing the post processing...");
+	Functs::MAssert("Successfully finishing the post processing...");
 	return 0;
 }
 

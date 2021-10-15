@@ -10,7 +10,6 @@ using namespace PGL;
 //p: 3d point
 //return true: inside
 //return false: outside
-typedef 2D_Polygon_Simple_0(Vector2d1 points_2d); (*CGAL_2D_Polygon_Simple_0)(Vector2d1 points_2d);
 typedef  void (*CGAL_Test_PGL)(const Vector3d& n);
 //implementation in "io.cpp"
 //####################################################################################
@@ -206,7 +205,6 @@ class PL
 	PL()
 	{
 		hModule = Functs::LoadHMODULE("ppgl.dll");
-		CGAL_2D_Polygon_Simple_0_C = (CGAL_2D_Polygon_Simple_0)GetProcAddress(hModule, "CGAL_2D_Polygon_Simple_0");
 		CGAL_Test_PGL_C = (CGAL_Test_PGL)GetProcAddress(hModule, "CGAL_Test_PGL");
 		//implementation in "io.cpp"
 		//####################################################################################
@@ -403,7 +401,6 @@ class PL
 	};
 
 	HMODULE hModule;
-	CGAL_2D_Polygon_Simple_0 CGAL_2D_Polygon_Simple_0_C;
 	CGAL_Test_PGL CGAL_Test_PGL_C;
 	//implementation in "io.cpp"
 	//####################################################################################
