@@ -1271,7 +1271,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C1(const Vector3d1 & 
 
 	for (int i = 0; i < vecs.size(); i++) {
 		bool b = false;
-		for (int j = 0; j < vecs_neigbor_lable[i].size() & !b; j++) {
+		for (int j = 0; j < vecs_neigbor_lable[i].size() && !b; j++) {
 			if (vecs_neigbor_lable[i][j] == 1) {
 				b = true;
 			}
@@ -2327,9 +2327,9 @@ extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C2(const Vector3d1 & vec, Vecto
 	{
 		//points.push_back(Point_3(xs[i], ys[i], zs[i]));
 		pt.id = i;
-		pt.r = vec[i][0];
-		pt.c = vec[i][1];
-		pt.z = vec[i][2];
+		pt.r = (float)vec[i][0];
+		pt.c = (float)vec[i][1];
+		pt.z = (float)vec[i][2];
 		pts.push_back(pt);
 	}
 
@@ -2377,9 +2377,9 @@ extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C3(const Vector3d1 & vec, Vecto
 	{
 		//points.push_back(Point_3(xs[i], ys[i], zs[i]));
 		pt.id = i;
-		pt.r = vec[i][0];
-		pt.c = vec[i][1];
-		pt.z = vec[i][2];
+		pt.r = (float)vec[i][0];
+		pt.c = (float)vec[i][1];
+		pt.z = (float)vec[i][2];
 		pts.push_back(pt);
 	}
 
@@ -2426,9 +2426,9 @@ extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C4(const Vector3d1 & vec, Vecto
 	{
 		//points.push_back(Point_3(xs[i], ys[i], zs[i]));
 		pt.id = i;
-		pt.r = vec[i][0];
-		pt.c = vec[i][1];
-		pt.z = vec[i][2];
+		pt.r = (float)vec[i][0];
+		pt.c = (float)vec[i][1];
+		pt.z = (float)vec[i][2];
 		pts.push_back(pt);
 	}
 
@@ -3093,7 +3093,7 @@ extern "C" PPGL_EXPORT void CGAL_Surface_Decomposition(const std::string & path,
 	const std::size_t number_of_clusters = 100;       // use 4 clusters in soft clustering
 	const double smoothing_lambda = 0.08;  // importance of surface features, suggested to be in-between [0,1]
 	regions_nb = CGAL::segmentation_from_sdf_values(
-		polyhedron, sdf_property_map, segment_property_map, number_of_clusters, smoothing_lambda);
+		polyhedron, sdf_property_map, segment_property_map, (int)number_of_clusters, smoothing_lambda);
 
 	for (Polyhedron_3::Facet_const_iterator facet_it = polyhedron.facets_begin();
 		facet_it != polyhedron.facets_end(); ++facet_it) {
@@ -4887,7 +4887,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 				//move next step
 				inside = intersection;
 				cur_handle = handle->opposite();
-				cur_face_id = cur_handle->face()->id();
+				cur_face_id = (int)cur_handle->face()->id();
 				face_used[cur_face_id] = true;
 				cur_face = cur_handle->face();
 

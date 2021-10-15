@@ -235,7 +235,7 @@ extern "C" PPGL_EXPORT std::vector<std::vector<int>> CGAL_2D_Polygon_Triangulati
 			polygon.push_back(Point_2(polys[i][j][0], polys[i][j][1]));
 			indexInt.emplace_back(j + nb);
 		}
-		nb += polys[i].size();
+		nb += (int)polys[i].size();
 		insert_polygon(cdt, polygon, indexInt);
 	}
 

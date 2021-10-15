@@ -281,16 +281,18 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Boundingbox_C2(const Vector3d1 & ps, Ve
 
 extern "C" PPGL_EXPORT void CGAL_Surface_Decomposition(const std::string & path, std::vector<double>&face_sdf, int& regions_nb, std::vector<int>&face_segments);
 
-/////////////////////////////////////////////////////////////
-//
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Gradient(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&psd, Vector3d1 & vecs_gradients, Vector3d1 & faces_gradients);
 
 extern "C" PPGL_EXPORT void CGAL_Intergral_Curvature(const Vector2d1 & input_points, const int& sampling_points_nb, const double& radius, const double& thresholder, Vector2d1 & output_points, std::vector<double>&output_rates);
 extern "C" PPGL_EXPORT bool CGAL_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&psd, const double& d, Vector3d2 & isolines);
-extern "C" PPGL_EXPORT void CGAL_BSplineCurveFit(const Vector3d1 & samples,  Vector3d1 & output);
+extern "C" PPGL_EXPORT void CGAL_BSplineCurveFit(const Vector3d1 & samples, Vector3d1 & output);
 
-extern "C" PPGL_EXPORT void CGAL_Cut_Surface(const Vector3d1 & boundary, const Vector3d & inside_point, const std::string & full_path,  std::string & output_path);
-extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const std::string & full_path,  std::string & output_path);
+extern "C" PPGL_EXPORT void CGAL_Cut_Surface(const Vector3d1 & boundary, const Vector3d & inside_point, const std::string & full_path, std::string & output_path);
+extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const std::string & full_path, std::string & output_path);
 
+
+
+/////////////////////////////////////////////////////////////
+//
 
 #endif

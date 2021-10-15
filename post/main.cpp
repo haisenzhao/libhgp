@@ -145,7 +145,7 @@ void Generate_CGAL_H()
 		std::ifstream file("E:\\Task2\\personal-pack-geom-lib\\ppgl\\geom.h");
 		for (std::string line; std::getline(file, line); )
 		{
-			if (Functs::StringContain(line, "CGAL"))
+			if (Functs::StringContain(line, "CGAL")&& Functs::StringContain(line, "extern \"C\" PPGL_EXPORT"))
 			{
 				if (!Functs::StringContain(line, "(") || !Functs::StringContain(line, ")"))
 				{

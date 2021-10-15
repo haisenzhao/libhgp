@@ -190,14 +190,14 @@ typedef  Vector3d (*CGAL_3D_Mesh_Center_C2)(const Vector3d1 & ps);
 typedef  void (*CGAL_3D_Mesh_Boundingbox_C1)(const Vector3d2 & ps, Vector3d & min_corner, Vector3d & max_corner);
 typedef  void (*CGAL_3D_Mesh_Boundingbox_C2)(const Vector3d1 & ps, Vector3d & min_corner, Vector3d & max_corner);
 typedef  void (*CGAL_Surface_Decomposition)(const std::string & path, std::vector<double>&face_sdf, int& regions_nb, std::vector<int>&face_segments);
-/////////////////////////////////////////////////////////////
-//
 typedef  void (*CGAL_3D_Mesh_Gradient)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&psd, Vector3d1 & vecs_gradients, Vector3d1 & faces_gradients);
 typedef  void (*CGAL_Intergral_Curvature)(const Vector2d1 & input_points, const int& sampling_points_nb, const double& radius, const double& thresholder, Vector2d1 & output_points, std::vector<double>&output_rates);
 typedef  bool (*CGAL_3D_Mesh_Extract_Isoline)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&psd, const double& d, Vector3d2 & isolines);
-typedef  void (*CGAL_BSplineCurveFit)(const Vector3d1 & samples,  Vector3d1 & output);
-typedef  void (*CGAL_Cut_Surface)(const Vector3d1 & boundary, const Vector3d & inside_point, const std::string & full_path,  std::string & output_path);
-typedef  void (*CGAL_Cut_Surface_by_Multi_Boundaries)(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const std::string & full_path,  std::string & output_path);
+typedef  void (*CGAL_BSplineCurveFit)(const Vector3d1 & samples, Vector3d1 & output);
+typedef  void (*CGAL_Cut_Surface)(const Vector3d1 & boundary, const Vector3d & inside_point, const std::string & full_path, std::string & output_path);
+typedef  void (*CGAL_Cut_Surface_by_Multi_Boundaries)(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const std::string & full_path, std::string & output_path);
+/////////////////////////////////////////////////////////////
+//
 
 
 class PL
@@ -386,14 +386,14 @@ class PL
 		CGAL_3D_Mesh_Boundingbox_C1_C = (CGAL_3D_Mesh_Boundingbox_C1)GetProcAddress(hModule, "CGAL_3D_Mesh_Boundingbox_C1");
 		CGAL_3D_Mesh_Boundingbox_C2_C = (CGAL_3D_Mesh_Boundingbox_C2)GetProcAddress(hModule, "CGAL_3D_Mesh_Boundingbox_C2");
 		CGAL_Surface_Decomposition_C = (CGAL_Surface_Decomposition)GetProcAddress(hModule, "CGAL_Surface_Decomposition");
-		/////////////////////////////////////////////////////////////
-		//
 		CGAL_3D_Mesh_Gradient_C = (CGAL_3D_Mesh_Gradient)GetProcAddress(hModule, "CGAL_3D_Mesh_Gradient");
 		CGAL_Intergral_Curvature_C = (CGAL_Intergral_Curvature)GetProcAddress(hModule, "CGAL_Intergral_Curvature");
 		CGAL_3D_Mesh_Extract_Isoline_C = (CGAL_3D_Mesh_Extract_Isoline)GetProcAddress(hModule, "CGAL_3D_Mesh_Extract_Isoline");
 		CGAL_BSplineCurveFit_C = (CGAL_BSplineCurveFit)GetProcAddress(hModule, "CGAL_BSplineCurveFit");
 		CGAL_Cut_Surface_C = (CGAL_Cut_Surface)GetProcAddress(hModule, "CGAL_Cut_Surface");
 		CGAL_Cut_Surface_by_Multi_Boundaries_C = (CGAL_Cut_Surface_by_Multi_Boundaries)GetProcAddress(hModule, "CGAL_Cut_Surface_by_Multi_Boundaries");
+		/////////////////////////////////////////////////////////////
+		//
 	};
 
 	static PL& Inst()
@@ -583,13 +583,13 @@ class PL
 	CGAL_3D_Mesh_Boundingbox_C1 CGAL_3D_Mesh_Boundingbox_C1_C;
 	CGAL_3D_Mesh_Boundingbox_C2 CGAL_3D_Mesh_Boundingbox_C2_C;
 	CGAL_Surface_Decomposition CGAL_Surface_Decomposition_C;
-	/////////////////////////////////////////////////////////////
-	//
 	CGAL_3D_Mesh_Gradient CGAL_3D_Mesh_Gradient_C;
 	CGAL_Intergral_Curvature CGAL_Intergral_Curvature_C;
 	CGAL_3D_Mesh_Extract_Isoline CGAL_3D_Mesh_Extract_Isoline_C;
 	CGAL_BSplineCurveFit CGAL_BSplineCurveFit_C;
 	CGAL_Cut_Surface CGAL_Cut_Surface_C;
 	CGAL_Cut_Surface_by_Multi_Boundaries CGAL_Cut_Surface_by_Multi_Boundaries_C;
+	/////////////////////////////////////////////////////////////
+	//
 };
 #endif
