@@ -262,7 +262,7 @@ extern "C" PPGL_EXPORT std::vector<std::vector<int>> CGAL_2D_Polygon_Triangulati
 //IO mesh
 /***************************************************************************************************/
 
-//void CGAL_Load_Obj(std::string path, std::vector<double> &coords,Vector1i1 &tris) {
+//void CGAL_Load_Obj(const char* path, std::vector<double> &coords,Vector1i1 &tris) {
 //    double x, y, z;
 //    char line[1024], v0[1024], v1[1024], v2[1024];
 //
@@ -289,7 +289,7 @@ extern "C" PPGL_EXPORT std::vector<std::vector<int>> CGAL_2D_Polygon_Triangulati
 //}
 
 extern "C" PPGL_EXPORT void CGAL_3D_Output_Triangle_Mesh
-(const std::string& path, const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2)
+(const char* path, const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2)
 {
 	std::ofstream file(path);
 
@@ -303,7 +303,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Output_Triangle_Mesh
 	file.close();
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const std::string& path, Vector3d1 &vecs,
+extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const char* path_, Vector3d1 &vecs,
                         Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2)
 {
     //if (path.substr(path.size() - 3, path.size()) == "off")
@@ -329,6 +329,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const std::string& path, 
     //	}
     //}
 
+	std::string path = path_;
     if (path.substr(path.size() - 3, path.size()) == "obj") 
 	{
 		Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);

@@ -16,7 +16,7 @@ Point_2 VectorPoint2d(Vector2d p) {
     return Point_2(p[0], p[1]);
 }
 
-extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n, const std::string & str, const char* char_)
+extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n, const char* str, const char* char_)
 {
 	Functs::CerrLine(char_);
 	Functs::CerrLine(str);
@@ -152,7 +152,7 @@ extern "C" PPGL_EXPORT void CGAL_Export_Path_Point
 
 
 
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C1(const std::string & path, const Vector3d1 & vecs)
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C1(const char* path, const Vector3d1 & vecs)
 {
 	if (vecs.size() < 3)
 	{
@@ -168,7 +168,7 @@ extern "C" PPGL_EXPORT void CGAL_Output_Obj_C1(const std::string & path, const V
 
 	file.close();
 }
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C2(const std::string & path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C2(const char* path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
 {
 
 	if (vecs.size() < 3 || face_id_0.size() < 1 || face_id_1.size() < 1 || face_id_2.size() < 1)
@@ -209,7 +209,7 @@ extern "C" PPGL_EXPORT void CGAL_Output_Obj_C2(const std::string & path, const V
 	}
 	file.close();
 }
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C3(const std::string & path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids)
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C3(const char* path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids)
 {
 	std::vector<int> face_id_0;
 	std::vector<int> face_id_1;
@@ -224,7 +224,7 @@ extern "C" PPGL_EXPORT void CGAL_Output_Obj_C3(const std::string & path, const V
 
 	CGAL_Output_Obj_C2(path, vecs, face_id_0, face_id_1, face_id_2);
 }
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C4(const std::string & path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<int>&triangles_lables, const int& index)
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C4(const char* path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<int>&triangles_lables, const int& index)
 {
 	std::vector<int> face_id_0;
 	std::vector<int> face_id_1;
@@ -272,7 +272,7 @@ extern "C" PPGL_EXPORT void CGAL_Output_Obj_C4(const std::string & path, const V
 
 	CGAL_Output_Obj_C2(path, new_vecs, new_face_id_0, new_face_id_1, new_face_id_2);
 }
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C5(const std::string & path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C5(const char* path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
 {
 
 	if (vecs.size() < 3 || colors.size() < 3 || face_id_0.size() < 1 || face_id_1.size() < 1 || face_id_2.size() < 1)
@@ -312,7 +312,7 @@ extern "C" PPGL_EXPORT void CGAL_Output_Obj_C5(const std::string & path, const V
 	file.close();
 }
 
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C6(const std::string & path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<std::vector<int>>&face_ids)
+extern "C" PPGL_EXPORT void CGAL_Output_Obj_C6(const char* path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<std::vector<int>>&face_ids)
 {
 	std::vector<int> face_id_0;
 	std::vector<int> face_id_1;
@@ -328,7 +328,7 @@ extern "C" PPGL_EXPORT void CGAL_Output_Obj_C6(const std::string & path, const V
 }
 
 
-extern "C" PPGL_EXPORT void CGAL_Output_Off(const std::string & path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
+extern "C" PPGL_EXPORT void CGAL_Output_Off(const char* path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
 {
 	if (vecs.size() < 3 || face_id_0.size() < 1 || face_id_1.size() < 1 || face_id_2.size() < 1)
 	{
@@ -358,7 +358,7 @@ extern "C" PPGL_EXPORT void CGAL_Output_Off(const std::string & path, const Vect
 	file.close();
 }
 
-extern "C" PPGL_EXPORT void CGAL_Load_Obj(const std::string & path, std::vector<double>&coords, std::vector<int>&tris)
+extern "C" PPGL_EXPORT void CGAL_Load_Obj(const char* path, std::vector<double>&coords, std::vector<int>&tris)
 {
 	Functs::LoadObj3d(path,coords,tris);
 }

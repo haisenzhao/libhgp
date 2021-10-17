@@ -614,7 +614,7 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_NotExtend(
     return true;
 }
 
-void OutputRectangle(std::string path, const Vector2d2  &points) {
+void OutputRectangle(const char* path, const Vector2d2  &points) {
     std::ofstream file(path);
 
     for (int i = 0; i < points.size(); i++) {
