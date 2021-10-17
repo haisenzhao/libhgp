@@ -18,7 +18,7 @@ include( ${CGAL_USE_FILE} )
 include(ExternalProject)
 ExternalProject_Add(
     pgl
-    PREFIX ${CMAKE_BINARY_DIR}/pgl
+    PREFIX ${CMAKE_BINARY_DIR}/third_party/pgl
     GIT_REPOSITORY https://github.com/haisenzhao/personal-geom-lib.git
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -30,7 +30,7 @@ set(PglIncludeDir ${source_dir})
 
 ExternalProject_Add(
     glm
-    PREFIX ${CMAKE_BINARY_DIR}/glm
+    PREFIX ${CMAKE_BINARY_DIR}/third_party/glm
     GIT_REPOSITORY https://github.com/g-truc/glm.git
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -42,7 +42,7 @@ set(GlmIncludeDir ${source_dir})
 
 ExternalProject_Add(
     eigen
-    PREFIX ${CMAKE_BINARY_DIR}/eigen
+    PREFIX ${CMAKE_BINARY_DIR}/third_party/eigen
     GIT_REPOSITORY https://github.com/libigl/eigen.git
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -55,7 +55,7 @@ set(EigenIncludeDir ${source_dir})
 
 ExternalProject_Add(
     gte
-    PREFIX ${CMAKE_BINARY_DIR}/gte
+    PREFIX ${CMAKE_BINARY_DIR}/third_party/gte
     GIT_REPOSITORY https://github.com/davideberly/GeometricTools.git
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
