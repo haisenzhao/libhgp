@@ -29,8 +29,16 @@ int main(int argc, char* argv[])
 	std::string micro_file = "1_micro.obj";
 	Vector3d1 sampling_points;
 	
-	(root + "\\" + cube_file, root + "\\" + micro_file, 10, sampling_points, 10);
-	Functs::CerrLine("Total sampling_points: " + std::to_string(sampling_points.size()), 2);
+
+	Vector3d1 origin_vecs;
+	Vector1i1 origin_face_id_0, origin_face_id_1, origin_face_id_2;
+	if (Functs::CerrLine("Read Input File.", 1))
+	{
+		std::cerr << "Path: " << root + "\\0_origin.obj" << std::endl;
+		CGAL_3D_Read_Triangle_Mesh(root + "\\0_origin.obj", origin_vecs, origin_face_id_0, origin_face_id_1, origin_face_id_2);
+	}
+
+	std::cerr << origin_vecs.size() << std::endl;
 
 #endif
 
