@@ -379,6 +379,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const char* path_, Vector
 	std::string path = path_;
 	std::cerr << path << std::endl;
 
+	Vector3d1().swap(vecs);
 	std::cerr << " vecs.size(): " << vecs.size() << std::endl;
 
 
