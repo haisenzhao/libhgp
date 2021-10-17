@@ -360,41 +360,5 @@ extern "C" PPGL_EXPORT void CGAL_Output_Off(const std::string & path, const Vect
 
 extern "C" PPGL_EXPORT void CGAL_Load_Obj(const std::string & path, std::vector<double>&coords, std::vector<int>&tris)
 {
-	auto get_first_integer = [](const char* v)
-	{
-		int ival;
-		std::string s(v);
-		std::replace(s.begin(), s.end(), '/', ' ');
-		sscanf(s.c_str(), "%d", &ival);
-		return ival;
-	};
-
-	double x, y, z;
-	char line[1024], v0[1024], v1[1024], v2[1024];
-
-	// open the file, return if open fails
-	FILE* fp = fopen(path.c_str(), "r");
-	if (!fp)
-	{
-		Functs::MAssert("This file does not exist: "+path);
-		return;
-	};
-
-	int i = 0;
-	while (fgets(line, 1024, fp)) {
-
-		if (line[0] == 'v') {
-			sscanf(line, "%*s%lf%lf%lf", &x, &y, &z);
-			coords.push_back(x);
-			coords.push_back(y);
-			coords.push_back(z);
-		}
-		else if (line[0] == 'f') {
-			sscanf(line, "%*s%s%s%s", v0, v1, v2);
-			tris.push_back(get_first_integer(v0) - 1);
-			tris.push_back(get_first_integer(v1) - 1);
-			tris.push_back(get_first_integer(v2) - 1);
-		}
-	}
-	fclose(fp);
+	Functs::LoadObj3d(path,coords,tris);
 }

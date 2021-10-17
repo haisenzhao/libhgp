@@ -58,7 +58,7 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const std::string& path)
 		std::vector<int> face_id_0;
 		std::vector<int> face_id_1;
 		std::vector<int> face_id_2;
-		CGAL_3D_Read_Triangle_Mesh(path, vecs, face_id_0, face_id_1, face_id_2);
+		Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 		Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
 	}
 }
@@ -93,7 +93,7 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const std::string& path, Ve
 	}
 	if (path.substr(path.size() - 3, path.size()) == "obj")
 	{
-		CGAL_3D_Read_Triangle_Mesh(path, vecs, face_id_0, face_id_1, face_id_2);
+		Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 		Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
 	}
 }
@@ -1289,7 +1289,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C2(const std::string 
 	std::vector<int> face_id_0;
 	std::vector<int> face_id_1;
 	std::vector<int> face_id_2;
-	CGAL_3D_Read_Triangle_Mesh(path, vecs, face_id_0, face_id_1, face_id_2);
+	Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, bools);
 }
 
@@ -1635,7 +1635,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C5(std::string path, 
 	std::vector<int> face_id_0;
 	std::vector<int> face_id_1;
 	std::vector<int> face_id_2;
-	CGAL_3D_Read_Triangle_Mesh(path, vecs, face_id_0, face_id_1, face_id_2);
+	Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 	CGAL_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries);
 }
 
@@ -1646,7 +1646,7 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_C1(const std::string & in_p
 	std::vector<int> face_id_0;
 	std::vector<int> face_id_1;
 	std::vector<int> face_id_2;
-	CGAL_3D_Read_Triangle_Mesh(in_path, vecs, face_id_0, face_id_1, face_id_2);
+	Functs::LoadObj3d(in_path, vecs, face_id_0, face_id_1, face_id_2);
 	CGAL_Mesh_Laplace_Smooth_C2(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
 	CGAL_Output_Obj_C2(out_path, vecs, face_id_0, face_id_1, face_id_2);
 }
@@ -1943,7 +1943,7 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_Own_Version(const std::st
 	std::vector<int> face_id_1;
 	std::vector<int> face_id_2;
 
-	CGAL_3D_Read_Triangle_Mesh(in_path, vecs, face_id_0, face_id_1, face_id_2);
+	Functs::LoadObj3d(in_path, vecs, face_id_0, face_id_1, face_id_2);
 
 	for (int i = 0; i < step; i++)
 	{
@@ -1966,7 +1966,7 @@ extern "C" PPGL_EXPORT void CGAL_Rotation_Obj(const std::string & path, const do
 	std::vector<int> face_id_1;
 	std::vector<int> face_id_2;
 
-	CGAL_3D_Read_Triangle_Mesh(path, vecs, face_id_0, face_id_1, face_id_2);
+	Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 	for (int i = 0; i < vecs.size(); i++)
 	{
 		Vector3d v = Functs::RotationAxis(vecs[i], angle, axis);
@@ -2614,7 +2614,7 @@ extern "C" PPGL_EXPORT void CGAL_Curvature_Mesh(const std::string & path, const 
 		Vector3d1 vecs;
 		std::vector<int> mesh_face_id_0, mesh_face_id_1, mesh_face_id_2;
 
-		//CGAL_3D_Read_Triangle_Mesh(path, vecs, mesh_face_id_0, mesh_face_id_1, mesh_face_id_2);
+		//Functs::LoadObj3d(path, vecs, mesh_face_id_0, mesh_face_id_1, mesh_face_id_2);
 
 		//Polyhedron_3 polyhedron;
 		//Construct_Polyhedron(polyhedron, vecs, mesh_face_id_0, mesh_face_id_1, mesh_face_id_2);
@@ -2783,7 +2783,7 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C1(const std::string & path, const 
 		std::vector<int> face_id_0;
 		std::vector<int> face_id_1;
 		std::vector<int> face_id_2;
-		CGAL_3D_Read_Triangle_Mesh(path, vecs, face_id_0, face_id_1, face_id_2);
+		Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 
 		Polyhedron_3 polyhedron;
 
@@ -2905,7 +2905,7 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C2(const std::string & path, const 
 		std::vector<int> face_id_0;
 		std::vector<int> face_id_1;
 		std::vector<int> face_id_2;
-		CGAL_3D_Read_Triangle_Mesh(path, vecs, face_id_0, face_id_1, face_id_2);
+		Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 
 		Polyhedron_3 polyhedron;
 
