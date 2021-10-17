@@ -3793,7 +3793,7 @@ extern "C" PPGL_EXPORT void CGAL_BSplineCurveFit(const Vector3d1 & samples, Vect
 
 //assumption: one projecting line can intersect with the three edges at most twice times
 //it's impossible to meet one edge for more than one times
-extern "C" PPGL_EXPORT void CGAL_Cut_Surface(const Vector3d1 & boundary, const Vector3d & inside_point, const char* full_path, std::string & output_path)
+extern "C" PPGL_EXPORT void CGAL_Cut_Surface(const Vector3d1 & boundary, const Vector3d & inside_point, const char* full_path, char* output_path)
 {
 	Vector3d2 multi_boundary(1, boundary);
 	CGAL_Cut_Surface_by_Multi_Boundaries(multi_boundary, inside_point, full_path, output_path);
@@ -3845,8 +3845,9 @@ void ComputeEdgeLables(const int size_of_vertice, Halfedge_handle& start_hh, std
 		{
 			std::ofstream  export_file_output_0("Z:\\Documents\\Windows\\SmartSFC\\workspace\\CFS\\cutting\\" + std::to_string(iter) + "_" + std::to_string(hh->vertex()->id()) + "_" + std::to_string(queue_1.front()) + ".obj");
 			int export_index_0 = 1;
+			std::string str = "inside" + std::to_string(iter) + "_" + std::to_string(hh->vertex()->id()) + "_" + std::to_string(queue_1.front());
 			CGAL_Export_Path_Point(export_file_output_0, export_index_0,
-				"inside" + std::to_string(iter) + "_" + std::to_string(hh->vertex()->id()) + "_" + std::to_string(queue_1.front()),
+				str.c_str(),
 				1.0, 0.0, 0.0, v, 0.1);
 			export_file_output_0.clear();
 			export_file_output_0.close();
@@ -4348,7 +4349,7 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 //output_path: file path of output mesh
 //assumption: one projecting line can intersect with the three edges of one triangle at most twice times
 //            it's impossible to meet one edge for more than one times
-extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const char* full_path, std::string & output_path)
+extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const char* full_path, char* output_path)
 {
 	auto Intersection = [](const Halfedge_handle& hh, const int nb, const Vector3d inside, const Vector3d outside, Halfedge_handle& handle, Vector3d& intersection)
 	{
@@ -4602,7 +4603,8 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 			{
 				Vector3d end_0 = multi_projects[i][j];
 				Vector3d end_1 = multi_projects[i][(j + 1) % multi_projects[i].size()];
-				CGAL_Export_Path_Segment(export_file_output, export_index_0, "projection_" + Functs::IntString(i), 1.0, 0.0, 0.0, end_0, end_1, 0.002);
+				std::string str = "projection_" + Functs::IntString(i);
+				CGAL_Export_Path_Segment(export_file_output, export_index_0, str.c_str(), 1.0, 0.0, 0.0, end_0, end_1, 0.002);
 			}
 		}
 		export_file_output.clear();
@@ -4663,13 +4665,16 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 			{
 				Vector3d end_0 = cutting_points[j];
 				Vector3d end_1 = cutting_points[j + 1];
-				CGAL_Export_Path_Segment(export_file_output, export_index, "cutting_points_" + Functs::IntString(j), 1.0, 0.0, 0.0, end_0, end_1, 0.05);
+				std::string str = "cutting_points_" + Functs::IntString(j);
+				CGAL_Export_Path_Segment(export_file_output, export_index, str.c_str(), 1.0, 0.0, 0.0, end_0, end_1, 0.05);
 			}
 		//CGAL_Export_Path_Segment(export_file_output, export_index, "inside_outside_segment", 1.0, 0.0, 0.0, inside, multi_projects[i][next_index], 0.01);
 		CGAL_Export_Path_Segment(export_file_output, export_index, "cur_tri_edge", 1.0, 0.0, 0.0, v1, v3, 0.001);
-		CGAL_Export_Path_Point(export_file_output, export_index, "cur_tri_center_" + std::to_string(cur_handle->face()->id()), 1.0, 0.0, 0.0, center, 0.002);
+		std::string str = "cur_tri_center_" + std::to_string(cur_handle->face()->id());
+		CGAL_Export_Path_Point(export_file_output, export_index, str.c_str(), 1.0, 0.0, 0.0, center, 0.002);
 		CGAL_Export_Path_Point(export_file_output, export_index, "cur_tri_inside", 1.0, 0.0, 0.0, inside, 0.002);
-		CGAL_Export_Path_Point(export_file_output, export_index, "cur_tri_outside_" + std::to_string(multi_project_faces[i][next_index]->id()),
+		str = "cur_tri_outside_" + std::to_string(multi_project_faces[i][next_index]->id());
+		CGAL_Export_Path_Point(export_file_output, export_index, str.c_str(),
 			1.0, 0.0, 0.0, multi_projects[i][next_index], 0.002);
 
 		if (b)
@@ -4691,7 +4696,8 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		int export_index = 1;
 		for (int i = 0; i < cutting_points.size() - 1; i++)
 		{
-			CGAL_Export_Path_Segment(export_file_output, export_index, "intersection_" + Functs::IntString(i), 1.0, 0.0, 0.0, cutting_points[i], cutting_points[i + 1], 0.05);
+			std::string str = "intersection_" + Functs::IntString(i);
+			CGAL_Export_Path_Segment(export_file_output, export_index, str.c_str(), 1.0, 0.0, 0.0, cutting_points[i], cutting_points[i + 1], 0.05);
 		}
 		export_file_output.clear();
 		export_file_output.close();
@@ -4706,8 +4712,8 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		for (int i = 0; i < handles.size(); i++)
 		{
 			auto name = "edge_" + std::to_string(i) + "_" + std::to_string(handles[i]->face()->id());
-			CGAL_Export_Path_Segment(export_file_output_0, export_index_0, name, 1.0, 0.0, 0.0, full_vecs[edges[i].first], full_vecs[edges[i].second], 0.03);
-			CGAL_Export_Path_Point(export_file_output_0, export_index_0, name, 1.0, 0.0, 0.0, cutting_points[i], 0.05);
+			CGAL_Export_Path_Segment(export_file_output_0, export_index_0, name.c_str(), 1.0, 0.0, 0.0, full_vecs[edges[i].first], full_vecs[edges[i].second], 0.03);
+			CGAL_Export_Path_Point(export_file_output_0, export_index_0, name.c_str(), 1.0, 0.0, 0.0, cutting_points[i], 0.05);
 
 			Point_3 p0 = handles[i]->next()->next()->vertex()->point();
 			Point_3 p1 = handles[i]->vertex()->point();
@@ -4716,7 +4722,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 			Vector3d v1 = PointVector3d(p1);
 			Vector3d v2 = PointVector3d(p2);
 			Vector3d center = (v0 + v1 + v2) / (double)3.0;
-			CGAL_Export_Path_Point(export_file_output_0, export_index_0, name, 1.0, 0.0, 0.0, center, 0.05);
+			CGAL_Export_Path_Point(export_file_output_0, export_index_0, name.c_str(), 1.0, 0.0, 0.0, center, 0.05);
 
 		}
 

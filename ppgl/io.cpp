@@ -37,7 +37,7 @@ Vector3d CGAL_3D_Plane_Base_1(Vector3d plane_p, Vector3d plane_n) {
 }
 
 extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_output, int &export_index,
-                                                               const std::string s_name, const double r, const double g, const double b,
+                                                               const char* s_name, const double r, const double g, const double b,
                                                                const Vector3d &start, const Vector3d &end, const double radius) {
     Vector3d normal = end - start;
     Vector3d base_1;
@@ -74,7 +74,7 @@ extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_
     faces.push_back(std::vector<int>(face_index_4, face_index_4 + 4));
     faces.push_back(std::vector<int>(face_index_5, face_index_5 + 4));
 
-    export_file_output << "g " + s_name << std::endl;
+    export_file_output << "g " + std::string(s_name) << std::endl;
 
     for (int i = 0; i < vecs.size(); i++) {
         export_file_output << "v " << vecs[i][0] << " " << vecs[i][1] << " " << vecs[i][2] << " " << r << " " << g
@@ -94,7 +94,7 @@ extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream &export_file_
 }
 
 extern "C" PPGL_EXPORT void CGAL_Export_Path_Point
-(std::ofstream &export_file_output, int &export_index,const std::string s_name, const double r, const double g, const double b,const Vector3d point, const double radius)
+(std::ofstream &export_file_output, int &export_index,const char* s_name, const double r, const double g, const double b,const Vector3d point, const double radius)
 {
     Vector3d1 vecs;
     vecs.push_back(Vector3d(0.5, 0.5, 0.5));
@@ -123,7 +123,7 @@ extern "C" PPGL_EXPORT void CGAL_Export_Path_Point
     faces.push_back(std::vector<int>(face_index_4, face_index_4 + 4));
     faces.push_back(std::vector<int>(face_index_5, face_index_5 + 4));
 
-    export_file_output << "g " + s_name << std::endl;
+    export_file_output << "g " + std::string(s_name) << std::endl;
 
     for (int i = 0; i < vecs.size(); i++) {
         vecs[i][0] = vecs[i][0] * radius;
