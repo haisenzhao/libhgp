@@ -370,11 +370,18 @@ extern "C" PPGL_EXPORT void CGAL_Load_Obj(const std::string & path, std::vector<
 	double x, y, z;
 	char line[1024], v0[1024], v1[1024], v2[1024];
 
+	std::cerr << path.c_str() << std::endl;
+
 	// open the file, return if open fails
 	FILE* fp = fopen(path.c_str(), "r");
 	if (!fp) return;
 
+	int i = 0;
 	while (fgets(line, 1024, fp)) {
+
+
+		std::cerr << line << std::endl;
+		std::cerr << coords.size() << std::endl;
 		if (line[0] == 'v') {
 			sscanf(line, "%*s%lf%lf%lf", &x, &y, &z);
 			coords.push_back(x);
