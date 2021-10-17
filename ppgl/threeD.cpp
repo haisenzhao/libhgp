@@ -328,7 +328,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const char* path_, Vector
     //		face_id_2.push_back(iter->halfedge()->next()->vertex()->id());
     //	}
     //}
-
+	std::cerr << path_ << std::endl;
 	std::string path = path_;
     if (path.substr(path.size() - 3, path.size()) == "obj") 
 	{
