@@ -357,8 +357,3 @@ extern "C" PPGL_EXPORT void CGAL_Output_Off(const char* path, const Vector3d1 & 
 		file << "3 " << face_id_0[i] << " " << face_id_1[i] << " " << face_id_2[i] << " " << std::endl;
 	file.close();
 }
-
-extern "C" PPGL_EXPORT void CGAL_Load_Obj(const char* path, std::vector<double>&coords, std::vector<int>&tris)
-{
-	Functs::LoadObj3d(path,coords,tris);
-}

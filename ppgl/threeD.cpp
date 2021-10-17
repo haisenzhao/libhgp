@@ -303,6 +303,52 @@ extern "C" PPGL_EXPORT void CGAL_3D_Output_Triangle_Mesh
 	file.close();
 }
 
+extern "C" PPGL_EXPORT void CGAL_Load_Obj(const char* path, std::vector<double> & coords, std::vector<int> & tris)
+{
+	auto get_first_integer = [](const char* v)
+	{
+		int ival;
+		std::string s(v);
+		std::replace(s.begin(), s.end(), '/', ' ');
+		sscanf(s.c_str(), "%d", &ival);
+		return ival;
+	};
+
+	double x, y, z;
+	char line[1024], v0[1024], v1[1024], v2[1024];
+
+	// open the file, return if open fails
+	FILE* fp = fopen(path, "r");
+	if (!Functs::DetectExisting(path))
+	{
+		Functs::MAssert("This file does not exist: " + std::string(path));
+		return;
+	};
+
+	int i = 0;
+	while (fgets(line, 1024, fp))
+	{
+		if (line[0] == 'v')
+		{
+			sscanf(line, "%*s%lf%lf%lf", &x, &y, &z);
+			coords.push_back(x);
+			coords.push_back(y);
+			coords.push_back(z);
+		}
+		else
+		{
+			if (line[0] == 'f')
+			{
+				sscanf(line, "%*s%s%s%s", v0, v1, v2);
+				tris.push_back(get_first_integer(v0) - 1);
+				tris.push_back(get_first_integer(v1) - 1);
+				tris.push_back(get_first_integer(v2) - 1);
+			}
+		}
+	}
+	fclose(fp);
+}
+
 extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const char* path_, Vector3d1 &vecs,
                         Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2)
 {
@@ -328,14 +374,52 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const char* path_, Vector
     //		face_id_2.push_back(iter->halfedge()->next()->vertex()->id());
     //	}
     //}
+
 	std::cerr << path_ << std::endl;
 	std::string path = path_;
-    if (path.substr(path.size() - 3, path.size()) == "obj") 
+	std::cerr << path << std::endl;
+
+	std::cerr << " vecs.size(): " << vecs.size() << std::endl;
+
+
+	if (path.substr(path.size() - 3, path.size()) == "obj")
 	{
-		std::cerr << 1 << std::endl;
-		Functs::LoadObj3d(path_, vecs, face_id_0, face_id_1, face_id_2);
-		std::cerr << 10 << std::endl;
-    }
+		std::cerr << 122 << std::endl;
+
+		std::vector<double> coords;
+		Vector1i1 tris;
+
+		CGAL_Load_Obj(path.c_str(), coords, tris);
+
+		std::cerr << 211 << " coords: " << coords.size() << " tris: " << tris.size() << std::endl;
+
+		if (coords.size() == 0)
+		{
+			return;
+		}
+
+		for (int i = 0; i < (int)coords.size(); i += 3)
+		{
+			std::cerr << "coords: " << i << " / " << coords.size() << std::endl;
+			std::cerr << coords[i + 0] << std::endl;
+			std::cerr << coords[i + 1] << std::endl;
+			std::cerr << coords[i + 2] << std::endl;
+			std::cerr << vecs.size() << std::endl;
+			vecs.push_back(Vector3d(coords[i + 0], coords[i + 1], coords[i + 2]));
+			std::cerr << vecs.size() << std::endl;
+			std::cerr << Functs::VectorString(vecs.back()) << std::endl;
+		}
+
+		for (int i = 0; i < (int)tris.size(); i += 3)
+		{
+			std::cerr << "tris: " << i << " / " << tris.size() << std::endl;
+
+			face_id_0.push_back(tris[i + 0]);
+			face_id_1.push_back(tris[i + 1]);
+			face_id_2.push_back(tris[i + 2]);
+		}
+		/*********************************************************************************/
+	}
 }
 
 extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Line(const Vector3d & p, const Vector3d & l_s, const Vector3d & l_e)
