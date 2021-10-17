@@ -329,16 +329,18 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const std::string& path, 
     //	}
     //}
 
-    if (path.substr(path.size() - 3, path.size()) == "obj") {
+    if (path.substr(path.size() - 3, path.size()) == "obj") 
+	{
         std::vector<double> coords;
        Vector1i1 tris;
         CGAL_Load_Obj(path.c_str(), coords, tris);
         if (coords.size() == 0)
             return;
 
-        //std::cout << "Size: " << coords.size() / 3 << " " << tris.size() / 3 << std::endl;
+        std::cout << "Size: " << coords.size() / 3 << " " << tris.size() / 3 << std::endl;
 
-        for (int i = 0; i < (int) coords.size(); i += 3) {
+        for (int i = 0; i < (int) coords.size(); i += 3) 
+		{
             vecs.push_back(Vector3d(coords[i + 0], coords[i + 1], coords[i + 2]));
         }
 
