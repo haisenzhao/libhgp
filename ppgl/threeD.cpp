@@ -375,24 +375,14 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const char* path_, Vector
     //	}
     //}
 
-	std::cerr << path_ << std::endl;
 	std::string path = path_;
-	std::cerr << path << std::endl;
-
-	Vector3d1().swap(vecs);
-	std::cerr << " vecs.size(): " << vecs.size() << std::endl;
-
 
 	if (path.substr(path.size() - 3, path.size()) == "obj")
 	{
-		std::cerr << 122 << std::endl;
 
 		std::vector<double> coords;
 		Vector1i1 tris;
-
 		CGAL_Load_Obj(path.c_str(), coords, tris);
-
-		std::cerr << 211 << " coords: " << coords.size() << " tris: " << tris.size() << std::endl;
 
 		if (coords.size() == 0)
 		{
@@ -401,20 +391,11 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const char* path_, Vector
 
 		for (int i = 0; i < (int)coords.size(); i += 3)
 		{
-			std::cerr << "coords: " << i << " / " << coords.size() << std::endl;
-			std::cerr << coords[i + 0] << std::endl;
-			std::cerr << coords[i + 1] << std::endl;
-			std::cerr << coords[i + 2] << std::endl;
-			std::cerr << vecs.size() << std::endl;
 			vecs.push_back(Vector3d(coords[i + 0], coords[i + 1], coords[i + 2]));
-			std::cerr << vecs.size() << std::endl;
-			std::cerr << Functs::VectorString(vecs.back()) << std::endl;
 		}
 
 		for (int i = 0; i < (int)tris.size(); i += 3)
 		{
-			std::cerr << "tris: " << i << " / " << tris.size() << std::endl;
-
 			face_id_0.push_back(tris[i + 0]);
 			face_id_1.push_back(tris[i + 1]);
 			face_id_2.push_back(tris[i + 2]);
