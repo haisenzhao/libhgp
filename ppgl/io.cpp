@@ -373,11 +373,18 @@ extern "C" PPGL_EXPORT void CGAL_Load_Obj(const std::string & path, std::vector<
 	char line[1024], v0[1024], v1[1024], v2[1024];
 	std::cerr << 5 << std::endl;
 
-	std::cerr << path.c_str() << std::endl;
+	std::cerr << path << std::endl;
 
 	// open the file, return if open fails
 	FILE* fp = fopen(path.c_str(), "r");
-	if (!fp) return;
+	if (!fp)
+	{
+		Functs::MAssert("This file does not exist: "+path);
+		return;
+	};
+
+	std::cerr << 6 << std::endl;
+
 
 	int i = 0;
 	while (fgets(line, 1024, fp)) {
