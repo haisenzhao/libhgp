@@ -358,6 +358,8 @@ extern "C" PPGL_EXPORT void CGAL_Output_Off(const std::string & path, const Vect
 
 extern "C" PPGL_EXPORT void CGAL_Load_Obj(const std::string & path, std::vector<double>&coords, std::vector<int>&tris)
 {
+	std::cerr << 4 << std::endl;
+
 	auto get_first_integer = [](const char* v)
 	{
 		int ival;
@@ -369,6 +371,7 @@ extern "C" PPGL_EXPORT void CGAL_Load_Obj(const std::string & path, std::vector<
 
 	double x, y, z;
 	char line[1024], v0[1024], v1[1024], v2[1024];
+	std::cerr << 5 << std::endl;
 
 	std::cerr << path.c_str() << std::endl;
 
