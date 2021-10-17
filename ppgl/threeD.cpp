@@ -332,7 +332,9 @@ extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const char* path_, Vector
 	std::string path = path_;
     if (path.substr(path.size() - 3, path.size()) == "obj") 
 	{
+		std::cerr << 1 << std::endl;
 		Functs::LoadObj3d(path_, vecs, face_id_0, face_id_1, face_id_2);
+		std::cerr << 10 << std::endl;
     }
 }
 
