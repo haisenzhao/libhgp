@@ -67,7 +67,7 @@ void mark_domains(CDT& cdt);
 
 int GetIndex(std::vector<GridEdge>& grid_edges, std::pair<int, int> i_0, std::pair<int, int> i_1);
 
-extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n);
+extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n, const std::string& str);
 
 //implementation in "io.cpp"
 //####################################################################################

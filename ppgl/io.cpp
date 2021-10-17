@@ -16,8 +16,9 @@ Point_2 VectorPoint2d(Vector2d p) {
     return Point_2(p[0], p[1]);
 }
 
-extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n) 
+extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n, const std::string & str)
 {
+	Functs::CerrLine(str);
     Functs::MAssert("Test PGL ...");
 }
 
@@ -358,8 +359,6 @@ extern "C" PPGL_EXPORT void CGAL_Output_Off(const std::string & path, const Vect
 
 extern "C" PPGL_EXPORT void CGAL_Load_Obj(const std::string & path, std::vector<double>&coords, std::vector<int>&tris)
 {
-	std::cerr << 4 << std::endl;
-
 	auto get_first_integer = [](const char* v)
 	{
 		int ival;
@@ -371,9 +370,6 @@ extern "C" PPGL_EXPORT void CGAL_Load_Obj(const std::string & path, std::vector<
 
 	double x, y, z;
 	char line[1024], v0[1024], v1[1024], v2[1024];
-	std::cerr << 5 << std::endl;
-
-	std::cerr << path << std::endl;
 
 	// open the file, return if open fails
 	FILE* fp = fopen(path.c_str(), "r");
@@ -383,15 +379,9 @@ extern "C" PPGL_EXPORT void CGAL_Load_Obj(const std::string & path, std::vector<
 		return;
 	};
 
-	std::cerr << 6 << std::endl;
-
-
 	int i = 0;
 	while (fgets(line, 1024, fp)) {
 
-
-		std::cerr << line << std::endl;
-		std::cerr << coords.size() << std::endl;
 		if (line[0] == 'v') {
 			sscanf(line, "%*s%lf%lf%lf", &x, &y, &z);
 			coords.push_back(x);

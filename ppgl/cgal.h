@@ -10,7 +10,7 @@ using namespace PGL;
 //p: 3d point
 //return true: inside
 //return false: outside
-typedef  void (*CGAL_Test_PGL)(const Vector3d& n);
+typedef  void (*CGAL_Test_PGL)(const Vector3d& n, const std::string& str);
 //implementation in "io.cpp"
 //####################################################################################
 typedef  void (*CGAL_Vector_Base)(const Vector3d& n, Vector3d &);
