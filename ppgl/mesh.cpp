@@ -59,7 +59,7 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const char* path_)
 		std::vector<int> face_id_0;
 		std::vector<int> face_id_1;
 		std::vector<int> face_id_2;
-		Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
+		Functs::LoadObj3d(path_, vecs, face_id_0, face_id_1, face_id_2);
 		Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
 	}
 }
@@ -95,7 +95,7 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const char* path_, Vector3d
 	}
 	if (path.substr(path.size() - 3, path.size()) == "obj")
 	{
-		Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
+		Functs::LoadObj3d(path_, vecs, face_id_0, face_id_1, face_id_2);
 		Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
 	}
 }
@@ -2789,7 +2789,7 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C1(const char* path_, const Vector3
 		std::vector<int> face_id_0;
 		std::vector<int> face_id_1;
 		std::vector<int> face_id_2;
-		Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
+		Functs::LoadObj3d(path_, vecs, face_id_0, face_id_1, face_id_2);
 
 		Polyhedron_3 polyhedron;
 
@@ -2912,7 +2912,7 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C2(const char* path_, const Vector3
 		std::vector<int> face_id_0;
 		std::vector<int> face_id_1;
 		std::vector<int> face_id_2;
-		Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
+		Functs::LoadObj3d(path_, vecs, face_id_0, face_id_1, face_id_2);
 
 		Polyhedron_3 polyhedron;
 
