@@ -104,7 +104,7 @@ add_dependencies(${PROJECT_NAME} gte)
 #)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND start E:/Task2/personal-pack-geom-lib/build/post/Release/post.exe
+    COMMAND start ${CMAKE_BINARY_DIR}/post/Release/post.exe
 )
 
 

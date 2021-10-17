@@ -244,23 +244,40 @@ void Generate_CGAL_H()
 
 int main(int argc, char* argv[])
 {
+	//get path
+	auto root_path = Functs::WinGetCurDirectory().substr(0, Functs::WinGetCurDirectory().find_last_of("\\"));
+	root_path = root_path.substr(0, root_path.find_last_of("\\")+1);
+
+	std::string ppgl_path = root_path + "build\\ppgl\\Release\\ppgl.dll";
+	std::string gmp_path = root_path + "build\\ppgl\\Release\\gmp.dll";
+	if(!Functs::DetectExisting(gmp_path))
+		gmp_path = root_path + "build\\ppgl\\Release\\mpir.dll";
+
+	std::string ppgl_debug_path = root_path + "build\\ppgl\\RelWithDebInfo\\ppgl.dll";
+	std::string gmp_debug_path = root_path + "build\\ppgl\\RelWithDebInfo\\gmp.dll";
+	if (!Functs::DetectExisting(gmp_debug_path))
+		gmp_debug_path = root_path + "build\\ppgl\\RelWithDebInfo\\mpir.dll";
+
 	//copy dll
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\ppgl\\dll\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\Release\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\post\\Release\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\Release\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\post\\Release\\");
+	Functs::WinCopy(ppgl_path, root_path+"ppgl\\dll\\");
+	Functs::WinCopy(gmp_path, root_path+"ppgl\\dll\\");
+	Functs::WinCopy(ppgl_path, root_path+"build\\test\\Release\\");
+	Functs::WinCopy(gmp_path, root_path+"build\\test\\Release\\");
+	Functs::WinCopy(ppgl_path, root_path+"build\\test\\");
+	Functs::WinCopy(gmp_path, root_path+"build\\test\\");
+	Functs::WinCopy(ppgl_path, root_path+"build\\post\\Release\\");
+	Functs::WinCopy(gmp_path, root_path+"build\\post\\Release\\");
 
 	//RelWithDebInfo
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\RelWithDebInfo\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\RelWithDebInfo\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\test\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\ppgl.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\post\\RelWithDebInfo\\");
-	Functs::WinCopy("E:\\Task2\\personal-pack-geom-lib\\build\\ppgl\\RelWithDebInfo\\gmp.dll", "E:\\Task2\\personal-pack-geom-lib\\build\\post\\RelWithDebInfo\\");
+	if (Functs::DetectExisting(ppgl_debug_path) && Functs::DetectExisting(gmp_debug_path))
+	{
+		Functs::WinCopy(ppgl_debug_path, root_path + "build\\test\\RelWithDebInfo\\");
+		Functs::WinCopy(gmp_debug_path, root_path + "build\\test\\RelWithDebInfo\\");
+		Functs::WinCopy(ppgl_debug_path, root_path + "build\\test\\");
+		Functs::WinCopy(gmp_debug_path, root_path + "build\\test\\");
+		Functs::WinCopy(ppgl_debug_path, root_path + "build\\post\\RelWithDebInfo\\");
+		Functs::WinCopy(gmp_debug_path, root_path + "build\\post\\RelWithDebInfo\\");
+	}
 
 	if(argc==1)
 		Generate_CGAL_H();
