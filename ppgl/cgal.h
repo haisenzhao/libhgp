@@ -14,8 +14,8 @@ typedef  void (*CGAL_Test_PGL)(const Vector3d& n, const char* str, const char* c
 //implementation in "io.cpp"
 //####################################################################################
 typedef  void (*CGAL_Vector_Base)(const Vector3d& n, Vector3d &);
-typedef  void (*CGAL_Export_Path_Segment)(std::ofstream & export_file_output, int& export_index,const std::string s_name, const double r, const double g, const double b,const Vector3d & start, const Vector3d & end, const double radius);
-typedef  void (*CGAL_Export_Path_Point)(std::ofstream & export_file_output, int& export_index, const std::string s_name, const double r, const double g, const double b, const Vector3d point, const double radius);
+typedef  void (*CGAL_Export_Path_Segment)(std::ofstream & export_file_output, int& export_index,const char* s_name, const double r, const double g, const double b,const Vector3d & start, const Vector3d & end, const double radius);
+typedef  void (*CGAL_Export_Path_Point)(std::ofstream & export_file_output, int& export_index, const char* s_name, const double r, const double g, const double b, const Vector3d point, const double radius);
 typedef  void (*CGAL_Output_Obj_C1)(const char* path, const Vector3d1 & vecs);
 typedef  void (*CGAL_Output_Obj_C2)(const char* path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
 typedef  void (*CGAL_Output_Obj_C3)(const char* path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids);
@@ -193,8 +193,8 @@ typedef  void (*CGAL_3D_Mesh_Gradient)(const Vector3d1 & vecs, const std::vector
 typedef  void (*CGAL_Intergral_Curvature)(const Vector2d1 & input_points, const int& sampling_points_nb, const double& radius, const double& thresholder, Vector2d1 & output_points, std::vector<double>&output_rates);
 typedef  bool (*CGAL_3D_Mesh_Extract_Isoline)(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&psd, const double& d, Vector3d2 & isolines);
 typedef  void (*CGAL_BSplineCurveFit)(const Vector3d1 & samples, Vector3d1 & output);
-typedef  void (*CGAL_Cut_Surface)(const Vector3d1 & boundary, const Vector3d & inside_point, const char* full_path, std::string & output_path);
-typedef  void (*CGAL_Cut_Surface_by_Multi_Boundaries)(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const char* full_path, std::string & output_path);
+typedef  void (*CGAL_Cut_Surface)(const Vector3d1 & boundary, const Vector3d & inside_point, const char* full_path, char* output_path);
+typedef  void (*CGAL_Cut_Surface_by_Multi_Boundaries)(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const char* full_path, char* output_path);
 /////////////////////////////////////////////////////////////
 //
 
