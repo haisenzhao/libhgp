@@ -131,6 +131,8 @@ typedef  void (*CGAL_3D_Mesh_Dart_Sampling_C2)(const char* outside_path, const c
 typedef  void (*CGAL_3D_Mesh_Regular_Sampling_C1)(const char* outside_path, const double& d, Vector3d1 & sampling_points);
 //d: percentage value of the length of the diagonal of the bounding box.
 typedef  void (*CGAL_3D_Mesh_Regular_Sampling_C2)(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points);
+//with neighboring
+typedef  void (*CGAL_3D_Mesh_Regular_Sampling_C3)(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points, VectorPI1& neighbors);
 typedef  double (*CGAL_3D_Distance_Point_Triangle)(const Vector3d & p, const Vector3d & t_0, const Vector3d & t_1, const Vector3d & t_2);
 typedef  double (*CGAL_3D_Distance_Point_Triangles)(const Vector3d & p, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
 typedef  Vector3d (*CGAL_3D_Nearest_Point_Triangles)(const Vector3d & p, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
@@ -326,6 +328,8 @@ class PL
 		CGAL_3D_Mesh_Regular_Sampling_C1_C = (CGAL_3D_Mesh_Regular_Sampling_C1)GetProcAddress(hModule, "CGAL_3D_Mesh_Regular_Sampling_C1");
 		//d: percentage value of the length of the diagonal of the bounding box.
 		CGAL_3D_Mesh_Regular_Sampling_C2_C = (CGAL_3D_Mesh_Regular_Sampling_C2)GetProcAddress(hModule, "CGAL_3D_Mesh_Regular_Sampling_C2");
+		//with neighboring
+		CGAL_3D_Mesh_Regular_Sampling_C3_C = (CGAL_3D_Mesh_Regular_Sampling_C3)GetProcAddress(hModule, "CGAL_3D_Mesh_Regular_Sampling_C3");
 		CGAL_3D_Distance_Point_Triangle_C = (CGAL_3D_Distance_Point_Triangle)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Triangle");
 		CGAL_3D_Distance_Point_Triangles_C = (CGAL_3D_Distance_Point_Triangles)GetProcAddress(hModule, "CGAL_3D_Distance_Point_Triangles");
 		CGAL_3D_Nearest_Point_Triangles_C = (CGAL_3D_Nearest_Point_Triangles)GetProcAddress(hModule, "CGAL_3D_Nearest_Point_Triangles");
@@ -522,6 +526,8 @@ class PL
 	CGAL_3D_Mesh_Regular_Sampling_C1 CGAL_3D_Mesh_Regular_Sampling_C1_C;
 	//d: percentage value of the length of the diagonal of the bounding box.
 	CGAL_3D_Mesh_Regular_Sampling_C2 CGAL_3D_Mesh_Regular_Sampling_C2_C;
+	//with neighboring
+	CGAL_3D_Mesh_Regular_Sampling_C3 CGAL_3D_Mesh_Regular_Sampling_C3_C;
 	CGAL_3D_Distance_Point_Triangle CGAL_3D_Distance_Point_Triangle_C;
 	CGAL_3D_Distance_Point_Triangles CGAL_3D_Distance_Point_Triangles_C;
 	CGAL_3D_Nearest_Point_Triangles CGAL_3D_Nearest_Point_Triangles_C;

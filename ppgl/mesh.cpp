@@ -626,18 +626,104 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C2(const char* outside
 					sampling_points.push_back(Vector3d(x, y, z));
 					if (sampling_points.size() % 100 == 0) std::cerr << sampling_points.size() << " ";
 				}
-
+			
 				z += minimal_d;
 			}
 			y += minimal_d;
 		}
-
 		x += minimal_d;
 	}
 
 	std::cerr << std::endl;
 }
 
+
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C3(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points,VectorPI1& neighbors)
+{
+	if (!(d > 0 && d < 1.0))
+		Functs::MAssert("CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
+
+	//outside
+	Polyhedron_3 out_polyhedron;
+	Vector3d1 out_vecs;
+	Vector1i1 out_face_id_0, out_face_id_1, out_face_id_2;
+	Construct_Polyhedron(out_polyhedron, outside_path, out_vecs, out_face_id_0, out_face_id_1, out_face_id_2);
+	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> out_checker(out_polyhedron);
+	Vector3d out_minC, out_maxC;
+	Functs::GetBoundingBox(out_vecs, out_minC, out_maxC);
+
+	//inside
+	Polyhedron_3 in_polyhedron;
+	Construct_Polyhedron(in_polyhedron, inside_path);
+	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> in_checker(in_polyhedron);
+
+	double diagonal_length = CGAL_3D_Distance_Point_Point(out_minC, out_maxC);
+	double minimal_d = d * diagonal_length;
+
+	double x(out_minC[0]);
+	Vector1i3 xyzb;
+	while (x < out_maxC[0])
+	{
+		double y(out_minC[1]);
+		Vector1i2 yzb;
+		while (y < out_maxC[1])
+		{
+			double z(out_minC[2]);
+			Vector1i1 zb;
+			while (z < out_maxC[2])
+			{
+				CGAL::Bounded_side out_res = out_checker(Point_3(x, y, z));
+				CGAL::Bounded_side in_res = in_checker(Point_3(x, y, z));
+				if (out_res == CGAL::ON_BOUNDED_SIDE && in_res == CGAL::ON_UNBOUNDED_SIDE)
+				{
+					zb.push_back(sampling_points.size());
+					sampling_points.push_back(Vector3d(x, y, z));
+					if (sampling_points.size() % 100 == 0) std::cerr << sampling_points.size() << " ";
+				}
+				else
+				{
+					zb.push_back(-1);
+				}
+
+				z += minimal_d;
+			}
+			yzb.push_back(zb);
+			y += minimal_d;
+		}
+		xyzb.push_back(yzb);
+		x += minimal_d;
+	}
+
+	auto CheckEdge = [](const Vector1i3& xyzb, const Vector3i& a)
+	{
+		const int xe = xyzb.size();
+		const int ye = xyzb.front().size();
+		const int ze = xyzb.front().front().size();
+		if (!(a[0] >= 0 && a[1] >= 0 && a[2] >= 0 && a[0] < xe && a[1] < ye && a[2] < ze)) return -1;
+		return xyzb[a[0]][a[1]][a[2]];
+	};
+
+	for (int xi = 0; xi < xyzb.size(); xi++)
+	{
+		for (int yi = 0; yi < xyzb[xi].size(); yi++)
+		{
+			for (int zi = 0; zi < xyzb[xi][yi].size(); zi++)
+			{
+				if (xyzb[xi][yi][zi] >= 0)
+				{
+					if (CheckEdge(xyzb, Vector3i(xi + 1, yi, zi)) >= 0)
+						neighbors.push_back(std::pair<int, int>(xyzb[xi][yi][zi], xyzb[xi + 1][yi][zi]));
+					if (CheckEdge(xyzb, Vector3i(xi, yi + 1, zi)) >= 0)
+						neighbors.push_back(std::pair<int, int>(xyzb[xi][yi][zi], xyzb[xi][yi + 1][zi]));
+					if (CheckEdge(xyzb, Vector3i(xi, yi, zi + 1)) >= 0)
+						neighbors.push_back(std::pair<int, int>(xyzb[xi][yi][zi], xyzb[xi][yi][zi + 1]));
+				}
+			}
+		}
+	}
+
+	std::cerr << std::endl;
+}
 
 extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(const Vector3d1& ps, const Vector3d1& ns, const char* path, Vector3d1& inters)
 {
