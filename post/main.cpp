@@ -1,7 +1,10 @@
 #include "pgl_functs.hpp"
 
+#include <iostream>
+
 using namespace std;
 using namespace PGL;
+
 
 void Check_Not_Included() 
 {
@@ -279,12 +282,12 @@ int main(int argc, char* argv[])
 		Functs::WinCopy(gmp_debug_path, root_path + "build\\post\\RelWithDebInfo\\");
 	}
 
-	if(argc==1)
+	if (argc == 1)
 		Generate_CGAL_H();
 	else
 		Check_Not_Included();
 
-	Functs::MAssert("Successfully finishing the post processing...");
+	Functs::MAssert("Successfully finishing the post processing...",1.5);
 	return 0;
 }
 
