@@ -64,6 +64,7 @@ void insert_polygon(CDT& cdt, const Polygon_2& polygon, Vector1i1& indexInt);
 void mark_domains(CDT& ct, CDT::Face_handle start, int index, std::list<CDT::Edge>& border);
 void mark_domains(CDT& cdt);
 
+Polygon_2 Polygon2D(const Vector2d1& py);
 
 int GetIndex(std::vector<GridEdge>& grid_edges, std::pair<int, int> i_0, std::pair<int, int> i_1);
 
@@ -72,18 +73,6 @@ extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n, const char* str, co
 //implementation in "io.cpp"
 //####################################################################################
 extern "C" PPGL_EXPORT void CGAL_Vector_Base(const Vector3d& n, Vector3d &);
-extern "C" PPGL_EXPORT void CGAL_Export_Path_Segment(std::ofstream & export_file_output, int& export_index,const char* s_name, const double r, const double g, const double b,const Vector3d & start, const Vector3d & end, const double radius);
-extern "C" PPGL_EXPORT void CGAL_Export_Path_Point(std::ofstream & export_file_output, int& export_index, const char* s_name, const double r, const double g, const double b, const Vector3d point, const double radius);
-
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C1(const char* path, const Vector3d1 & vecs);
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C2(const char* path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C3(const char* path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids);
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C4(const char* path, const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, const std::vector<int>&triangles_lables, const int& index);
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C5(const char* path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
-extern "C" PPGL_EXPORT void CGAL_Output_Obj_C6(const char* path, const Vector3d1 & vecs, const Vector3d1 & colors, const std::vector<std::vector<int>>&face_ids);
-
-extern "C" PPGL_EXPORT void CGAL_Output_Off(const char* path, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
-extern "C" PPGL_EXPORT void CGAL_Load_Obj(const char* path, std::vector<double>&coords, std::vector<int>&tris);
 
 //implementation in "twoD.cpp"
 //####################################################################################
@@ -95,13 +84,26 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(const Vector2d & p, c
 extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &ps, const Vector2d1 &py);
 //d: percentage value of the length of the diagonal of the bounding box.
 extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1& py, const double& d, Vector2d1& sampling_points, const int& total_iter);
+//d: percentage value of the length of the diagonal of the bounding box.
+extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C1(const Vector2d1& py, const double& d);
+//d: percentage value of the length of the diagonal of the bounding box.
+extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C2(const Vector2d1& py, const double& d, VectorPI1& neighbors);
+//d: percentage value of the length of the diagonal of the bounding box.
+extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C3(const Vector2d1& py, const double& d, VectorPI1& neighbors, const bool& compute_neighbors);
+
+extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Square_Regular_Sampling_C1(const double& d);
+extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Square_Regular_Sampling_C2(const double& d, VectorPI1& neighbors);
+extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Square_Regular_Sampling_C3(const double& d, VectorPI1& neighbors, const bool& compute_neighbors);
+
+
+
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(const Vector2d & p, const Vector2d1 & py);
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygons(const Vector2d & p, const Vector2d2 & pys);
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Segment(const Vector2d & s_0_s, const Vector2d & s_0_e, const Vector2d & s_1_s, const Vector2d & s_1_e, Vector2d &inter);
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Line_Line(const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter);
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Line(const Vector2d& s_s, const Vector2d & s_e, const Vector2d & l_s, const Vector2d & l_e, Vector2d& inter);
 
-extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Polygon(const Vector2d & s_s, const Vector2d & s_e, Vector2d1 &p);
+extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Polygon(const Vector2d & s_s, const Vector2d & s_e, const Vector2d1 &p);
 extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(const Vector2d1 &ps);
 extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Union(const Vector2d1 & poly_0, const Vector2d1 & poly_1, Vector2d2 & inter_polygons);
 extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d1 &poly_0, const Vector2d1 &poly_1);
@@ -159,7 +161,8 @@ extern "C" PPGL_EXPORT void CGAL_3D_Plane_Point_Projection(const Vector3d & plan
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_Points_Projection(const Vector3d & plane_p, const Vector3d & plane_n, const Vector3d1 & points, Vector3d1 & project_points);
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Point(const Vector3d & plane_p, const Vector3d & plane_n, const Vector3d & point_3d, Vector2d & result);
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Point(const Vector3d & plane_p, const Vector3d & plane_n, const Vector2d & points_2d, Vector3d & result);
-extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(const Vector3d & plane_p, const Vector3d & plane_n, const Vector3d1 & points_3d, Vector2d1 & points_2d);
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_3D_to_2D_Points(const Vector3d& plane_p, const Vector3d& plane_n, const Vector3d1& points_3d, Vector2d1& points_2d);
+extern "C" PPGL_EXPORT void CGAL_3D_Plane_3Ds_to_2Ds_Points(const Vector3d& plane_p, const Vector3d& plane_n, const Vector3d2& points_3d, Vector2d2& points_2d);
 extern "C" PPGL_EXPORT void CGAL_3D_Plane_2D_to_3D_Points(const Vector3d & plane_p, const Vector3d & plane_n, const Vector2d1 & points_2d, Vector3d1 & points_3d);
 extern "C" PPGL_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(const Vector3d & p, const Vector3d & s_s, const Vector3d & s_e);
 extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Point(const Vector3d & v0, const Vector3d & v1);
@@ -193,17 +196,21 @@ extern "C" PPGL_EXPORT Vector3d CGAL_Face_Normal(const Vector3d & source, const 
 //implementation in "mesh.cpp"
 //####################################################################################
 extern "C" PPGL_EXPORT void CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature,const Vector1i1 &face_ids, const Vector3d1 &vecs, const Vector1i1 &face_id_0,const Vector1i1 &face_id_1,const Vector1i1 &face_id_2, Vector1i1 &igl_cutting_0_edges,Vector1i1 &igl_cutting_1_edges, Vector3d1 &igl_cutting_points,Vector1i2 &cutting_faces);
-extern "C" PPGL_EXPORT void CGAL_3D_Output_Triangle_Mesh(const char* path, const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2);
-extern "C" PPGL_EXPORT void CGAL_3D_Read_Triangle_Mesh(const char* path, Vector3d1 &vecs,Vector1i1 &face_id_0, Vector1i1 &face_id_1, Vector1i1 &face_id_2);
 extern "C" PPGL_EXPORT void CGAL_Mesh_Edges(const char* path);
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(const double& center_x, const double& center_y, const double& center_z, const double& radius,const double& ray_origin_x, const double& ray_origin_y, const double& ray_origin_z, const double& ray_direction_x, const double& ray_direction_y, const double& ray_direction_z,std::vector<double>&i_x, std::vector<double>&i_y, std::vector<double>&i_z);
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Triangle(const Vector3d & p, const Vector3d & n, const Vector3d & p0, const Vector3d & p1, const Vector3d & p2);
-extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(const Vector3d & p, const Vector3d & n, const char* path);
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(const Vector3d& p, const Vector3d& n, const char* path);
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Segment_Mesh(const Vector3d& s, const Vector3d& e, const char* path);
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Segments_Mesh(const Vector3d1& ss, const Vector3d1& ee, const char* path, Vector1b1& inters);
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Polygons_Mesh(const Vector3d2& polygons, const char* path, Vector1b1& inters);
+//check whether there is a polygon intersected with the input mesh
+extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Polygons_Mesh_Bool(const Vector3d2& polygons, const char* path);
 extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(const Vector3d1 & ps, const Vector3d1 & ns, const char* path, Vector3d1 & inters);
 //test each group directions (nes[i]) for each point in ps
 extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C1_Bool(const Vector3d1 & ps, const Vector3d2 & nes, const char* path, Vector1b2 & inters);
 //test all directions (ns) for each point in ps
-extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(const Vector3d1 & ps, const Vector3d1 & ns, const char* path, Vector1b2 & inters);
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(const Vector3d1& ps, const Vector3d1& ns, const char* path, Vector1b2& inters);
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Vector3d(const Vector3d1& ps, const Vector3d1& ns, const char* path, Vector1d2& inters);
 extern "C" PPGL_EXPORT void CGAL_3D_Points_Inside_Triangles_C1_Bool(const Vector3d1& vecs, const std::vector<int>& face_id_0, const std::vector<int>& face_id_1, const std::vector<int>& face_id_2, const Vector3d1& points, std::vector<bool>& insides);
 extern "C" PPGL_EXPORT void CGAL_3D_Points_Inside_Triangles_C2_Bool(const char* path, const Vector3d1& points, std::vector<bool>& insides);
 //d: percentage value of the length of the diagonal of the bounding box.
@@ -214,6 +221,13 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C2(const char* outside_pa
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C1(const char* outside_path, const double& d, Vector3d1 & sampling_points);
 //d: percentage value of the length of the diagonal of the bounding box.
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C2(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points);
+//d: percentage value of the length of the diagonal of the bounding box.
+extern "C" PPGL_EXPORT void CGAL_3D_Cube_Surface_Sampling_C1(const double& cube_size, const double& d, Vector3d2& sampling_points, VectorPI2& neighbors, const bool& compute_neighbors);
+//d: percentage value of the length of the diagonal of the bounding box.
+extern "C" PPGL_EXPORT void CGAL_3D_Cube_Surface_Sampling_C2(const double& cube_size, const double& d, Vector3d2& sampling_points);
+//d: percentage value of the length of the diagonal of the bounding box.
+extern "C" PPGL_EXPORT void CGAL_3D_Cube_Surface_Sampling_C3(const double& cube_size, const double&d, Vector3d2& sampling_points, VectorPI2& neighbors);
+
 //with neighboring
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C3(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points, VectorPI1& neighbors);
 extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Triangle(const Vector3d & p, const Vector3d & t_0, const Vector3d & t_1, const Vector3d & t_2);
@@ -257,7 +271,6 @@ extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C4(const char* path, Vec
 extern "C" PPGL_EXPORT double CGAL_Geodesic_Distance(const char* path, const Vector3d & source, const Vector3d & target);
 extern "C" PPGL_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface_C1(const Vector3d1 & vecs, const std::vector<int> &face_id_0, const std::vector<int> &face_id_1, const std::vector<int> &face_id_2, const Vector3d1 & points);
 extern "C" PPGL_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface_C2(const char* path, const Vector3d1 & points);
-
 extern "C" PPGL_EXPORT void CGAL_3D_Triangel_Mesh_Most_Inside_Point(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, Vector3d & inside);
 extern "C" PPGL_EXPORT double CGAL_3D_One_Triangle_Area(const Vector3d & v0, const Vector3d & v1, const Vector3d & v2);
 extern "C" PPGL_EXPORT double CGAL_3D_Triangle_Mesh_Area(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2);
