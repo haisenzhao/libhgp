@@ -3,7 +3,6 @@
 #include <Mathematics/MeshCurvature.h>
 #include <Mathematics/BSplineCurveFit.h>
 #include "NewtonApple_hull3D.h"
-
 #include "kdtree.h"
 
 void  Construct_Polyhedron(Polyhedron_3& polyhedron, const Vector3d1& vecs, const Vector1i1& face_id_0, const Vector1i1& face_id_1, const Vector1i1& face_id_2)

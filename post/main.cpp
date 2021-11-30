@@ -185,6 +185,7 @@ void Generate_CGAL_H()
 	cgal_file << "#include <pgl_functs.hpp>" << std::endl;
 	cgal_file << "using namespace std;" << std::endl;
 	cgal_file << "using namespace PGL;" << std::endl;
+	cgal_file << "namespace PPGL {" << std::endl;
 
 	//define functions
 	if (funct_notations.find(-1) != funct_notations.end())
@@ -204,10 +205,10 @@ void Generate_CGAL_H()
 	//define class
 	cgal_file << std::endl;
 	cgal_file << std::endl;
-	cgal_file << "class PL" << std::endl;
+	cgal_file << "class CGALPL" << std::endl;
 	cgal_file << "{" << std::endl;
 	cgal_file << "	public:" << std::endl;
-	cgal_file << "	PL()" << std::endl;
+	cgal_file << "	CGALPL()" << std::endl;
 	cgal_file << "	{" << std::endl;
 	cgal_file << "		hModule = Functs::LoadHMODULE(\"ppgl.dll\");" << std::endl;
 	for (int i = 0; i < funct_titles.size(); i++)
@@ -220,11 +221,12 @@ void Generate_CGAL_H()
 				cgal_file << pre_str << line << std::endl;
 	}
 	cgal_file << "	};" << std::endl << std::endl;
-	cgal_file << "	static PL& Inst()" << std::endl;
+
+	/*cgal_file << "	static PL& Inst()" << std::endl;
 	cgal_file << "	{" << std::endl;
 	cgal_file << "		static PL instance;" << std::endl;
 	cgal_file << "		return instance;" << std::endl;
-	cgal_file << "	};" << std::endl << std::endl;
+	cgal_file << "	};" << std::endl << std::endl;*/
 
 
 	cgal_file << "	HMODULE hModule;" << std::endl;
@@ -240,6 +242,11 @@ void Generate_CGAL_H()
 	}
 
 	cgal_file << "};" << std::endl;
+
+	cgal_file << "static CGALPL PL;" << std::endl;
+
+	cgal_file << "}" << std::endl;
+
 	cgal_file << "#endif" << std::endl;
 	cgal_file.close();
 };

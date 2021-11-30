@@ -2,7 +2,6 @@
 #include "clipper/clipper.hpp"
 #include <Mathematics/Vector2.h>
 
-
 Polygon_2 Polygon2D(const Vector2d1& py)
 {
 	Polygon_2 polygon;
