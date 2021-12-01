@@ -222,11 +222,11 @@ void Generate_CGAL_H()
 	}
 	cgal_file << "	};" << std::endl << std::endl;
 
-	/*cgal_file << "	static PL& Inst()" << std::endl;
+	cgal_file << "	static CGALPL& Inst()" << std::endl;
 	cgal_file << "	{" << std::endl;
-	cgal_file << "		static PL instance;" << std::endl;
+	cgal_file << "		static CGALPL instance;" << std::endl;
 	cgal_file << "		return instance;" << std::endl;
-	cgal_file << "	};" << std::endl << std::endl;*/
+	cgal_file << "	};" << std::endl << std::endl;
 
 
 	cgal_file << "	HMODULE hModule;" << std::endl;
@@ -243,7 +243,7 @@ void Generate_CGAL_H()
 
 	cgal_file << "};" << std::endl;
 
-	cgal_file << "static CGALPL PL;" << std::endl;
+	cgal_file << "#define PL() CGALPL::Inst()" << std::endl;
 
 	cgal_file << "}" << std::endl;
 

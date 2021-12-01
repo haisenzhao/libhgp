@@ -1,5 +1,5 @@
-//#include "cgal.h" //call functions from a dll
-#include "geom.h" //call functions directly
+#include "cgal.h" //call functions from a dll
+//#include "geom.h" //call functions directly
 
 using namespace std;
 #ifdef CGAL_ONCE
@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 	//std::cerr << result[0] << " " << result[1] << " " << result[2] << std::endl;
 
 	//Vector3d p, Vector3d s_s, Vector3d s_e
-	auto inter=PL.CGAL_3D_Projection_Point_Segment_C(Vector3d(0, 0, 0), Vector3d(17, 2, 2), Vector3d{32,23,234});
+	auto inter=PL().CGAL_3D_Projection_Point_Segment_C(Vector3d(0, 0, 0), Vector3d(17, 2, 2), Vector3d{32,23,234});
 
 	Functs::CerrLine(Functs::VectorString(inter," "));
 
