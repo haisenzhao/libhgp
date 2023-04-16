@@ -21,6 +21,7 @@ ExternalProject_Add(
     PREFIX ${CMAKE_BINARY_DIR}/third_party/pgl
     GIT_REPOSITORY https://github.com/haisenzhao/personal-geom-lib.git
     CONFIGURE_COMMAND ""
+	UPDATE_DISCONNECTED 1
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     LOG_DOWNLOAD ON
@@ -33,6 +34,7 @@ ExternalProject_Add(
     PREFIX ${CMAKE_BINARY_DIR}/third_party/glm
     GIT_REPOSITORY https://github.com/g-truc/glm.git
     CONFIGURE_COMMAND ""
+	UPDATE_DISCONNECTED 1
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     LOG_DOWNLOAD ON
@@ -45,6 +47,7 @@ ExternalProject_Add(
     PREFIX ${CMAKE_BINARY_DIR}/third_party/eigen
     GIT_REPOSITORY https://github.com/libigl/eigen.git
     CONFIGURE_COMMAND ""
+	UPDATE_DISCONNECTED 1
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     LOG_DOWNLOAD ON
@@ -58,6 +61,7 @@ ExternalProject_Add(
     PREFIX ${CMAKE_BINARY_DIR}/third_party/gte
     GIT_REPOSITORY https://github.com/davideberly/GeometricTools.git
     CONFIGURE_COMMAND ""
+	UPDATE_DISCONNECTED 1
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     LOG_DOWNLOAD ON
