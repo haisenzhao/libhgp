@@ -83,9 +83,9 @@ add_dependencies(${PROJECT_NAME} pgl)
 add_dependencies(${PROJECT_NAME} eigen)
 add_dependencies(${PROJECT_NAME} gte)
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND start ${CMAKE_BINARY_DIR}/post/Release/post.exe
-)
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#    COMMAND start ${CMAKE_BINARY_DIR}/post/Release/post.exe
+#)
 
 
 #@echo xxxxxxxxxxx if $(PlatformTarget)==x64 (xcopy "$(ProjectDir)\Release\ppgl.dll" "$(ProjectDir)\..\..\pack-geom-lib\dll\" /y ) )

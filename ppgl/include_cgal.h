@@ -173,9 +173,9 @@ class polyhedron_builder : public CGAL::Modifier_base<HDS> {
 public:
 
 	std::vector<double> coords;
-	Vector1i1 tris;
+	std::vector<int> tris;
 
-	polyhedron_builder(std::vector<double>& c, Vector1i1& t) {
+	polyhedron_builder(std::vector<double>& c, std::vector<int>& t) {
 		coords = c;
 		tris = t;
 	}

@@ -2293,7 +2293,9 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & ve
 
 				if (run)
 				{
-					Vector3d cur_v = vecs[i] + Functs::SetVectorLength(vecs_normals[i], 0.001 * min_curvature[i] / low_curvature);
+					Vector3d n = vecs_normals[i];
+					Functs::SetVectorLength(n, 0.001 * min_curvature[i] / low_curvature);
+					Vector3d cur_v = vecs[i] + n;
 
 					Vector3d smooth_v(0.0, 0.0, 0.0);
 
