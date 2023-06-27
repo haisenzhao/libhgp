@@ -2,6 +2,8 @@
 //#include "geom.h" //call functions directly
 
 using namespace std;
+
+
 #ifdef CGAL_ONCE
 using namespace PPGL;
 #endif
@@ -20,9 +22,39 @@ int main(int argc, char* argv[])
 
 	Functs::CerrLine(Functs::VectorString(inter," "));
 
+	CGALPL cgal;
+	double abcdd = cgal.CGAL_2D_Distance_Point_Point_C(Vector2d(0, 0), Vector2d(1, 1));
+	cout << abcdd << endl;
+	const char* path = "D:\\cube.off";
+	auto aaa = Functs::DetectExisting(path);
+	// C:\Users\86139\Desktop\Graduation_Design\fileTransform\obj
+	Vector3d plane_normal(1.0, 0.0, 0.0);
+	std::vector<double> plane_d;
+	plane_d.push_back(1.0);
+	Vector3d3 offsetses;
+	Vector3d2 offsets;
+	cgal.CGAL_Slicer_Mesh_C(path, plane_normal, plane_d, offsetses, offsets);
+
 #endif
 
 #ifdef geom_hpp
+
+	
+	double abcdd = CGAL_2D_Distance_Point_Point(Vector2d(0, 0), Vector2d(1, 1));
+	cout << abcdd << endl;
+	char* path = "D:/cube.off";
+	auto aaa = Functs::DetectExisting(path);
+	// C:\Users\86139\Desktop\Graduation_Design\fileTransform\obj
+	Vector3d plane_normal(1.0, 0.0, 0.0);
+	std::vector<double> plane_d;
+	plane_d.push_back(1.0);
+	Vector3d3 offsetses;
+	Vector3d2 offsets;
+	//(const char* path, const Vector3d & plane_normal, const std::vector<double> &plane_d, Vector3d3 & offsetses, Vector3d2 & offsets)
+	CGAL_Slicer_Mesh(path, plane_normal, plane_d, offsetses, offsets);
+
+	
+	/*
 	Vector3d result;
 	CGAL_Vector_Base(Vector3d(1.0, 323.0, 0.0), result);
 	std::cerr << result[0] << " " << result[1] << " " << result[2] << std::endl;
@@ -43,7 +75,7 @@ int main(int argc, char* argv[])
 	}
 
 	std::cerr << origin_vecs.size() << std::endl;
-
+	*/
 #endif
 
 	system("pause");

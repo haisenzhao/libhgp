@@ -5372,3 +5372,28 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 
 
 //extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Gradient(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&psd, Vector3d1 & vecs_gradients, Vector3d1 & faces_gradients);
+
+#include<iostream>
+#include<vector>
+//#include "cgal.h"
+
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+
+	double abcdd = CGAL_2D_Distance_Point_Point(Vector2d(0, 0), Vector2d(1, 1));
+	cout << abcdd << endl;
+	const char* path = "D:\\cube.off";
+	auto aaa = Functs::DetectExisting(path);
+	// C:\Users\86139\Desktop\Graduation_Design\fileTransform\obj
+	Vector3d plane_normal(1.0, 0.0, 0.0);
+	std::vector<double> plane_d;
+	plane_d.push_back(1.0);
+	Vector3d3 offsetses;
+	Vector3d2 offsets;
+	//(const char* path, const Vector3d & plane_normal, const std::vector<double> &plane_d, Vector3d3 & offsetses, Vector3d2 & offsets)
+	CGAL_Slicer_Mesh(path, plane_normal, plane_d, offsetses, offsets);
+
+	return 0;
+}
