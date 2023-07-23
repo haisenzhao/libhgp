@@ -411,6 +411,18 @@ CGAL_2D_Intersection_Segment_Polygon(const Vector2d & s_s, const Vector2d & s_e,
     return false;
 }
 
+//extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Polygon_Polygon(const Vector2d1 & p1, const Vector2d1 & p2);
+
+extern "C" PPGL_EXPORT bool
+CGAL_2D_Intersection_Polygon_Polygon(const Vector2d1 & p1, const Vector2d1 & p2) {
+
+	Polygon_2 poly1 = Polygon2D(p1);
+	Polygon_2 poly2 = Polygon2D(p2);
+
+	return CGAL::do_intersect(poly1, poly2);
+}
+
+
 extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(const Vector2d1 &ps) {
 	Polygon_2 poly = Polygon2D(ps);
     return poly.is_clockwise_oriented();

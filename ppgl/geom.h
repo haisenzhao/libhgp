@@ -104,6 +104,7 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Line_Line(const Vector2d& s_0_s
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Line(const Vector2d& s_s, const Vector2d& s_e, const Vector2d& l_s, const Vector2d& l_e, Vector2d& inter);
 
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Polygon(const Vector2d& s_s, const Vector2d& s_e, const Vector2d1& p);
+extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Polygon_Polygon(const Vector2d1 & p1, const Vector2d1 & p2);
 extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(const Vector2d1& ps);
 extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Union(const Vector2d1& poly_0, const Vector2d1& poly_1, Vector2d2& inter_polygons);
 extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d1& poly_0, const Vector2d1& poly_1);

@@ -5379,9 +5379,90 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 
 using namespace std;
 
-int main(int argc, char* argv[])
+
+
+int Check2DIntersection()
 {
 
+	auto Load = [](Vector2d2& contours)
+	{
+		string address = "D:/test.txt";
+		ifstream infile;
+		infile.open(address);
+		if (!infile.is_open()) {
+			std::cout << "文件打开失败" << endl;
+			return;
+		}
+
+		string line;
+
+		while (getline(infile, line))
+		{//每次从文件读取一行
+			istringstream iss(line);
+			Vector2d1 points;
+			int n;
+			iss >> n;
+			double x, y;
+			for (int i = 0; i < n; i++)
+			{
+				iss >> x >> y;
+				points.push_back(Vector2d(x, y));
+			}
+			contours.push_back(points);
+		}
+	};
+
+	Vector2d2 contours;
+	Load(contours);
+
+
+	for (int i = 0; i < contours.size(); i++)
+	{
+		if (CGAL_2D_Polygon_Is_Clockwise_Oriented(contours[i]))
+		{
+			std::reverse(contours[i].begin(), contours[i].end());
+		}
+		//Functs::Export_Segment(contours[i],);
+
+		Vector2d center = Functs::GetCenter(contours[i]);
+	
+		for (int j = 0; j < contours[i].size(); j++)
+		{
+			contours[i][j] = contours[i][j] - center;
+		}
+
+		auto c3d = Functs::Vector2d3d(contours[i], 0.0);
+		Functs::OutputObj3d("D:\\debug_"+Functs::IntString(i) + ".obj", c3d);
+
+		bool b = CGAL_2D_Polygon_Simple(contours[i]);
+
+		std::cerr << "Simple test: " << i << " " << b << std::endl;
+	}
+
+	Vector1d1 des;
+	for (int i = 0; i < contours.size(); i++)
+	{
+		for (int j = i + 1; j < contours.size(); j++)
+		{
+			double ds = CGAL_2D_Distance_Polygon_Polygon(contours[i], contours[j]);
+			//double cs = CGAL_2D_Intersection_Polygon_Polygon(contours[i], contours[j]);
+
+			double cs = CGAL_2D_Two_Polygons_Intersection(contours[i], contours[j]);
+
+			std::cerr << i << " " << j << " dis: " << ds <<" collision: "<<cs << std::endl;
+			des.push_back(ds);
+		}
+	}
+
+	return 0;
+}
+
+/*
+int main(int argc, char* argv[])
+{
+	//Check2DIntersection();
+
+	/*
 	double abcdd = CGAL_2D_Distance_Point_Point(Vector2d(0, 0), Vector2d(1, 1));
 	cout << abcdd << endl;
 	const char* path = "D:\\cube.off";
@@ -5394,6 +5475,7 @@ int main(int argc, char* argv[])
 	Vector3d2 offsets;
 	//(const char* path, const Vector3d & plane_normal, const std::vector<double> &plane_d, Vector3d3 & offsetses, Vector3d2 & offsets)
 	CGAL_Slicer_Mesh(path, plane_normal, plane_d, offsetses, offsets);
+	*/
 
-	return 0;
-}
+	//return 0;
+//}
