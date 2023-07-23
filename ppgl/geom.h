@@ -29,7 +29,6 @@ struct GridEdge {
 	}
 };
 
-
 Vector3d PointVector3d(Point_3 p);
 Point_3 VectorPoint3d(Vector3d p);
 Vector2d PointVector2d(Point_2 p);

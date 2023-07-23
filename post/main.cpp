@@ -5,10 +5,8 @@
 using namespace std;
 using namespace PGL;
 
-
-void Check_Not_Included() 
+void Check_Not_Included(std::string root_path)
 {
-
 	auto Get_CGAL_Functions = [](const std::string& path, 
 		VectorStr1& funct_titles, VectorStr1& funct_lines)
 	{
@@ -31,8 +29,7 @@ void Check_Not_Included()
 	VectorStr1 funct_titles;
 	VectorStr1 funct_lines;
 
-	Get_CGAL_Functions("E:\\Task2\\personal-pack-geom-lib\\ppgl\\geom.h", funct_titles, funct_lines);
-
+	Get_CGAL_Functions(root_path+"ppgl\\geom.h", funct_titles, funct_lines);
 
 	VectorStr1 sfc_titles;
 	VectorStr1 sfc_lines;
@@ -139,13 +136,13 @@ void Check_Not_Included()
 
 };
 
-void Generate_CGAL_H() 
+void Generate_CGAL_H(std::string root_path)
 {
 	//parse geom.h
 	VectorStr1 funct_values, funct_titles, funct_paras;
 	std::map<int, VectorStr1> funct_notations;
 	{
-		std::ifstream file("E:\\Task2\\personal-pack-geom-lib\\ppgl\\geom.h");
+		std::ifstream file(root_path +"\\ppgl\\geom.h");
 		for (std::string line; std::getline(file, line); )
 		{
 			if (Functs::StringContain(line, "CGAL")&& Functs::StringContain(line, "extern \"C\" PPGL_EXPORT"))
@@ -178,11 +175,11 @@ void Generate_CGAL_H()
 	//if (mt.find(t1) == mt.end())
 
 	//output cgal.h
-	std::ofstream cgal_file("E:\\Task2\\personal-pack-geom-lib\\ppgl\\cgal.h");
+	std::ofstream cgal_file(root_path+"port\\cgal.h");
 	cgal_file << "#ifndef CGAL_ONCE" << std::endl;
 	cgal_file << "#define CGAL_ONCE" << std::endl;
 	cgal_file << "#pragma once" << std::endl;
-	cgal_file << "#include <pgl_functs.hpp>" << std::endl;
+	// cgal_file << "#include <pgl_functs.hpp>" << std::endl;
 	cgal_file << "using namespace std;" << std::endl;
 	cgal_file << "using namespace PGL;" << std::endl;
 	cgal_file << "namespace PPGL {" << std::endl;
@@ -255,7 +252,7 @@ void Generate_CGAL_H()
 int main(int argc, char* argv[])
 {
 	//get path
-	auto root_path = Functs::WinGetCurDirectory().substr(0, Functs::WinGetCurDirectory().find_last_of("\\"));
+	std::string root_path = Functs::WinGetCurDirectory().substr(0, Functs::WinGetCurDirectory().find_last_of("\\"));
 	root_path = root_path.substr(0, root_path.find_last_of("\\")+1);
 
 	std::string ppgl_path = root_path + "build\\ppgl\\Release\\ppgl.dll";
@@ -290,9 +287,9 @@ int main(int argc, char* argv[])
 	}
 
 	if (argc == 1)
-		Generate_CGAL_H();
+		Generate_CGAL_H(root_path);
 	else
-		Check_Not_Included();
+		Check_Not_Included(root_path);
 
 	Functs::MAssert("Successfully finishing the post processing...",1.5);
 	return 0;
