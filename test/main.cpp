@@ -1,4 +1,4 @@
-#include "cgal.h" //call functions from a dll
+#include "../port/cgal.h" //call functions from a dll
 //#include "geom.h" //call functions directly
 
 using namespace std;
@@ -93,6 +93,8 @@ int main(int argc, char* argv[])
 	//Vector3d result;
 	//read_mesh(Vector3d(1.0, 323.0, 0.0), result);
 	//std::cerr << result[0] << " " << result[1] << " " << result[2] << std::endl;
+
+	auto cur_path = Functs::WinGetCurDirectory();
 
 	//Vector3d p, Vector3d s_s, Vector3d s_e
 	auto inter=PL().CGAL_3D_Projection_Point_Segment_C(Vector3d(0, 0, 0), Vector3d(17, 2, 2), Vector3d{32,23,234});

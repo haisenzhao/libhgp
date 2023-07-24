@@ -69,7 +69,7 @@ ExternalProject_Add(
 ExternalProject_Get_Property(gte source_dir)
 set(GteIncludeDir ${source_dir}/GTE)
 
-add_library(${PROJECT_NAME} SHARED geom.h twoD.cpp threeD.cpp mesh.cpp clipper/clipper.cpp io.cpp  include_cgal.h cgal.h kdtree.h kdtree.cpp NewtonApple_hull3D.h NewtonApple_hull3D.cpp)
+add_library(${PROJECT_NAME} SHARED geom.h twoD.cpp threeD.cpp mesh.cpp clipper/clipper.cpp io.cpp  include_cgal.h  kdtree.h kdtree.cpp NewtonApple_hull3D.h NewtonApple_hull3D.cpp)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Export interface symbols and hide internal implementation

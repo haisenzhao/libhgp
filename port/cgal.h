@@ -1,6 +1,7 @@
 #ifndef CGAL_ONCE
 #define CGAL_ONCE
 #pragma once
+#include <pgl_functs.hpp>
 using namespace std;
 using namespace PGL;
 namespace PPGL {

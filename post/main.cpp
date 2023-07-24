@@ -136,13 +136,13 @@ void Check_Not_Included(std::string root_path)
 
 };
 
-void Generate_CGAL_H(std::string root_path)
+void Generate_CGAL_H(std::string input_path, std::string output_path)
 {
 	//parse geom.h
 	VectorStr1 funct_values, funct_titles, funct_paras;
 	std::map<int, VectorStr1> funct_notations;
 	{
-		std::ifstream file(root_path +"\\ppgl\\geom.h");
+		std::ifstream file(input_path);
 		for (std::string line; std::getline(file, line); )
 		{
 			if (Functs::StringContain(line, "CGAL")&& Functs::StringContain(line, "extern \"C\" PPGL_EXPORT"))
@@ -175,11 +175,11 @@ void Generate_CGAL_H(std::string root_path)
 	//if (mt.find(t1) == mt.end())
 
 	//output cgal.h
-	std::ofstream cgal_file(root_path+"port\\cgal.h");
+	std::ofstream cgal_file(output_path);
 	cgal_file << "#ifndef CGAL_ONCE" << std::endl;
 	cgal_file << "#define CGAL_ONCE" << std::endl;
 	cgal_file << "#pragma once" << std::endl;
-	// cgal_file << "#include <pgl_functs.hpp>" << std::endl;
+	cgal_file << "#include <pgl_functs.hpp>" << std::endl;
 	cgal_file << "using namespace std;" << std::endl;
 	cgal_file << "using namespace PGL;" << std::endl;
 	cgal_file << "namespace PPGL {" << std::endl;
@@ -251,45 +251,30 @@ void Generate_CGAL_H(std::string root_path)
 
 int main(int argc, char* argv[])
 {
-	//get path
+	//get root path
 	std::string root_path = Functs::WinGetCurDirectory().substr(0, Functs::WinGetCurDirectory().find_last_of("\\"));
 	root_path = root_path.substr(0, root_path.find_last_of("\\")+1);
 
-	std::string ppgl_path = root_path + "build\\ppgl\\Release\\ppgl.dll";
-	std::string gmp_path = root_path + "build\\ppgl\\Release\\gmp.dll";
-	if(!Functs::DetectExisting(gmp_path))
-		gmp_path = root_path + "build\\ppgl\\Release\\mpir.dll";
+	//generate cgal.h
+	Generate_CGAL_H(root_path + "ppgl\\geom.h", root_path + "port\\cgal.h");
 
-	std::string ppgl_debug_path = root_path + "build\\ppgl\\RelWithDebInfo\\ppgl.dll";
-	std::string gmp_debug_path = root_path + "build\\ppgl\\RelWithDebInfo\\gmp.dll";
-	if (!Functs::DetectExisting(gmp_debug_path))
-		gmp_debug_path = root_path + "build\\ppgl\\RelWithDebInfo\\mpir.dll";
-
-	//copy dll
-	Functs::WinCopy(ppgl_path, root_path+"ppgl\\dll\\");
-	Functs::WinCopy(gmp_path, root_path+"ppgl\\dll\\");
-	Functs::WinCopy(ppgl_path, root_path+"build\\test\\Release\\");
-	Functs::WinCopy(gmp_path, root_path+"build\\test\\Release\\");
-	Functs::WinCopy(ppgl_path, root_path+"build\\test\\");
-	Functs::WinCopy(gmp_path, root_path+"build\\test\\");
-	Functs::WinCopy(ppgl_path, root_path+"build\\post\\Release\\");
-	Functs::WinCopy(gmp_path, root_path+"build\\post\\Release\\");
-
-	//RelWithDebInfo
-	if (Functs::DetectExisting(ppgl_debug_path) && Functs::DetectExisting(gmp_debug_path))
+	//copy dll - Release
+	VectorStr1 pds = {"Debug", "Release", "RelWithDebInfo"};
+	for (auto pd : pds)
 	{
-		Functs::WinCopy(ppgl_debug_path, root_path + "build\\test\\RelWithDebInfo\\");
-		Functs::WinCopy(gmp_debug_path, root_path + "build\\test\\RelWithDebInfo\\");
-		Functs::WinCopy(ppgl_debug_path, root_path + "build\\test\\");
-		Functs::WinCopy(gmp_debug_path, root_path + "build\\test\\");
-		Functs::WinCopy(ppgl_debug_path, root_path + "build\\post\\RelWithDebInfo\\");
-		Functs::WinCopy(gmp_debug_path, root_path + "build\\post\\RelWithDebInfo\\");
-	}
+		if (Functs::DetectExisting(root_path + "build\\ppgl\\" + pd) && 
+			Functs::DetectExisting(root_path + "port\\" + pd))
+		{
+			Functs::WinCopy(root_path + "build\\ppgl\\" + pd, root_path + "port\\"+pd);
 
-	if (argc == 1)
-		Generate_CGAL_H(root_path);
-	else
-		Check_Not_Included(root_path);
+			if (Functs::DetectExisting(root_path + "port\\" + pd + "\\ppgl.pdb"))
+				Functs::WinDel(root_path + "port\\" + pd + "\\ppgl.pdb");
+
+			if (Functs::DetectExisting(root_path + "port\\" + pd + "\\ppgl.exp"))
+				Functs::WinDel(root_path + "port\\" + pd + "\\ppgl.exp");
+		}
+
+	}
 
 	Functs::MAssert("Successfully finishing the post processing...",1.5);
 	return 0;
