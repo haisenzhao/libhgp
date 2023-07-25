@@ -2134,7 +2134,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Faces(Vector3d1 & vecs, s
 }
 
 extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2,
-	std::vector<std::vector<std::vector<int>>>&surface_vectices_to_neighbor_edges)
+	Vector1i3& surface_vectices_to_neighbor_edges)
 {
 	std::vector<std::vector<int>> surface_vectices_to_face;
 	CGAL_3D_Triangle_Mesh_Vecs_Faces(vecs, face_id_0, face_id_1, face_id_2, surface_vectices_to_face);

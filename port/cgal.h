@@ -14,7 +14,10 @@ using namespace PGL;
 typedef  void (*CGAL_Test_PGL)(const Vector3d& n, const char* str, const char* char_);
 //implementation in "io.cpp"
 //####################################################################################
-typedef  void (*CGAL_Vector_Base)(const Vector3d& n, Vector3d&);
+//Usage: Get a vector which is perpenticular to the input vector;
+//Input: input vector "n"; 
+//Output: output vector "r";
+typedef  void (*CGAL_Vector_Base)(const Vector3d& n, Vector3d& r);
 //implementation in "twoD.cpp"
 //####################################################################################
 typedef  double (*CGAL_2D_Distance_Point_Point)(const Vector2d& p_0, const Vector2d& p_1);
@@ -172,7 +175,7 @@ typedef  void (*CGAL_Mesh_Laplace_Smooth_C1)(const char* in_path, const char* ou
 typedef  void (*CGAL_3D_Triangle_Mesh_Vecs_Neighbors)(Vector3d1& vecs, std::vector<int>& face_id_0, std::vector<int>& face_id_1, std::vector<int>& face_id_2, std::vector<std::vector<int>>& neighs);
 typedef  void (*CGAL_Mesh_Laplace_Smooth_C2)(Vector3d1& vecs, std::vector<int>& face_id_0, std::vector<int>& face_id_1, std::vector<int>& face_id_2, const int laplace_nb);
 typedef  void (*CGAL_3D_Triangle_Mesh_Vecs_Faces)(Vector3d1& vecs, std::vector<int>& face_id_0, std::vector<int>& face_id_1, std::vector<int>& face_id_2, std::vector<std::vector<int>>& surface_vectices_to_face);
-typedef  void (*CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges)(Vector3d1& vecs, std::vector<int>& face_id_0, std::vector<int>& face_id_1, std::vector<int>& face_id_2, std::vector<std::vector<std::vector<int>>>& surface_vectices_to_neighbor_edges);
+typedef  void (*CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges)(Vector3d1& vecs, std::vector<int>& face_id_0, std::vector<int>& face_id_1, std::vector<int>& face_id_2, Vector1i3& surface_vectices_to_neighbor_edges);
 typedef  void (*CGAL_Mesh_Laplace_Smooth_by_Curvature)(Vector3d1& vecs, std::vector<int>& face_id_0, std::vector<int>& face_id_1, std::vector<int>& face_id_2, double& low_curvature);
 typedef  void (*CGAL_Mesh_Loop_Subdivision_Own_Version)(const char* in_path, const int& step, const char* out_path, const int& laplace_nb);
 typedef  void (*CGAL_Rotation_Obj)(const char* path, const double& angle, const Vector3d& axis);
@@ -222,6 +225,9 @@ class CGALPL
 		CGAL_Test_PGL_C = (CGAL_Test_PGL)GetProcAddress(hModule, "CGAL_Test_PGL");
 		//implementation in "io.cpp"
 		//####################################################################################
+		//Usage: Get a vector which is perpenticular to the input vector;
+		//Input: input vector "n"; 
+		//Output: output vector "r";
 		CGAL_Vector_Base_C = (CGAL_Vector_Base)GetProcAddress(hModule, "CGAL_Vector_Base");
 		//implementation in "twoD.cpp"
 		//####################################################################################
@@ -431,6 +437,9 @@ class CGALPL
 	CGAL_Test_PGL CGAL_Test_PGL_C;
 	//implementation in "io.cpp"
 	//####################################################################################
+	//Usage: Get a vector which is perpenticular to the input vector;
+	//Input: input vector "n"; 
+	//Output: output vector "r";
 	CGAL_Vector_Base CGAL_Vector_Base_C;
 	//implementation in "twoD.cpp"
 	//####################################################################################
