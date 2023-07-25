@@ -71,8 +71,10 @@ extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n, const char* str, co
 
 //implementation in "io.cpp"
 //####################################################################################
-extern "C" PPGL_EXPORT void CGAL_Vector_Base(const Vector3d& n, Vector3d&);
-
+//Usage: Get a vector which is perpenticular to the input vector;
+//Input: input vector "n"; 
+//Output: output vector "r";
+extern "C" PPGL_EXPORT void CGAL_Vector_Base(const Vector3d& n, Vector3d& r);
 //implementation in "twoD.cpp"
 //####################################################################################
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Point(const Vector2d& p_0, const Vector2d& p_1);
