@@ -181,8 +181,9 @@ void Generate_CGAL_H(std::string input_path, std::string output_path)
 	cgal_file << "#pragma once" << std::endl;
 	cgal_file << "#include <pgl_functs.hpp>" << std::endl;
 	cgal_file << "using namespace std;" << std::endl;
-	cgal_file << "using namespace PGL;" << std::endl;
+	
 	cgal_file << "namespace PPGL {" << std::endl;
+	cgal_file << "using namespace PGL;" << std::endl;
 
 	//define functions
 	if (funct_notations.find(-1) != funct_notations.end())

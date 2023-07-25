@@ -3,11 +3,8 @@
 #pragma once
 #include <pgl_functs.hpp>
 using namespace std;
-using namespace PGL;
 namespace PPGL {
-
-
-
+using namespace PGL;
 //Project p onto the planar surface of 3d triangle
 //Checking the position relationship between the p and 3d triangle
 //face: 3d triangle
