@@ -1,5 +1,6 @@
-#include "../port/cgal.h" //call functions from a dll
+//#include "../port/cgal.h" //call functions from a dll
 //#include "geom.h" //call functions directly
+#include"port/cgal.h"
 
 using namespace std;
 
