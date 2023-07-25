@@ -208,6 +208,7 @@ void Generate_CGAL_H(std::string input_path, std::string output_path)
 	cgal_file << "	CGALPL()" << std::endl;
 	cgal_file << "	{" << std::endl;
 	cgal_file << "		hModule = Functs::LoadHMODULE(\"ppgl.dll\");" << std::endl;
+
 	for (int i = 0; i < funct_titles.size(); i++)
 	{
 		std::string pre_str = "		";
