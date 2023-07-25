@@ -9,7 +9,6 @@ using namespace PPGL;
 #endif
 
 
-
 int Check2DIntersection()
 {
 	auto Load = [](Vector2d2& contours)
@@ -42,7 +41,6 @@ int Check2DIntersection()
 
 	Vector2d2 contours;
 	Load(contours);
-
 
 	for (int i = 0; i < contours.size(); i++)
 	{
