@@ -95,7 +95,6 @@ extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Square_Regular_Sampling_C2(const double
 extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Square_Regular_Sampling_C3(const double& d, VectorPI1& neighbors, const bool& compute_neighbors);
 
 
-
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(const Vector2d& p, const Vector2d1& py);
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygons(const Vector2d& p, const Vector2d2& pys);
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Segment(const Vector2d& s_0_s, const Vector2d& s_0_e, const Vector2d& s_1_s, const Vector2d& s_1_e, Vector2d& inter);
