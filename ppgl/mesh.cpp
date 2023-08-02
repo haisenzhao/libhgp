@@ -1676,6 +1676,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C1(const Vector3d1 & 
 	std::vector<std::vector<int>>().swap(vecs_neigbor_lable);
 	std::vector<int>().swap(edges);
 }
+
 extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C2(const char* path, std::vector<bool>&bools)
 {
 	Vector3d1 vecs;
