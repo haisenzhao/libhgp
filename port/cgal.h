@@ -1,10 +1,98 @@
 #ifndef CGAL_ONCE
 #define CGAL_ONCE
 #pragma once
-#include <pgl_functs.hpp>
+#include <vector>
+#include <windows.h>
+#include <direct.h>
+#include <tchar.h>
+#include <string>
+#include "glm/glm.hpp"
 using namespace std;
 namespace PPGL {
-using namespace PGL;
+
+template <typename datum>
+using Vector1 = std::vector<datum>;
+
+template <typename datum>
+using Vector2 = std::vector<std::vector<datum>>;
+
+template <typename datum>
+using Vector3 = std::vector<std::vector<std::vector<datum>>>;
+
+typedef glm::highp_dvec2 Vector2d;
+typedef glm::highp_dvec3 Vector3d;
+typedef glm::highp_ivec2 Vector2i;
+typedef glm::highp_ivec3 Vector3i;
+
+typedef Vector1<Vector2d> Vector2d1;
+typedef Vector2<Vector2d> Vector2d2;
+typedef Vector3<Vector2d> Vector2d3;
+
+typedef Vector1<Vector3d> Vector3d1;
+typedef Vector2<Vector3d> Vector3d2;
+typedef Vector3<Vector3d> Vector3d3;
+
+typedef Vector1<bool> Vector1b1;
+typedef Vector2<bool> Vector1b2;
+typedef Vector3<bool> Vector1b3;
+
+typedef Vector1<int> Vector1i1;
+typedef Vector2<int> Vector1i2;
+typedef Vector3<int> Vector1i3;
+
+typedef Vector1<double> Vector1d1;
+typedef Vector2<double> Vector1d2;
+typedef Vector3<double> Vector1d3;
+
+typedef Vector1<std::string> VectorStr1;
+typedef Vector2<std::string> VectorStr2;
+typedef Vector3<std::string> VectorStr3;
+
+typedef Vector1<Vector2i> Vector2i1;
+typedef Vector2<Vector2i> Vector2i2;
+typedef Vector3<Vector2i> Vector2i3;
+
+typedef Vector1<Vector3i> Vector3i1;
+typedef Vector2<Vector3i> Vector3i2;
+typedef Vector3<Vector3i> Vector3i3;
+
+typedef Vector1<std::pair<int, int>> VectorPI1;
+typedef Vector2<std::pair<int, int>> VectorPI2;
+typedef Vector3<std::pair<int, int>> VectorPI3;
+
+typedef Vector1<std::pair<bool, bool>> VectorPB1;
+typedef Vector2<std::pair<bool, bool>> VectorPB2;
+typedef Vector3<std::pair<bool, bool>> VectorPB3;
+
+typedef std::tuple<int, int, int> TI3;
+typedef Vector1<std::tuple<int, int, int>> VectorTI3;
+
+static HMODULE LoadHMODULE(const string& dll_path)
+{
+	struct stat buffer;
+	if (!(stat(dll_path.c_str(), &buffer) == 0))
+	{
+		char tmp[256];
+		if (_getcwd(tmp, 256)) {};
+		std::string root_path = std::string(tmp);
+
+		std::string str;
+		str += "The dll does not exist: " + dll_path + "; \n";
+		str += "The current running directory : " + root_path + "; \n";
+		str += "Please gurrentee the dll is in the right place; \n";
+		std::cerr << str << std::endl;
+	}
+
+	HMODULE hModule = LoadLibrary(_T(dll_path.c_str()));
+	if (!hModule)
+	{
+		DWORD dw = GetLastError(); // returns 0xc1 (193)
+		std::cerr << "LoadLibrary failed with error code " + std::to_string(dw) << std::endl;
+	}
+	else
+		std::cerr << "LoadLibrary success\n";
+	return hModule;
+};
 //Project p onto the planar surface of 3d triangle
 //Checking the position relationship between the p and 3d triangle
 //face: 3d triangle
@@ -221,7 +309,7 @@ class CGALPL
 	public:
 	CGALPL()
 	{
-		hModule = Functs::LoadHMODULE("ppgl.dll");
+		hModule = LoadHMODULE("ppgl.dll");
 		CGAL_Test_PGL_C = (CGAL_Test_PGL)GetProcAddress(hModule, "CGAL_Test_PGL");
 		//implementation in "io.cpp"
 		//####################################################################################

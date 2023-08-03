@@ -48,11 +48,105 @@ void Generate_CGAL_H(std::string input_path, std::string output_path)
 	cgal_file << "#ifndef CGAL_ONCE" << std::endl;
 	cgal_file << "#define CGAL_ONCE" << std::endl;
 	cgal_file << "#pragma once" << std::endl;
-	cgal_file << "#include <pgl_functs.hpp>" << std::endl;
+	cgal_file << "#include <vector>" << std::endl;
+	cgal_file << "#include <windows.h>" << std::endl;
+	cgal_file << "#include <direct.h>" << std::endl;
+	cgal_file << "#include <tchar.h>" << std::endl;
+	cgal_file << "#include <string>" << std::endl;
+	cgal_file << "#include \"glm/glm.hpp\"" << std::endl;
+
 	cgal_file << "using namespace std;" << std::endl;
 	
 	cgal_file << "namespace PPGL {" << std::endl;
-	cgal_file << "using namespace PGL;" << std::endl;
+
+	cgal_file << "" << std::endl;
+	cgal_file << "template <typename datum>" << std::endl;
+	cgal_file << "using Vector1 = std::vector<datum>;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "template <typename datum>" << std::endl;
+	cgal_file << "using Vector2 = std::vector<std::vector<datum>>;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "template <typename datum>" << std::endl;
+	cgal_file << "using Vector3 = std::vector<std::vector<std::vector<datum>>>;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef glm::highp_dvec2 Vector2d;" << std::endl;
+	cgal_file << "typedef glm::highp_dvec3 Vector3d;" << std::endl;
+	cgal_file << "typedef glm::highp_ivec2 Vector2i;" << std::endl;
+	cgal_file << "typedef glm::highp_ivec3 Vector3i;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef Vector1<Vector2d> Vector2d1;" << std::endl;
+	cgal_file << "typedef Vector2<Vector2d> Vector2d2;" << std::endl;
+	cgal_file << "typedef Vector3<Vector2d> Vector2d3;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef Vector1<Vector3d> Vector3d1;" << std::endl;
+	cgal_file << "typedef Vector2<Vector3d> Vector3d2;" << std::endl;
+	cgal_file << "typedef Vector3<Vector3d> Vector3d3;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef Vector1<bool> Vector1b1;" << std::endl;
+	cgal_file << "typedef Vector2<bool> Vector1b2;" << std::endl;
+	cgal_file << "typedef Vector3<bool> Vector1b3;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef Vector1<int> Vector1i1;" << std::endl;
+	cgal_file << "typedef Vector2<int> Vector1i2;" << std::endl;
+	cgal_file << "typedef Vector3<int> Vector1i3;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef Vector1<double> Vector1d1;" << std::endl;
+	cgal_file << "typedef Vector2<double> Vector1d2;" << std::endl;
+	cgal_file << "typedef Vector3<double> Vector1d3;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef Vector1<std::string> VectorStr1;" << std::endl;
+	cgal_file << "typedef Vector2<std::string> VectorStr2;" << std::endl;
+	cgal_file << "typedef Vector3<std::string> VectorStr3;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef Vector1<Vector2i> Vector2i1;" << std::endl;
+	cgal_file << "typedef Vector2<Vector2i> Vector2i2;" << std::endl;
+	cgal_file << "typedef Vector3<Vector2i> Vector2i3;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef Vector1<Vector3i> Vector3i1;" << std::endl;
+	cgal_file << "typedef Vector2<Vector3i> Vector3i2;" << std::endl;
+	cgal_file << "typedef Vector3<Vector3i> Vector3i3;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef Vector1<std::pair<int, int>> VectorPI1;" << std::endl;
+	cgal_file << "typedef Vector2<std::pair<int, int>> VectorPI2;" << std::endl;
+	cgal_file << "typedef Vector3<std::pair<int, int>> VectorPI3;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef Vector1<std::pair<bool, bool>> VectorPB1;" << std::endl;
+	cgal_file << "typedef Vector2<std::pair<bool, bool>> VectorPB2;" << std::endl;
+	cgal_file << "typedef Vector3<std::pair<bool, bool>> VectorPB3;" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "typedef std::tuple<int, int, int> TI3;" << std::endl;
+	cgal_file << "typedef Vector1<std::tuple<int, int, int>> VectorTI3;" << std::endl;
+	cgal_file << "" << std::endl;
+
+	cgal_file << "static HMODULE LoadHMODULE(const string& dll_path)" << std::endl;
+	cgal_file << "{" << std::endl;
+	cgal_file << "	struct stat buffer;" << std::endl;
+	cgal_file << "	if (!(stat(dll_path.c_str(), &buffer) == 0))" << std::endl;
+	cgal_file << "	{" << std::endl;
+	cgal_file << "		char tmp[256];" << std::endl;
+	cgal_file << "		if (_getcwd(tmp, 256)) {};" << std::endl;
+	cgal_file << "		std::string root_path = std::string(tmp);" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "		std::string str;" << std::endl;
+	cgal_file << "		str += \"The dll does not exist: \" + dll_path + \"; \\n\";" << std::endl;
+	cgal_file << "		str += \"The current running directory : \" + root_path + \"; \\n\";" << std::endl;
+	cgal_file << "		str += \"Please gurrentee the dll is in the right place; \\n\";" << std::endl;
+	cgal_file << "		std::cerr << str << std::endl;" << std::endl;
+	cgal_file << "	}" << std::endl;
+	cgal_file << "" << std::endl;
+	cgal_file << "	HMODULE hModule = LoadLibrary(_T(dll_path.c_str()));" << std::endl;
+	cgal_file << "	if (!hModule)" << std::endl;
+	cgal_file << "	{" << std::endl;
+	cgal_file << "		DWORD dw = GetLastError(); // returns 0xc1 (193)" << std::endl;
+	cgal_file << "		std::cerr << \"LoadLibrary failed with error code \" + std::to_string(dw) << std::endl;" << std::endl;
+	cgal_file << "	}" << std::endl;
+	cgal_file << "	else" << std::endl;
+	cgal_file << "		std::cerr << \"LoadLibrary success\\n\";" << std::endl;
+	cgal_file << "	return hModule;" << std::endl;
+	cgal_file << "};" << std::endl;
+
+
+
 
 	//define functions
 	if (funct_notations.find(-1) != funct_notations.end())
@@ -77,7 +171,7 @@ void Generate_CGAL_H(std::string input_path, std::string output_path)
 	cgal_file << "	public:" << std::endl;
 	cgal_file << "	CGALPL()" << std::endl;
 	cgal_file << "	{" << std::endl;
-	cgal_file << "		hModule = Functs::LoadHMODULE(\"ppgl.dll\");" << std::endl;
+	cgal_file << "		hModule = LoadHMODULE(\"ppgl.dll\");" << std::endl;
 
 	for (int i = 0; i < funct_titles.size(); i++)
 	{
