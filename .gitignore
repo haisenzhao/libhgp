@@ -146,3 +146,5 @@ _deps
 build/
 /build1/
 build1/
+/.vs/
+.vs/

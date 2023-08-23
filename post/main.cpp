@@ -48,6 +48,7 @@ void Generate_CGAL_H(std::string input_path, std::string output_path)
 	cgal_file << "#ifndef CGAL_ONCE" << std::endl;
 	cgal_file << "#define CGAL_ONCE" << std::endl;
 	cgal_file << "#pragma once" << std::endl;
+	cgal_file << "#include <iostream>" << std::endl;
 	cgal_file << "#include <vector>" << std::endl;
 	cgal_file << "#include <windows.h>" << std::endl;
 	cgal_file << "#include <direct.h>" << std::endl;
@@ -134,7 +135,7 @@ void Generate_CGAL_H(std::string input_path, std::string output_path)
 	cgal_file << "		std::cerr << str << std::endl;" << std::endl;
 	cgal_file << "	}" << std::endl;
 	cgal_file << "" << std::endl;
-	cgal_file << "	HMODULE hModule = LoadLibrary(_T(dll_path.c_str()));" << std::endl;
+	cgal_file << "	HMODULE hModule = LoadLibraryA(LPCSTR(dll_path.c_str()));" << std::endl;
 	cgal_file << "	if (!hModule)" << std::endl;
 	cgal_file << "	{" << std::endl;
 	cgal_file << "		DWORD dw = GetLastError(); // returns 0xc1 (193)" << std::endl;
