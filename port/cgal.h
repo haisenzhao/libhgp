@@ -1,6 +1,7 @@
 #ifndef CGAL_ONCE
 #define CGAL_ONCE
 #pragma once
+#include<iostream>
 #include <vector>
 #include <windows.h>
 #include <direct.h>
