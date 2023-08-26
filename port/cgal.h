@@ -1,7 +1,7 @@
 #ifndef CGAL_ONCE
 #define CGAL_ONCE
 #pragma once
-#include<iostream>
+#include <iostream>
 #include <vector>
 #include <windows.h>
 #include <direct.h>
@@ -84,7 +84,7 @@ static HMODULE LoadHMODULE(const string& dll_path)
 		std::cerr << str << std::endl;
 	}
 
-	HMODULE hModule = LoadLibrary(_T(dll_path.c_str()));
+	HMODULE hModule = LoadLibraryA(LPCSTR(dll_path.c_str()));
 	if (!hModule)
 	{
 		DWORD dw = GetLastError(); // returns 0xc1 (193)
