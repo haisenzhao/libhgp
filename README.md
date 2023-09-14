@@ -7,13 +7,13 @@ Besides that, a set of commonly used functions are included. Currently, we relea
 
 [Dependency](#Dependency)
 
-[Develop PPGL]（Develop PPGL.md)
+[Develop PPGL]（Develop-PPGL.md)
 
 [Usage](#Usage)
 
-[Call PPGL](#Call PPGL)
+[Call PPGL](#Call-PPGL)
 
-[License](License)
+[License](#License)
 
 # Dependency
 
