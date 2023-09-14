@@ -7,7 +7,7 @@ Besides that, a set of commonly used functions are included. Currently, we relea
 
 [Dependency](#Dependency)
 
-[Develop PPGL]（Develop-PPGL.md)
+[Develop PPGL](Develop-PPGL.md)
 
 [Usage](#Usage)
 
@@ -24,7 +24,7 @@ Our project also depends on [glm](https://github.com/g-truc/glm.git) and [Clippe
 
 # Call PPGL
 
-If you already have a VS project, please start from "[Copy PPGL](Copy PPGL)". Otherwise, follow these steps to create a new project.
+If you already have a VS project, please start from "[Copy PPGL](Copy-PPGL)". Otherwise, follow these steps to create a new project.
 
 ## Prepare a project
 
