@@ -1,6 +1,20 @@
 This repository is developed by Haisen Zhao for his research projects. A set of fundamental geometric process functions are well organized based on some third-party library. 
 Besides that, a set of commonly used functions are included. Currently, we release a dynamic link library file of "ppgl.dll". An example of using this library is a port-example. 
 
+
+
+# Contents
+
+[Dependency](#Dependency)
+
+[Develop PPGL]（Develop PPGL.md)
+
+[Usage](#Usage)
+
+[Call PPGL](#Call PPGL)
+
+[License](License)
+
 # Dependency
 
 You should install [CGAL](https://github.com/CGAL/cgal) before compiling this project. For Windows, recommend using vcpkg to install CGAL. 
@@ -8,27 +22,11 @@ Our project also depends on [glm](https://github.com/g-truc/glm.git) and [Clippe
 
 # Usage
 
-- Install vcpkg and use vcpkg to install CGAL.
+# Call PPGL
 
-- Clone this repository:
-
-        git clone git@github.com:haisenzhao/personal-pack-geom-lib.git
-
-- Use Cmake-gui to Compile：([Cmake](https://cmake.org))
-
-    - Click "Browse Source..." and "Browse Build..." to select the project path.![image-select_path](images/image-select_path.png)
-    - Click the "Configue" button and select the option "Specify toolchain file for cross-compiling" and "Next".
-    - Select the "vcpkg.cmake" file path in the vcpkg installation directory.(For example:"D:/vcpkg/scripts/buildsystems/vcpkg.cmake")
-    - Click the "Generate" button and "Open Project".
-    - Set the sub-projects as startup projects from top to bottom, and compile them one by one.(Ensure network connectivity)
-    - If you encounter errors, clear the cache and try again.("File"-"delete cache")
-    
-
-# Call PPGL in another project
+If you already have a VS project, please start from "[Copy PPGL](Copy PPGL)". Otherwise, follow these steps to create a new project.
 
 ## Prepare a project
-
-If you already have a VS project, just open it. Otherwise, follow these steps to create a new project.
 
 - Open Visual Studio
 
@@ -69,7 +67,7 @@ If you already have a VS project, just open it. Otherwise, follow these steps to
 
 - Seeing these words, it means that the run was successful.![image-run_successful](images/image-run_successful.png)
 
-## Copy PPGL into your project
+## Copy PPGL 
 
 - First, download the folder "[port](https://github.com/haisenzhao/personal-pack-geom-lib/tree/master/port)" to your computer.
 - Open the "port" folder and copy `cgal.h` and "glm".
