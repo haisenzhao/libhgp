@@ -9,9 +9,11 @@ Besides that, a set of commonly used functions are included. Currently, we relea
 
 [Develop PPGL](Develop%20PPGL.md)
 
-[Usage](#Usage)
-
 [Call PPGL](#Call-PPGL)
+
+​	[Prepare a project](#Prepare a project) 
+​	[Copy PPGL](#Copy PPGL )
+​	[Call PPGL in your project](#Call PPGL in your project)
 
 [License](#License)
 
@@ -19,8 +21,6 @@ Besides that, a set of commonly used functions are included. Currently, we relea
 
 You should install [CGAL](https://github.com/CGAL/cgal) before compiling this project. For Windows, recommend using vcpkg to install CGAL. 
 Our project also depends on [glm](https://github.com/g-truc/glm.git) and [Clipper](http://www.angusj.com/delphi/clipper.php), but you don't need to install them explicitly.
-
-# Usage
 
 # Call PPGL
 
