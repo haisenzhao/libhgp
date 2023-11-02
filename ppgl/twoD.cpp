@@ -2,6 +2,13 @@
 #include "clipper/clipper.hpp"
 #include <Mathematics/Vector2.h>
 
+/********************************************************
+* Function name: Polygon2D
+* Description: Create a 2D polygon from a vector of 2D points.
+* Parameters:
+* @py: A vector of 2D points representing the vertices of the polygon.
+* Return: A 2D polygon created from the input points.
+*********************************************************/
 Polygon_2 Polygon2D(const Vector2d1& py)
 {
 	Polygon_2 polygon;
@@ -9,16 +16,42 @@ Polygon_2 Polygon2D(const Vector2d1& py)
 	return polygon;
 };
 
+/********************************************************
+* Function name: CGAL_2D_Distance_Point_Point
+* Description: Calculate the Euclidean distance between two 2D points.
+* Parameters:
+* @p_0: The first 2D point.
+* @p_1: The second 2D point.
+* Return: The Euclidean distance between the two input points.
+*********************************************************/
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Point(const Vector2d& p_0, const Vector2d& p_1)
 {
     return sqrt(pow((p_0[0] - p_1[0]), 2.0) + pow((p_0[1] - p_1[1]), 2.0));
 }
 
+/********************************************************
+* Function name: CGAL_2D_Distance_Point_Segment
+* Description: Calculate the distance between a 2D point and a line segment.
+* Parameters:
+* @v: The 2D point for which the distance is calculated.
+* @s_0: The starting point of the line segment.
+* @s_1: The ending point of the line segment.
+* Return: The distance between the point and the line segment.
+*********************************************************/
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Segment(const Vector2d& v, const Vector2d & s_0, const Vector2d & s_1) {
-    return sqrt((double) CGAL::squared_distance(Point_2(v[0], v[1]),
-                                                Segment_2(Point_2(s_0[0], s_0[1]), Point_2(s_1[0], s_1[1]))));
+    return sqrt((double) CGAL::squared_distance(Point_2(v[0], v[1]), Segment_2(Point_2(s_0[0], s_0[1]), Point_2(s_1[0], s_1[1]))));
 }
 
+/********************************************************
+* Function name: CGAL_2D_Distance_Segment_Segment
+* Description: Calculate the minimum distance between two 2D line segments.
+* Parameters:
+* @s_0: The starting point of the first line segment.
+* @s_1: The ending point of the first line segment.
+* @e_0: The starting point of the second line segment.
+* @e_1: The ending point of the second line segment.
+* Return: The minimum distance between the two line segments.
+*********************************************************/
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Segment_Segment(const Vector2d& s_0, const Vector2d & s_1, const Vector2d & e_0, const Vector2d & e_1) {
     double d0 = CGAL_2D_Distance_Point_Segment(s_0, e_0, e_1);
     double d1 = CGAL_2D_Distance_Point_Segment(s_1, e_0, e_1);
@@ -31,11 +64,28 @@ extern "C" PPGL_EXPORT double CGAL_2D_Distance_Segment_Segment(const Vector2d& s
     return min_d;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Distance_Point_Line
+* Description: Calculate the distance between a 2D point and a 2D line.
+* Parameters:
+* @v: The 2D point for which you want to calculate the distance.
+* @l_0: The first point on the line.
+* @l_1: The second point on the line.
+* Return: The distance between the point and the line.
+*********************************************************/
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Line(const Vector2d& v, const Vector2d & l_0, const Vector2d & l_1) {
     return sqrt((double) CGAL::squared_distance(Point_2(v[0], v[1]),
                                                 Line_2(Point_2(l_0[0], l_0[1]), Point_2(l_1[0], l_1[1]))));
 }
 
+/********************************************************
+* Function name: CGAL_2D_Distance_Point_Polygon
+* Description: Calculate the minimum distance between a 2D point and a 2D polygon.
+* Parameters:
+* @p: The 2D point for which you want to calculate the distance.
+* @py: A vector of 2D points representing the vertices of the polygon.
+* Return: The minimum distance between the point and the polygon.
+*********************************************************/
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(const Vector2d& p, const Vector2d1 & py) {
     double distance = 1000000000000.0;
     for (int i = 0; i < py.size(); i++)
@@ -46,6 +96,14 @@ extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygon(const Vector2d& p, 
     return distance;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Distance_Point_Polygons
+* Description: Calculate the minimum distance between a 2D point and a collection of 2D polygons.
+* Parameters:
+* @p: The 2D point for which you want to calculate the distance.
+* @pys: A vector of vectors, where each inner vector represents a 2D polygon defined by its vertices.
+* Return: The minimum distance between the point and the collection of polygons.
+*********************************************************/
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygons(const Vector2d & p, const Vector2d2 & pys)
 {
 	double distance = 1000000000000.0;
@@ -54,11 +112,30 @@ extern "C" PPGL_EXPORT double CGAL_2D_Distance_Point_Polygons(const Vector2d & p
 	return distance;
 }
 
-
+/********************************************************
+* Function name: CGAL_2D_Is_Point_OutCGALPolygon
+* Description: Check if a 2D point is outside a CGAL polygon.
+* Parameters:
+* @p: The 2D point you want to check.
+* @py: The CGAL polygon (Polygon_2) against which you want to check if the point is outside.
+* Return:
+* - true if the point is outside the polygon (on the unbounded side).
+* - false if the point is inside or on the boundary of the polygon.
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Is_Point_OutCGALPolygon(const Vector2d &p, const Polygon_2 &py) {
     return py.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_UNBOUNDED_SIDE;
 }
 
+/********************************************************
+* Function name: CGAL_Construct_Polygon
+* Description: Construct a CGAL polygon from a list of 2D points and check if it is simple.
+* Parameters:
+* @py: A list of 2D points (Vector2d1) that represent the vertices of the polygon.
+* @poly: The CGAL polygon (Polygon_2) to be constructed.
+* Return:
+* - true if the constructed polygon is simple (has no self-intersections).
+* - false if the constructed polygon is not simple (has self-intersections).
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_Construct_Polygon(const Vector2d1 &py, Polygon_2 &poly) {
     poly.clear();
     for (auto i : py)
@@ -66,6 +143,18 @@ extern "C" PPGL_EXPORT bool CGAL_Construct_Polygon(const Vector2d1 &py, Polygon_
     return poly.is_simple();
 }
 
+/********************************************************
+* Function name: CGAL_Construct_InOutSide_Polygon
+* Description: Construct a CGAL polygon from a list of 2D points, check if it is simple,
+* and determine if two points are inside or outside the polygon.
+* Parameters:
+* @py: A list of 2D points (Vector2d1) that represent the vertices of the polygon.
+* @p: The first 2D point to be checked.
+* @q: The second 2D point to be checked.
+* @isPInside: A reference to a boolean variable that will be set to true if point 'p' is inside the polygon.
+* @isQInside: A reference to a boolean variable that will be set to true if point 'q' is inside the polygon.
+* Return:- true if the polygon is successfully constructed, is simple, and points 'p' and 'q' are checked; - false if the polygon construction fails or if it is not simple.
+*********************************************************/
 extern "C" PPGL_EXPORT bool
 CGAL_Construct_InOutSide_Polygon(const Vector2d1 &py, const Vector2d &p, const Vector2d &q, bool &isPInside,
                                  bool &isQInside) {
@@ -77,18 +166,41 @@ CGAL_Construct_InOutSide_Polygon(const Vector2d1 &py, const Vector2d &p, const V
     return true;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Location_Point_Polygon
+* Description: Check the location of a 2D point relative to a CGAL polygon.
+* Parameters:
+* @p: The 2D point (Vector2d) to be checked for its location.
+* @py: A list of 2D points (Vector2d1) that represent the vertices of the CGAL polygon.
+* Return: - true if the point 'p' is located inside the polygon (bounded side). - false if the point 'p' is located outside the polygon (unbounded side).
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Location_Point_Polygon(const Vector2d & p, const Vector2d1 & py) {
 	Polygon_2 poly = Polygon2D(py);
 
     return poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_BOUNDED_SIDE;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Is_Point_OutPolygon
+* Description: Check if a 2D point is outside a CGAL polygon.
+* Parameters:
+* @p: The 2D point (Vector2d) to be checked for its location.
+* @py: A list of 2D points (Vector2d1) that represent the vertices of the CGAL polygon.
+* Return: - true if the point 'p' is located outside the polygon (unbounded side). - false if the point 'p' is located inside the polygon (bounded side).
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Is_Point_OutPolygon(Vector2d p, Vector2d1 py) {
     Polygon_2 poly = Polygon2D(py);
     return poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_UNBOUNDED_SIDE;
 }
 
-
+/********************************************************
+* Function name: CGAL_2D_Location_Points_Polygon
+* Description: Check if a list of 2D points are all located inside a CGAL polygon.
+* Parameters:
+* @ps: A list of 2D points (Vector2d1) to be checked for their locations.
+* @py: A list of 2D points (Vector2d1) that represent the vertices of the CGAL polygon.
+* Return: - true if all points in the list 'ps' are located inside the polygon (bounded side). - false if at least one point in the list 'ps' is located outside the polygon (unbounded side).
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &ps,
                                                                       const Vector2d1 &py) {
 	Polygon_2 poly = Polygon2D(py);
@@ -100,6 +212,16 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &ps,
     return true;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Polygon_Dart_Sampling
+* Description: Sample points inside a CGAL polygon using the dart throwing algorithm.
+* Parameters:
+* @py: A list of 2D points (Vector2d1) representing the vertices of the CGAL polygon.
+* @d: The minimum distance between sampled points, as a fraction of the diagonal length of the polygon's bounding box.
+* @sampling_points: An output list (Vector2d1) that will contain the sampled points.
+* @total_iter: The maximum number of iterations to attempt for point sampling.
+* Return: This function doesn't return a value, but it populates the 'sampling_points' list with the sampled points.
+*********************************************************/
 extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1 & py, const double& d, Vector2d1 & sampling_points, const int& total_iter)
 {
 	Functs::MAssert(d>0&&d<1.0,"CGAL_2D_Polygon_Dart_Sampling if (!(d > 0 && d < 1.0))");
@@ -149,7 +271,6 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1 & py, 
 	}
 }
 
-//d: percentage value of the length of the diagonal of the bounding box.
 extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C1(const Vector2d1& py, const double& d)
 {
 	VectorPI1 neighbors;
@@ -157,13 +278,21 @@ extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C1(const Vecto
 }
 
 
-//d: percentage value of the length of the diagonal of the bounding box.
 extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C2(const Vector2d1& py, const double& d, VectorPI1& neighbors)
 {
 	return CGAL_2D_Polygon_Regular_Sampling_C3(py, d, neighbors, true);
 }
 
-//d: percentage value of the length of the diagonal of the bounding box.
+/********************************************************
+* Function name: CGAL_2D_Polygon_Regular_Sampling_C3
+* Description: Computes a regular sampling of a 2D polygon.
+* Parameters:
+* @py: A vector of 2D points representing a polygon.
+* @d: percentage value of the length of the diagonal of the bounding box.
+* @neighbors: A vector to store neighbor relationships (optional).
+* @compute_neighbors: A flag to indicate whether to compute neighbor relationships (optional).
+* Return: A vector of regularly sampled 2D points within the polygon.
+* *********************************************************/
 extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C3(const Vector2d1& py, const double& d, VectorPI1& neighbors, const bool& compute_neighbors)
 {
 	//check input
@@ -248,6 +377,7 @@ extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C3(const Vecto
 	return sampling_points;
 }
 
+
 extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Square_Regular_Sampling_C1(const double& d)
 {
 	return CGAL_2D_Polygon_Regular_Sampling_C1(Functs::GetUnitSquare(), d);
@@ -262,7 +392,17 @@ extern "C" PPGL_EXPORT Vector2d1 CGAL_2D_Square_Regular_Sampling_C3(const double
 	return CGAL_2D_Polygon_Regular_Sampling_C3(Functs::GetUnitSquare(), d, neighbors, compute_neighbors);
 }
 
-
+/********************************************************
+* Function name: CGAL_2D_Intersection_Segment_Segment
+* Description: Computes the intersection point between two line segments in 2D, if it exists.
+* Parameters:
+* @s_0_s: Starting point of the first line segment.
+* @s_0_e: Ending point of the first line segment.
+* @s_1_s: Starting point of the second line segment.
+* @s_1_e: Ending point of the second line segment.
+* @inter: If an intersection point exists, it is stored in this vector (x, y).
+* Return: True if an intersection point exists, false otherwise.
+* *********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Segment
         (const Vector2d & s_0_s, const Vector2d & s_0_e, const Vector2d & s_1_s, const Vector2d & s_1_e, Vector2d &inter) {
     CGAL::Object result = intersection(Segment_2(Point_2(s_0_s[0], s_0_s[1]), Point_2(s_0_e[0], s_0_e[1])),
@@ -276,6 +416,17 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Segment
     return false;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Intersection_Ray_Segment
+* Description: Computes the intersection point between a ray and a line segment in 2D, if it exists.
+* Parameters:
+* @s_0_s: Starting point of the ray.
+* @s_0_e: Endpoint of the ray (direction vector).
+* @s_1_s: Starting point of the line segment.
+* @s_1_e: Ending point of the line segment.
+* @inter: If an intersection point exists, it is stored in this vector (x, y).
+* Return: True if an intersection point exists, false otherwise.
+* *********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Segment
         (const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter) {
     Point_2 st(s_0_s[0], s_0_s[1]);
@@ -326,6 +477,17 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Segment
     }*/
 }
 
+/********************************************************
+* Function name: CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints
+* Description: Computes the intersection point between a ray and a line segment in 2D, excluding endpoints of the segment.
+* Parameters:
+* @s_0_s: Starting point of the ray.
+* @s_0_e: Endpoint of the ray (direction vector).
+* @s_1_s: Starting point of the line segment.
+* @s_1_e: Ending point of the line segment.
+* @inter: If an intersection point exists and is not an endpoint of the segment, it is stored in this vector (x, y).
+* Return: True if a valid intersection point exists, false otherwise.
+* *********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints
         (const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter) {
     Point_2 st(s_0_s[0], s_0_s[1]);
@@ -351,6 +513,16 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints
 }
 
 
+/********************************************************
+* Function name: CGAL_2D_Intersection_Ray_Polygon
+* Description: Determines if a ray intersects a 2D polygon and, if so, returns the intersection point.
+* Parameters:
+* @r_s: Starting point of the ray.
+* @r_d: Direction vector of the ray.
+* @poly: Points defining the vertices of the polygon as a list of 2D vectors.
+* @pnt: If an intersection point exists, it is stored in this vector (x, y).
+* Return: True if the ray intersects the polygon and a valid intersection point is found, false otherwise.
+* *********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Polygon(
         const Vector2d &r_s,
         const Vector2d &r_d,
@@ -368,7 +540,17 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Ray_Polygon(
     return false;
 }
 
-
+/********************************************************
+* Function name: CGAL_2D_Intersection_Line_Line
+* Description: Determines if two 2D lines intersect and, if so, returns the intersection point.
+* Parameters:
+* @s_0_s: Starting point of the first line.
+* @s_0_e: Ending point of the first line.
+* @s_1_s: Starting point of the second line.
+* @s_1_e: Ending point of the second line.
+* @inter: If lines intersect, the intersection point (x, y) is stored in this vector.
+* Return: True if the lines intersect and a valid intersection point is found, false otherwise.
+* *********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Line_Line
         (const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter) {
     CGAL::Object result = intersection(Line_2(Point_2(s_0_s[0], s_0_s[1]), Point_2(s_0_e[0], s_0_e[1])),
@@ -382,6 +564,17 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Line_Line
     return false;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Intersection_Segment_Line
+* Description: Determines if a 2D line segment and a 2D line intersect, and if so, returns the intersection point.
+* Parameters:
+* @s_s: Starting point of the line segment.
+* @s_e: Ending point of the line segment.
+* @l_s: Starting point of the line.
+* @l_e: Ending point of the line.
+* @inter: If the line segment and line intersect, the intersection point (x, y) is stored in this vector.
+* Return: True if they intersect and a valid intersection point is found, false otherwise.
+* *********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Line(const Vector2d & s_s, const Vector2d & s_e, const Vector2d & l_s, const Vector2d & l_e, Vector2d & inter)
 {
 	CGAL::Object result = CGAL::intersection(Segment_2(Point_2(s_s[0], s_s[1]), Point_2(s_e[0], s_e[1])),
@@ -399,6 +592,15 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Intersection_Segment_Line(const Vector2d & s
 	}
 }
 
+/********************************************************
+* Function name: CGAL_2D_Intersection_Segment_Polygon
+* Description: Determines if a 2D line segment intersects with a 2D polygon by checking for segment-polygon intersection.
+* Parameters:
+* @s_s: Starting point of the line segment.
+* @s_e: Ending point of the line segment.
+* @p: A vector of points defining the vertices of the polygon.
+* Return: True if the line segment intersects with the polygon, false otherwise.
+* *********************************************************/
 extern "C" PPGL_EXPORT bool
 CGAL_2D_Intersection_Segment_Polygon(const Vector2d & s_s, const Vector2d & s_e, const Vector2d1 &p) {
     for (int i = 0; i < p.size(); i++) {
@@ -428,6 +630,14 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(const Vector2d
     return poly.is_clockwise_oriented();
 }
 
+/********************************************************
+* Function name: CGAL_2D_Two_Polygons_Intersection
+* Description: Calculates the intersection area of two 2D polygons.
+* Parameters:
+* @poly_0: First polygon defined by a vector of 2D points.
+* @poly_1: Second polygon defined by a vector of 2D points.
+* Return: The intersection area of the two polygons.
+* *********************************************************/
 extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d1 &poly_0,
                                                                           const Vector2d1 &poly_1) {
     double scale = 1000000.0;
@@ -459,6 +669,15 @@ extern "C" PPGL_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d1 
     return area;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Two_Polygons_Union
+* Description: Calculates the union area of two 2D polygons and provides the resulting polygons.
+* Parameters:
+* @poly_0: First polygon defined by a vector of 2D points.
+* @poly_1: Second polygon defined by a vector of 2D points.
+* @inter_polygons: Output parameter for resulting polygons after union.
+* Return: The union area of the two polygons.
+* *********************************************************/
 extern "C" PPGL_EXPORT double
 CGAL_2D_Two_Polygons_Union(const Vector2d1& poly_0, const Vector2d1 & poly_1, Vector2d2  &inter_polygons) {
     double scale = 1000000.0;
@@ -482,8 +701,8 @@ CGAL_2D_Two_Polygons_Union(const Vector2d1& poly_0, const Vector2d1 & poly_1, Ve
     for (int i = 0; i < solution.size(); i++) {
         Polygon_2 poly_2;
 
-        std::vector<double> xs;
-        std::vector<double> ys;
+        Vector1d1 xs;
+        Vector1d1 ys;
 
         Vector2d1 polygon;
 
@@ -501,6 +720,14 @@ CGAL_2D_Two_Polygons_Union(const Vector2d1& poly_0, const Vector2d1 & poly_1, Ve
     return area;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Polygon_One_Offsets
+* Description: Computes one-side offsets of a 2D polygon.
+* Parameters:
+* @poly: Input polygon defined by a vector of 2D points.
+* @d: Offset distance.
+* @offset_polys: Output parameter for resulting offset polygons.
+* *********************************************************/
 extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(const Vector2d1 &poly, const double& d, Vector2d2  &offset_polys) {
     if (!(poly.size() > 0)) return;
 
@@ -548,7 +775,14 @@ extern "C" PPGL_EXPORT void CGAL_2D_Polygon_One_Offsets(const Vector2d1 &poly, c
 }
 
 
-
+/********************************************************
+* Function name: CGAL_2D_Polygons_One_Offsets
+* Description: Computes one-side offsets of a collection of 2D polygons.
+* Parameters:
+* @polys: Input polygons defined by a vector of vector of 2D points.
+* @d: Offset distance.
+* @offset_polys: Output parameter for resulting offset polygons.
+* *********************************************************/
 extern "C" PPGL_EXPORT void CGAL_2D_Polygons_One_Offsets(const Vector2d2 & polys, const double& d, Vector2d2 & offset_polys)
 {
 	if (!(polys.size() > 0 && polys[0].size() > 0)) return;
@@ -617,6 +851,13 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Simple(const Vector2d1 & py)
 	return poly.is_simple();
 }
 
+/********************************************************
+* Function name: CGAL_2D_Polygon_Simple_Inter
+* Description: Checks if a 2D polygon is simple (non-self-intersecting) by testing all non-adjacent edge pairs for intersections.
+* Parameters:
+* @poly: Input polygon defined by a vector of 2D points.
+* Return: True if the polygon is simple; false otherwise.
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Simple_Inter(const Vector2d1 & poly)
 {
 	for (int i = 0; i < poly.size(); i++)
@@ -644,7 +885,13 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Simple_Inter(const Vector2d1 & poly)
 	return true;
 }
 
-
+/********************************************************
+* Function name: CGAL_2D_Convex_Hulls
+* Description: Computes the convex hull of a set of 2D points using CGAL's convex_hull_2 algorithm.
+* Parameters:
+* @vec: Input vector of 2D points.
+* @hull_points: Output vector to store the points on the convex hull.
+*********************************************************/
 extern "C" PPGL_EXPORT void CGAL_2D_Convex_Hulls(const Vector2d1 & vec, Vector2d1 & hull_points)
 {
 	std::vector<Point_2> points;
@@ -660,6 +907,17 @@ extern "C" PPGL_EXPORT void CGAL_2D_Convex_Hulls(const Vector2d1 & vec, Vector2d
 		hull_points.push_back(PointVector2d(results[i]));
 }
 
+/********************************************************
+* Function name: CGAL_2D_OBB_Box
+* Description: Computes the oriented bounding box (OBB) of a set of 2D points.
+* Parameters:
+* @vec: Input vector of 2D points.
+* @center: Output vector to store the OBB center.
+* @axis_0: Output vector to store the first OBB axis.
+* @axis_1: Output vector to store the second OBB axis.
+* @extent_0: Output variable to store the extent along the first axis.
+* @extent_1: Output variable to store the extent along the second axis.
+*********************************************************/
 extern "C" PPGL_EXPORT void CGAL_2D_OBB_Box(const Vector2d1 & vec, Vector2d & center, Vector2d & axis_0, Vector2d & axis_1, double& entent_0, double& entent_1)
 {
 	gte::Vector2<double>* points = new gte::Vector2<double>[vec.size()];
@@ -691,6 +949,15 @@ CGAL_Decompose_Polyline(const Vector2d1 &polyline, const double& threshold, Vect
     }
 }
 
+/********************************************************
+* Function name: CGAL_Identify_Polycut_NotExtend
+* Description: Identifies if a line segment does not extend into a polygon.
+* Parameters:
+* @polygon: Input vector representing the polygon vertices.
+* @s: Start point of the segment.
+* @e: End point of the segment.
+* Returns: True if the segment does not extend into the polygon, false otherwise.
+*********************************************************/
 // This one is used to intersect a polygon with a segment
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_NotExtend(
         const Vector2d1 &polygon,
@@ -727,6 +994,13 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_NotExtend(
     return true;
 }
 
+/********************************************************
+* Function name: OutputRectangle
+* Description: Writes 2D points to an .obj file format.
+* Parameters:
+* @path: Path to the output .obj file.
+* @points: 2D points to be written to the file.
+*********************************************************/
 void OutputRectangle(const char* path, const Vector2d2  &points) {
     std::ofstream file(path);
 
@@ -752,12 +1026,29 @@ void OutputRectangle(const char* path, const Vector2d2  &points) {
     file.close();
 }
 
+/********************************************************
+* Function name: CGAL_Get_Angle_Kerf_Offset_Tan
+* Description: Calculate the tangent of the angle between two 2D vectors.
+* Parameters:
+* @a: First 2D vector.
+* @b: Second 2D vector.
+* Return: The tangent of the angle between the vectors.
+*********************************************************/
 extern "C" PPGL_EXPORT double CGAL_Get_Angle_Kerf_Offset_Tan(const Vector2d &a, const Vector2d &b) {
     auto na = normalize(a);
     auto nb = normalize(b);
     return glm::tan(glm::acos(glm::abs(dot(na, nb))));
 }
 
+/********************************************************
+* Function name: CGAL_2D_Projection_Point_Segment
+* Description: Project a 2D point onto a line segment defined by two endpoints.
+* Parameters:
+* @p: The 2D point to be projected.
+* @s: The starting endpoint of the line segment.
+* @e: The ending endpoint of the line segment.
+* Return: Vector2d representing the projected point on the line segment.
+*********************************************************/
 extern "C" PPGL_EXPORT Vector2d CGAL_2D_Projection_Point_Segment(const Vector2d & p, const Vector2d & s, const Vector2d & e)
 {
 	Line_2 l(VectorPoint2d(s), VectorPoint2d(e));
@@ -772,6 +1063,14 @@ extern "C" PPGL_EXPORT Vector2d CGAL_2D_Projection_Point_Segment(const Vector2d 
     return PointVector2d(m_p);
 }
 
+/********************************************************
+* Function name: CGAL_2D_Detect_Polygon_Inside_C1
+* Description: Detect if a 2D point is inside or near the boundary of a polygon.
+* Parameters:
+* @outside_py: A vector of 2D points defining the outer boundary of the polygon.
+* @p: The 2D point to be tested.
+* Return: A boolean indicating if the point is inside or near the boundary of the polygon.
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C1(const Vector2d1 & outside_py, const Vector2d & p)
 {
 	Vector2d outside_max, outside_min;
@@ -793,6 +1092,14 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C1(const Vector2d1 & o
 	return true;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Detect_Polygon_Inside_C2
+* Description: Detect if a set of 2D points are inside or near the boundary of a polygon.
+* Parameters:
+* @outside_py: A vector of 2D points defining the outer boundary of the polygon.
+* @inside_py: A vector of 2D points to be tested for being inside or near the polygon.
+* Return: A boolean indicating if all points are inside or near the boundary of the polygon.
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C2(const Vector2d1 & outside_py, const Vector2d1 & inside_py)
 {
 	Vector2d outside_max, outside_min, inside_max, inside_min;
@@ -819,6 +1126,15 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C2(const Vector2d1 & o
 	}
 	return true;
 }
+
+/********************************************************
+* Function name: CGAL_2D_Detect_Polygon_Inside_C3
+* Description: Detect if a 2D point is inside or near the boundary of multiple polygons.
+* Parameters:
+* @outside_pys: A vector of vectors of 2D points, each defining the outer boundary of a polygon.
+* @p: A 2D point to be tested for being inside or near any of the polygons.
+* Return: A boolean indicating if the point is inside or near the boundary of any of the polygons.
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C3(const Vector2d2 & outside_pys, const Vector2d & p)
 {
 	if (!CGAL_2D_Detect_Polygon_Inside_C1(outside_pys[0], p)) return false;
@@ -836,6 +1152,15 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C3(const Vector2d2 & o
 
 	return true;
 }
+
+/********************************************************
+* Function name: CGAL_2D_Detect_Polygon_Inside_C4
+* Description: Detect if a set of 2D points are inside or near the boundary of multiple polygons.
+* Parameters:
+* @outside_pys: A vector of vectors of 2D points, each defining the outer boundary of a polygon.
+* @inside_py: A vector of 2D points defining a polygon that should be inside or near the boundary of the outer polygons.
+* Return: A boolean indicating if the inner polygon is inside or near the boundary of any of the outer polygons.
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C4(const Vector2d2 & outside_pys, const Vector2d1 & inside_py)
 {
 	if (!CGAL_2D_Detect_Polygon_Inside_C2(outside_pys[0], inside_py)) return false;
@@ -870,6 +1195,14 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C5(const Vector2d2 & o
 	return true;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Distance_Polygon_Polygon
+* Description: Calculate the minimum distance between two 2D polygons.
+* Parameters:
+* @poly_0: A vector of 2D points defining the first polygon.
+* @poly_1: A vector of 2D points defining the second polygon.
+* Return: The minimum distance between the two polygons.
+*********************************************************/
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Polygon_Polygon(const Vector2d1 & poly_0, const Vector2d1 & poly_1)
 {
 	double min_d = 1000000000.0;
@@ -885,6 +1218,14 @@ extern "C" PPGL_EXPORT double CGAL_2D_Distance_Polygon_Polygon(const Vector2d1 &
 	return min_d;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Distance_Polygons_Polygons
+* Description: Calculate the minimum distance between sets of 2D polygons.
+* Parameters:
+* @poly_0: A vector of vectors of 2D points defining the first set of polygons.
+* @poly_1: A vector of vectors of 2D points defining the second set of polygons.
+* Return: The minimum distance between the two sets of polygons.
+*********************************************************/
 extern "C" PPGL_EXPORT double CGAL_2D_Distance_Polygons_Polygons(const Vector2d2 & poly_0, const Vector2d2 & poly_1)
 {
 	double min_d = 1000000000.0;
@@ -902,6 +1243,14 @@ extern "C" PPGL_EXPORT double CGAL_2D_Distance_Polygons_Polygons(const Vector2d2
 	return min_d;
 }
 
+/********************************************************
+* Function name: CGAL_2D_Nearest_Point_Polygon_C1
+* Description: Find the nearest point on a 2D polygon to a given point.
+* Parameters:
+* @v: The 2D point for which the nearest point on the polygon is to be found.
+* @poly: A vector of 2D points defining the polygon.
+* Return: The nearest point on the polygon to the input point.
+*********************************************************/
 extern "C" PPGL_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygon_C1(const Vector2d & v, const Vector2d1 & poly)
 {
 	double min_d = 1000000000.0;
@@ -920,6 +1269,16 @@ extern "C" PPGL_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygon_C1(const Vector2d 
 
 	return CGAL_2D_Projection_Point_Segment(v, poly[min_i], poly[(min_i + 1) % poly.size()]);
 }
+
+/********************************************************
+* Function name: CGAL_2D_Nearest_Point_Polygon_C2
+* Description: Find the nearest point on a 2D polygon to a given point and return both the nearest point and the minimum distance.
+* Parameters:
+* @v: The 2D point for which the nearest point on the polygon is to be found.
+* @poly: A vector of 2D points defining the polygon.
+* @p: The nearest point on the polygon to the input point.
+* @min_d: The minimum distance from the input point to the polygon.
+*********************************************************/
 extern "C" PPGL_EXPORT void CGAL_2D_Nearest_Point_Polygon_C2(const Vector2d & v, const Vector2d1 & poly, Vector2d & p, double& min_d)
 {
 	min_d = 1000000000.0;
@@ -938,6 +1297,15 @@ extern "C" PPGL_EXPORT void CGAL_2D_Nearest_Point_Polygon_C2(const Vector2d & v,
 
     p= CGAL_2D_Projection_Point_Segment(v, poly[min_i], poly[(min_i + 1) % poly.size()]);
 }
+
+/********************************************************
+* Function name: CGAL_2D_Nearest_Point_Polygons
+* Description: Find the nearest point on a collection of 2D polygons to a given point.
+* Parameters:
+* @v: The 2D point for which the nearest point on the polygons is to be found.
+* @polys: A vector of vectors of 2D points representing a collection of polygons.
+* Return: The nearest 2D point on any of the polygons to the input point.
+*********************************************************/
 extern "C" PPGL_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygons(const Vector2d & v, const Vector2d2 & polys)
 {
 	Vector2d result;
@@ -957,18 +1325,39 @@ extern "C" PPGL_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygons(const Vector2d & 
 	return result;
 }
 
+/********************************************************
+* Function name: CGAL_2d_Polygon_Boundingbox
+* Description: Compute the bounding box (axis-aligned) of a collection of 2D points.
+* Parameters:
+* @ps: A vector of 2D points for which the bounding box is to be computed.
+* @min_corner: A vector to store the minimum corner (bottom-left) of the bounding box.
+* @max_corner: A vector to store the maximum corner (top-right) of the bounding box.
+*********************************************************/
 extern "C" PPGL_EXPORT void CGAL_2d_Polygon_Boundingbox(const Vector2d1 & ps, Vector2d & min_corner, Vector2d & max_corner)
 {
     Functs::GetBoundingBox(ps, min_corner, max_corner);
 }
 
-
+/********************************************************
+* Function name: CGAL_2D_Polygon_Area
+* Description: Compute the signed area of a 2D polygon defined by a vector of 2D points.
+* Parameters:
+* @py: A vector of 2D points representing the vertices of the polygon.
+* Return: The signed area of the polygon (positive if vertices are in counterclockwise order, negative if clockwise).
+*********************************************************/
 extern "C" PPGL_EXPORT double CGAL_2D_Polygon_Area(const Vector2d1 & py)
 {
 	Polygon_2 poly = Polygon2D(py);
 	return abs(poly.area());
 }
 
+/********************************************************
+* Function name: CGAL_2D_Polygon_Inside_Point_C1
+* Description: Find the approximate center of a convex or concave 2D polygon defined by a vector of 2D points.
+* Parameters:
+* @py: A vector of 2D points representing the vertices of the polygon.
+* Return: A 2D point representing the approximate center of the polygon.
+*********************************************************/
 extern "C" PPGL_EXPORT Vector2d CGAL_2D_Polygon_Inside_Point_C1(const Vector2d1 & py)
 {
 	double inside_x, inside_y;
@@ -996,6 +1385,14 @@ extern "C" PPGL_EXPORT Vector2d CGAL_2D_Polygon_Inside_Point_C1(const Vector2d1 
 	return Vector2d(inside_x, inside_y);
 }
 
+/********************************************************
+* Function name: CGAL_2D_Polygon_Inside_Point_C2
+* Description: Find a point inside multiple 2D polygons. The function generates random points and checks if they are inside all given polygons.
+* Parameters:
+* @polys: A vector of vectors, where each inner vector represents the vertices of a polygon.
+* @inner_vec: A 2D point representing the found point inside the polygons (if successful).
+* Return: A boolean indicating if a point inside all polygons was found.
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Inside_Point_C2(const Vector2d2 & polys, Vector2d & inner_vec)
 {
 	auto CheckValid = [](std::vector<Polygon_2>& cgal_polys, double p_x, double p_y)
@@ -1069,6 +1466,17 @@ extern "C" PPGL_EXPORT bool CGAL_2D_Polygon_Inside_Point_C2(const Vector2d2 & po
 	return success_iter != 0;
 }
 
+/********************************************************
+* Function name: CGAL_Identify_Polycut_Extend
+* Description: Identifies and extends the boundary of a polygon cut. Given a polygon, a starting point (s), and an ending point (e), this function calculates the extended points (ns and ne) for the cut.
+* Parameters:
+* @polygon: A vector of 2D points representing the vertices of the polygon.
+* @s: The starting point of the cut.
+* @e: The ending point of the cut.
+* @ns: Output parameter for the starting point of the extended cut.
+* @ne: Output parameter for the ending point of the extended cut.
+* Return: A boolean indicating if the operation was successful.
+*********************************************************/
 // This one is used to intersect a polygon with a line
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
         const Vector2d1 &polygon,
@@ -1245,6 +1653,17 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_Extend(
     return true;
 }
 
+/********************************************************
+* Function name: CGAL_Identify_Polycut_ExtendOld
+* Description: An alternative implementation to identify and extend the boundary of a polygon cut. Given a polygon, a starting point (s), and an ending point (e), this function calculates the extended points (ns and ne) for the cut.
+* Parameters:
+* @polygon: A vector of 2D points representing the vertices of the polygon.
+* @s: The starting point of the cut.
+* @e: The ending point of the cut.
+* @ns: Output parameter for the starting point of the extended cut.
+* @ne: Output parameter for the ending point of the extended cut.
+* Return: A boolean indicating if the operation was successful.
+*********************************************************/
 // This one is used to intersect a polygon with a line
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
         const Vector2d1 &polygon,
@@ -1366,7 +1785,15 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
     return true;
 }
 
-
+/********************************************************
+* Function name: CGAL_Identify_Polycut
+* Description: Identifies the intersection points of a cutting line with a polygon's boundary.
+* Parameters:
+* @polygon: A vector of 2D points representing the vertices of the polygon.
+* @cutLine: A vector of 2D points representing the vertices of the cutting line.
+* @result: Output parameter, a vector of pairs of boolean values indicating whether the cutting line enters and exits the polygon at each segment. The vector's size is one less than the size of cutLine.
+* Return: A boolean indicating if the operation was successful.
+*********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon,const Vector2d1 &cutLine, VectorPB1 &result) {
     // N-1 edges, default 0 -> cant be fabricated
     result = VectorPB1(cutLine.size() - 1, std::make_pair<bool, bool>(false, false));
@@ -1424,6 +1851,15 @@ extern "C" PPGL_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon,const
     return true;
 }
 
+/********************************************************
+* Function name: GetIndex
+* Description: Searches for an edge in the vector of GridEdge structures that matches the specified start and end points.
+* Parameters:
+* @grid_edges: A vector of GridEdge structures representing edges in a grid.
+* @i_0: A pair of integers representing the start point coordinates.
+* @i_1: A pair of integers representing the end point coordinates.
+* Return: The index of the edge that matches the specified start and end points, or -1 if no matching edge is found.
+*********************************************************/
 int GetIndex(std::vector<GridEdge>& grid_edges, std::pair<int,int> i_0, std::pair<int,int> i_1)
 {
 	int s_i = i_0.first;
@@ -1441,8 +1877,17 @@ int GetIndex(std::vector<GridEdge>& grid_edges, std::pair<int,int> i_0, std::pai
 	return -1;
 }
 
+/********************************************************
+* Function name: Decomposition_Mapping
+* Description: Decomposes a boundary represented by a vector of coordinate pairs into multiple parts and stores them in separate vectors.
+* Parameters:
+* @one_boundary: A vector of coordinate pairs representing a boundary.
+* @boundary_xs: A vector of vectors that will store the x-coordinates of the decomposed boundaries.
+* @boundary_ys: A vector of vectors that will store the y-coordinates of the decomposed boundaries.
+* @remove_b: A boolean flag indicating whether to remove duplicate entries from one_boundary.
+*********************************************************/
 void Decomposition_Mapping(VectorPI1& one_boundary,
-	std::vector<std::vector<double>>& boundary_xs, std::vector<std::vector<double>>& boundary_ys, bool remove_b = false)
+	Vector1d2& boundary_xs, Vector1d2& boundary_ys, bool remove_b = false)
 {
 	//remove multi grid index
 	if (remove_b) {
@@ -1477,16 +1922,16 @@ void Decomposition_Mapping(VectorPI1& one_boundary,
 	}
 
 	if (!run) {
-		std::vector<double> xs;
-		std::vector<double> ys;
+		Vector1d1 xs;
+		Vector1d1 ys;
 		for (int i = 0; i < one_boundary.size(); i++) {
 			xs.push_back(one_boundary[i].first - 1.0);
 			ys.push_back(one_boundary[i].second - 1.0);
 		}
 		boundary_xs.push_back(xs);
 		boundary_ys.push_back(ys);
-		std::vector<double>().swap(xs);
-		std::vector<double>().swap(ys);
+		Vector1d1().swap(xs);
+		Vector1d1().swap(ys);
 	}
 	else {
 		VectorPI1 one_boundary_0;
@@ -1505,12 +1950,20 @@ void Decomposition_Mapping(VectorPI1& one_boundary,
 	}
 }
 
-extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::vector<int>>&image, std::vector<std::vector<double>>&boundary_xs, std::vector<std::vector<double>>&boundary_ys)
+/********************************************************
+* Function name: CGAL_Image_Grid_Decomposition_C1
+* Description: Decomposes an image represented as a grid into boundaries and stores the x and y coordinates of these boundaries.
+* Parameters:
+* @image: A 2D vector representing the image grid.
+* @boundary_xs: A vector of vectors that will store the x-coordinates of the detected boundaries.
+* @boundary_ys: A vector of vectors that will store the y-coordinates of the detected boundaries.
+*********************************************************/
+extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(Vector1i2&image, Vector1d2&boundary_xs, Vector1d2&boundary_ys)
 {
 	//refine  lables
-	std::vector<std::vector<int>> grid;
+	Vector1i2 grid;
 	for (int i = 0; i < image.size() + 2; i++) {
-		std::vector<int> one_grid_raw;
+		Vector1i1 one_grid_raw;
 		for (int j = 0; j < image[0].size() + 2; j++) {
 			if (i >= 1 && i < image.size() + 1 && j >= 1 && j < image.size() + 1) {
 				one_grid_raw.push_back(image[i - 1][j - 1]);
@@ -1558,7 +2011,7 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 	//std::pair<int,int> s e
 	//std::pair<int,int> 3 4
 	Vector1i2 grid_relations;
-	std::vector<bool> grid_edges_used;
+	Vector1b1 grid_edges_used;
 	for (int i = 0; i < grid_edges.size(); i++) {
 		grid_edges_used.push_back(false);
 		std::pair<int,int> index_1;
@@ -1632,9 +2085,9 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 	}
 
 	//std::vector<GridEdgeRelation> grid_relations;
-	//std::vector<bool> grid_edges_used;
+	//Vector1b1 grid_edges_used;
 	//for (int i = 0; i < grid_edges.size(); i++)
-	std::vector<std::vector<int>> grid_boundaries;
+	Vector1i2 grid_boundaries;
 	while (true) {
 		int start_edge_index = -1;
 
@@ -1646,7 +2099,7 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 		}
 		if (start_edge_index < 0) break;
 		grid_edges_used[start_edge_index] = true;
-		std::vector<int> one_boundary(1, start_edge_index);
+		Vector1i1 one_boundary(1, start_edge_index);
 		while (true) {
 			int next_edge_index = -1;
 			for (int i = 0; i < grid_relations[start_edge_index].size(); i++) {
@@ -1668,8 +2121,8 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 #if 0
 	{
 		for (int i = 0; i < grid_boundaries.size(); i++) {
-			std::vector<double> xs;
-			std::vector<double> ys;
+			Vector1d1 xs;
+			Vector1d1 ys;
 			for (int j = 0; j < grid_boundaries[i].size(); j++) {
 				std::pair<int,int> index_s(grid_edges[grid_boundaries[i][j]].s_i, grid_edges[grid_boundaries[i][j]].s_j);
 				std::pair<int,int> index_e(grid_edges[grid_boundaries[i][j]].e_i, grid_edges[grid_boundaries[i][j]].e_j);
@@ -1700,16 +2153,24 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C1(std::vector<std::ve
 	}
 #endif
 
-	std::vector<std::vector<int>>().swap(grid);
+	Vector1i2().swap(grid);
 	std::vector<GridEdge>().swap(grid_edges);
 	Vector1i2().swap(grid_relations);
-	std::vector<bool>().swap(grid_edges_used);
-	std::vector<std::vector<int>>().swap(grid_boundaries);
+	Vector1b1().swap(grid_edges_used);
+	Vector1i2().swap(grid_boundaries);
 }
 
 
+/********************************************************
+* Function name: CGAL_Image_Grid_Decomposition_Conservative_C1
+* Description: Decomposes an image represented as a grid into conservative boundaries and stores the x and y coordinates of these boundaries.
+* Parameters:
+* @image: A 2D vector representing the image grid.
+* @boundary_xs: A vector of vectors that will store the x-coordinates of the detected boundaries.
+* @boundary_ys: A vector of vectors that will store the y-coordinates of the detected boundaries.
+*********************************************************/
 
-extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::vector<std::vector<int>>&image, std::vector<std::vector<double>>&boundary_xs, std::vector<std::vector<double>>&boundary_ys)
+extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(Vector1i2&image, Vector1d2&boundary_xs, Vector1d2&boundary_ys)
 {
 	VectorPI2 boundaries;
 
@@ -1742,7 +2203,7 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::v
 
 		//3
 		VectorPI1 lables_3;
-		std::vector<bool> lables_3_used;
+		Vector1b1 lables_3_used;
 		for (int i = 0; i < image.size(); i++)
 		{
 			for (int j = 0; j < image[i].size(); j++)
@@ -1838,8 +2299,8 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::v
 
 	for (int i = 0; i < boundaries.size(); i++)
 	{
-		std::vector<double> xs;
-		std::vector<double> ys;
+		Vector1d1 xs;
+		Vector1d1 ys;
 		for (int j = 0; j < boundaries[i].size(); j++)
 		{
 			xs.push_back(boundaries[i][j].first);
@@ -1852,10 +2313,18 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(std::v
 
 	VectorPI2().swap(boundaries);
 }
-extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C2(std::vector<std::vector<int>>&image, Vector2d2 & boundaries)
+
+/********************************************************
+* Function name: CGAL_Image_Grid_Decomposition_C2
+* Description: Decomposes an image represented as a grid into boundaries and stores the boundary point coordinates.
+* Parameters:
+* @image: A 2D vector representing the image grid.
+* @boundaries: A vector of vectors that will store the boundary point coordinates (as pairs of x and y coordinates).
+*********************************************************/
+extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C2(Vector1i2&image, Vector2d2 & boundaries)
 {
-	std::vector<std::vector<double>> xs;
-	std::vector<std::vector<double>> ys;
+	Vector1d2 xs;
+	Vector1d2 ys;
 
 	CGAL_Image_Grid_Decomposition_C1(image, xs, ys);
 
@@ -1869,10 +2338,18 @@ extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_C2(std::vector<std::ve
 		boundaries.push_back(one_boundary);
 	}
 }
-extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C2(std::vector<std::vector<int>>&image, Vector2d2 & boundaries)
+
+/********************************************************
+* Function name: CGAL_Image_Grid_Decomposition_Conservative_C2
+* Description: Decomposes an image represented as a grid using conservative method into boundaries and stores the boundary point coordinates.
+* Parameters:
+* @image: A 2D vector representing the image grid.
+* @boundaries: A vector of vectors that will store the boundary point coordinates (as pairs of x and y coordinates).
+*********************************************************/
+extern "C" PPGL_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C2(Vector1i2&image, Vector2d2 & boundaries)
 {
-	std::vector<std::vector<double>> xs;
-	std::vector<std::vector<double>> ys;
+	Vector1d2 xs;
+	Vector1d2 ys;
 
 	CGAL_Image_Grid_Decomposition_Conservative_C1(image, xs, ys);
 

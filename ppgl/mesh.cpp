@@ -1,4 +1,4 @@
-#include "geom.h"
+﻿#include "geom.h"
 
 #include <Mathematics/MeshCurvature.h>
 #include <Mathematics/BSplineCurveFit.h>
@@ -8,7 +8,7 @@
 void  Construct_Polyhedron(Polyhedron_3& polyhedron, const Vector3d1& vecs, const Vector1i1& face_id_0, const Vector1i1& face_id_1, const Vector1i1& face_id_2)
 {
     Vector1d1 coords;
-    Vector1i1    tris;
+    Vector1i1 tris;
 	for (int i = 0; i < vecs.size(); i++)
 	{
 		coords.push_back(vecs[i][0]);
@@ -32,8 +32,8 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const Vector3d1& vecs, cons
 		facet_it->id() = facet_id;
 	}
 
-	std::vector<double>().swap(coords);
-	std::vector<int>().swap(tris);
+	Vector1d1().swap(coords);
+	Vector1i1().swap(tris);
 }
 
 void  Construct_Polyhedron(Polyhedron_3& polyhedron, const char* path_)
@@ -55,9 +55,9 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const char* path_)
 	if (path.substr(path.size() - 3, path.size()) == "obj")
 	{
 		Vector3d1 vecs;
-		std::vector<int> face_id_0;
-		std::vector<int> face_id_1;
-		std::vector<int> face_id_2;
+		Vector1i1 face_id_0;
+		Vector1i1 face_id_1;
+		Vector1i1 face_id_2;
 		Functs::LoadObj3d(path_, vecs, face_id_0, face_id_1, face_id_2);
 		Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
 	}
@@ -101,12 +101,14 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const char* path_, Vector3d
 
 
 
-//Project p onto the planar surface of 3d triangle
-//Checking the position relationship between the p and 3d triangle
-//face: 3d triangle
-//p: 3d point
-//return true: inside
-//return false: outside
+/********************************************************
+* Function name : OutsidePointInsideTriangle
+* Description  :	Determine if a point is inside a triangle by the center of gravity coordinate method.
+* Parameter  :
+* @face				 Triangular surface
+* @p				 3d point
+* Return  :true -- inside  ,  false -- outside
+**********************************************************/
 bool OutsidePointInsideTriangle(Poly_facet_iterator &face, Vector3d p) 
 {
 	Point_3 p0 = face->halfedge()->next()->next()->vertex()->point();
@@ -130,7 +132,18 @@ bool OutsidePointInsideTriangle(Poly_facet_iterator &face, Vector3d p)
     }
 }
 
-
+/********************************************************
+* Function name :Intersection
+* Description        :Determine whether a given two-dimensional line segment intersects any half of the line.
+* Parameter         :
+* @hh       half edge
+* @nb       integer
+* @inside		3d point 
+* @outside		3d point 
+* @handle		the handle to store intersecting halves
+* @intersection		3d point to store intersection
+* Return          :false -- no intersection  ,  true -- intersection exists
+**********************************************************/
 bool Intersection(Halfedge_handle &hh, int nb, Vector3d inside, Vector3d outside, Halfedge_handle &handle,
                   Vector3d &intersection) {
     Point_3 p0 = hh->next()->next()->vertex()->point();
@@ -160,7 +173,16 @@ bool Intersection(Halfedge_handle &hh, int nb, Vector3d inside, Vector3d outside
 }
 
 
-
+/********************************************************
+* Function name :RelatedFaceNormal
+* Description        : Calculate the normal of the triangle (or polygon) face closest to the given point.
+* Parameter         :
+* @polyhedron       Data structures for polyhedra or polygons
+* @tree       Tree structure of spatial queries
+* @normals		normal vector
+* @source		the given 3d point
+* Return          :a new 3d vector of the normal
+**********************************************************/
 Vector3d RelatedFaceNormal(Polyhedron_3& polyhedron, Tree& tree, Vector3d1& normals, Vector3d source)
 {
 	Point_3 query(source[0], source[1], source[2]);
@@ -179,6 +201,19 @@ Vector3d RelatedFaceNormal(Polyhedron_3& polyhedron, Tree& tree, Vector3d1& norm
 	return (double)u * normals[point_id_0] + (double)v * normals[point_id_1] + (double)w * normals[point_id_2];
 }
 
+/********************************************************
+* Function name :CGAL_Remesh_Surface_by_Adding_Feature
+* Description        : Remesh a surface by adding feature points
+* Parameter         :
+* @feature       the coordinates of feature points
+* @face_ids       the indices of the triangular faces where features need to be added
+* @vecs			the coordinates of vertices of the original surface
+* @face_id_0, face_id_1, face_id_2:		the indices of the triangular faces used to construct the original surface
+* @igl_cutting_0_edges,igl_cutting_1_edges:		the indices of cutting edges 
+* @igl_cutting_points		3d double vectors of the coordinates of cutting points
+* @cutting_faces			2d integer vectors of the triangular faces after cutting
+* Return          :void
+**********************************************************/
 extern "C" PPGL_EXPORT  void
 CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature, const Vector1i1 &face_ids,
                                       const Vector3d1 &vecs,
@@ -290,10 +325,20 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Edges(const char* path) {
 }
 
 
-
+/********************************************************
+* Function name :CGAL_3D_Intersection_Sphere_Ray
+* Description        : Check if the 3D sphere intersects with the ray
+* Parameter         :
+* @center_x, center_y, center_z:		The central coordinate of the sphere.
+* @radius:		The radius of the sphere.
+* @ray_origin_x, ray_origin_y, ray_origin_z:	The coordinates of the starting point of the ray.
+* @ray_direction_x, ray_direction_y, ray_direction_z:		The direction of the ray.
+* @i_x, i_y, i_z:		The vector of double to store the coordinates of the intersection.
+* Return          :false -- no intersection  ,  true -- intersection exists
+**********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(const double& center_x, const double& center_y, const double& center_z, const double& radius,
 	const double& ray_origin_x, const double& ray_origin_y, const double& ray_origin_z, const double& ray_direction_x, const double& ray_direction_y, const double& ray_direction_z,
-	std::vector<double>& i_x, std::vector<double>& i_y, std::vector<double>& i_z)
+	std::vector<double>&i_x, std::vector<double>&i_y, std::vector<double>&i_z)
 {
 	//gte::Sphere3<double> sphere(gte::Vector3d(center_x, center_y, center_z), radius);
 	//gte::Ray3<double> ray(gte::Vector3d(ray_origin_x, ray_origin_y, ray_origin_z), gte::Vector3d(ray_direction_x, ray_direction_y, ray_direction_z));
@@ -318,6 +363,15 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(const double& center
 	return false;
 }
 
+/********************************************************
+* Function name :CGAL_3D_Intersection_Ray_Triangle
+* Description        :	Check if a 3D ray intersects a triangle.
+* Parameter         :
+* @p		3d point of the coordinates of the starting point of the ray.
+* @n		The 3d direction vector of the ray.
+* @p0,p1,p2:  3d points of the coordinates of the three vertex of the triangle.
+* Return          :false -- no intersection  ,  true -- intersection exists
+**********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Triangle(const Vector3d& p, const Vector3d & n, const Vector3d & p0, const Vector3d & p1, const Vector3d & p2)
 {
 	Ray_3 ray(VectorPoint3d(p), Vector_3(n[0], n[1], n[2]));
@@ -334,6 +388,15 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Triangle(const Vector3d& p,
 	}
 }
 
+/********************************************************
+* Function name :CGAL_3D_Intersection_Segment_Mesh
+* Description        :	Checks if a 3D line segment intersects a 3D mesh (or polygon mesh).
+* Parameter         :
+* @s		3d point of the coordinates of the starting point of the line segment.
+* @e		3d point of the coordinates of the end point of the line segment.
+* @path		Path or filename of the mesh.
+* Return          :false -- no intersection  ,  true -- intersection exists
+**********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Segment_Mesh(const Vector3d& s, const Vector3d& e, const char* path)
 {
 	std::cerr << "CGAL_3D_Intersection_Segment_Mesh..." << std::endl;
@@ -351,6 +414,16 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Segment_Mesh(const Vector3d& s,
 		return false;
 }
 
+/********************************************************
+* Function name :CGAL_3D_Intersection_Segment_Mesh
+* Description        :	Checks if a 3D line segment intersects a 3D mesh (or polygon mesh).
+* Parameter         :
+* @ss		A container containing the coordinates of the starting points of multiple line segments.
+* @e		A container containing the coordinates of the end points of multiple line segments
+* @path		Path or filename of the mesh.
+* @inters	Boolean array to stores the result of whether each line segment intersects the grid or not.
+* Return          :false -- no intersection  ,  true -- intersection exists
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Segments_Mesh(const Vector3d1& ss, const Vector3d1& ee, const char* path, Vector1b1& inters)
 {
 	Functs::MAssert(ss.size()==ee.size(),"ss.size()!=ee.size()");
@@ -370,6 +443,15 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Segments_Mesh(const Vector3d1& 
 
 }
 
+/********************************************************
+* Function name :CGAL_3D_Intersection_Polygons_Mesh
+* Description:check whether multiple three-dimensional polygons intersect with a three-dimensional mesh (or polyhedral mesh)
+* Parameter :
+* @polygons:A container containing multiple polygons.
+* @path: path or filename representing the mesh.
+* @inters:An output parameter used to store boolean results indicating whether each polygon intersects with the mesh.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Polygons_Mesh(const Vector3d2& polygons, const char* path, Vector1b1& inters)
 {
 	for (auto& polygon : polygons)
@@ -411,7 +493,14 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Polygons_Mesh(const Vector3d2& 
 	}
 }
 
-//check whether there is a polygon intersected with the input mesh
+/********************************************************
+* Function name: CGAL_3D_Intersection_Polygons_Mesh_Bool
+* Description: This function checks if multiple three-dimensional polygons intersect with a three-dimensional mesh (or polyhedral mesh) and returns a boolean result.
+* Parameters:
+* @polygons: A container of multiple polygons, where each polygon is represented as a Vector3d2, containing a series of vertices.
+* @path: A string representing the path or filename of the mesh to be checked for intersections.
+* Return		:false -- no intersection, true -- intersection exists
+**********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Polygons_Mesh_Bool(const Vector3d2& polygons, const char* path)
 {
 	for (auto& polygon : polygons)
@@ -448,6 +537,17 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Polygons_Mesh_Bool(const Vector
 	return false;
 }
 
+/********************************************************
+* Function name: CGAL_3D_Intersection_Ray_Mesh
+* Description: This function checks for intersections between a three-dimensional ray and a three-dimensional mesh.
+* Parameters:
+* @p: A vector representing the origin point of the ray.
+* @n: A vector indicating the direction of the ray.
+* @path: A string representing the path or filename of the mesh for intersection checks.
+* Return:
+* - false: no intersections
+* - true: intersection exists
+**********************************************************/
 extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(const Vector3d& p, const Vector3d & n, const char* path)
 {
 	std::cerr << "CGAL_3D_Intersection_Ray_Mesh..." << std::endl;
@@ -465,7 +565,16 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(const Vector3d& p, con
 		return false;
 }
 
-//test each group directions (nes[i]) for each point in ps
+/********************************************************
+* Function name: CGAL_3D_Intersection_Rays_Mesh_C1_Bool
+* Description: Check for intersections between multiple three-dimensional rays and a three-dimensional mesh and stores the results in a boolean matrix.
+* Parameters:
+* @ps: A vector of three-dimensional points representing the origins of the rays.
+* @nes: A matrix of three-dimensional vectors indicating the directions of the rays.
+* @path: A string representing the path or filename of the mesh for intersection checks.
+* @inters: An output parameter, a matrix of booleans, to store the intersection results.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void  CGAL_3D_Intersection_Rays_Mesh_C1_Bool(const Vector3d1& ps, const Vector3d2& nes, const char* path, Vector1b2& inters)
 {
 	//input validation
@@ -494,7 +603,16 @@ extern "C" PPGL_EXPORT void  CGAL_3D_Intersection_Rays_Mesh_C1_Bool(const Vector
 	}
 }
 
-//test all directions (ns) for each point in ps
+/********************************************************
+* Function name: CGAL_3D_Intersection_Rays_Mesh_C2_Bool
+* Description: Check for intersections between multiple three-dimensional rays and a three-dimensional mesh using custom-defined origins and directions, and stores the results in a boolean matrix.
+* Parameters:
+* @ps: A vector of three-dimensional points representing the origins of the rays.
+* @ns: A vector of three-dimensional vectors indicating the directions of the rays.
+* @path: A string representing the path or filename of the mesh for intersection checks.
+* @inters: An output parameter, a matrix of booleans, to store the intersection results.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(const Vector3d1& ps, const Vector3d1& ns, const char* path, Vector1b2& inters)
 {
 	//input validation
@@ -526,6 +644,16 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(const Vector3
 	}
 }
 
+/********************************************************
+* Function name: CGAL_3D_Intersection_Rays_Mesh_C2_Vector3d
+* Description: Check for intersections between multiple three-dimensional rays and a three-dimensional mesh using custom-defined origins and directions.
+* Parameters:
+* @ps: A vector of three-dimensional points representing the origins of the rays.
+* @ns: A vector of three-dimensional vectors indicating the directions of the rays.
+* @path: A string representing the path or filename of the mesh for intersection checks.
+* @inters: An output parameter, a matrix of distances, where each value represents the distance from the ray origin to the nearest intersection point. A negative value (-1.0) indicates no intersection.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Vector3d(
 	const Vector3d1& ps, const Vector3d1& ns, const char* path, Vector1d2& inters)
 {
@@ -621,7 +749,17 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Vector3d(
 	}
 }
 
-extern "C" PPGL_EXPORT void  CGAL_3D_Points_Inside_Triangles_C1_Bool(const Vector3d1& vecs, const std::vector<int>& face_id_0, const std::vector<int>& face_id_1, const std::vector<int>& face_id_2, const Vector3d1& points, std::vector<bool>& insides)
+/********************************************************
+* Function name: CGAL_3D_Points_Inside_Triangles_C1_Bool
+* Description: Determine if a set of three-dimensional points are inside or outside a polyhedral mesh represented by its triangles.
+* Parameters:
+* @vecs: A vector containing the vertices of the polyhedral mesh.
+* @face_id_0, @face_id_1, @face_id_2: Vectors containing the indices of vertices for each triangle in the mesh.
+* @points: A vector of three-dimensional points to be checked for inclusion.
+* @insides: An output parameter, a boolean vector indicating whether each point is inside (true) or outside (false) of the mesh.
+* Return: void
+**********************************************************/
+extern "C" PPGL_EXPORT void  CGAL_3D_Points_Inside_Triangles_C1_Bool(const Vector3d1& vecs, const Vector1i1& face_id_0, const Vector1i1& face_id_1, const Vector1i1& face_id_2, const Vector3d1& points, Vector1b1& insides)
 {
 	//build polyhedron
 	Polyhedron_3 polyhedron;
@@ -639,7 +777,16 @@ extern "C" PPGL_EXPORT void  CGAL_3D_Points_Inside_Triangles_C1_Bool(const Vecto
 	}
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Points_Inside_Triangles_C2_Bool(const char* path, const Vector3d1& points, std::vector<bool>& insides)
+/********************************************************
+* Function name: CGAL_3D_Points_Inside_Triangles_C2_Bool
+* Description: Check if a set of three-dimensional points are located inside or outside a polyhedral mesh represented by its triangles.
+* Parameters:
+* @path: A string representing the path or filename of the mesh to be used for the check.
+* @points: A vector of three-dimensional points to be assessed for inclusion.
+* @insides: An output parameter, a boolean vector indicating whether each point is inside (true) or outside (false) of the mesh.
+* Return: void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Points_Inside_Triangles_C2_Bool(const char* path, const Vector3d1& points, Vector1b1& insides)
 {
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -655,7 +802,17 @@ extern "C" PPGL_EXPORT void CGAL_3D_Points_Inside_Triangles_C2_Bool(const char* 
 	}
 }
 
-//d: percentage value of the length of the diagonal of the bounding box.
+/********************************************************
+* Function name: CGAL_3D_Mesh_Dart_Sampling_C1
+* Description: This function performs dart throwing sampling within a three-dimensional polyhedral mesh. 
+*				It generates a set of sampling points within the mesh.
+* Parameters:
+* @outside_path: A string representing the path or filename of the mesh used for sampling.
+* @d: percentage value of the length of the diagonal of the bounding box.
+* @sampling_points: An output parameter, a vector of three-dimensional points representing the generated sampling points within the mesh.
+* @total_iter: An integer specifying the total number of iterations for dart throwing.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C1(const char* outside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter)
 {
 	if (!(d > 0 && d < 1.0))
@@ -701,6 +858,18 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C1(const char* outside_pa
 	std::cerr << std::endl;
 }
 
+/********************************************************
+* Function name: CGAL_3D_Mesh_Dart_Sampling_C2
+* Description: This function performs dart throwing sampling within a three-dimensional polyhedral mesh while avoiding an internal region. 
+*				It generates a set of sampling points within the specified region.
+* Parameters:
+* @outside_path: A string representing the path or filename of the mesh used as the outer boundary.
+* @inside_path: A string representing the path or filename of the mesh used to define the internal region to be avoided.
+* @d: percentage value of the length of the diagonal of the bounding box.
+* @sampling_points: An output parameter, a vector of three-dimensional points representing the generated sampling points within the specified region.
+* @total_iter: An integer specifying the total number of iterations for dart throwing.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C2(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter)
 {
 	if (!(d > 0 && d < 1.0))
@@ -756,7 +925,16 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C2(const char* outside_pa
 }
 
 
-//d: percentage value of the length of the diagonal of the bounding box.
+/********************************************************
+* Function name: CGAL_3D_Mesh_Regular_Sampling_C1
+* Description: This function performs regular grid-based sampling within a three-dimensional polyhedral mesh.
+*				It generates a set of sampling points at regular intervals within the specified region.
+* Parameters:
+* @outside_path: A string representing the path or filename of the mesh to be sampled.
+* @d: percentage value of the length of the diagonal of the bounding box.
+* @sampling_points: An output parameter, a vector of three-dimensional points representing the generated sampling points within the specified region.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C1(const char* outside_path, const double& d, Vector3d1 & sampling_points)
 {
 	if (!(d > 0 && d < 1.0))
@@ -800,6 +978,18 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C1(const char* outside
 	std::cerr << std::endl;
 }
 
+/********************************************************
+* Function name: CGAL_3D_Mesh_Regular_Sampling_C2
+* Description: This function performs regular grid-based sampling within a three-dimensional polyhedral mesh.
+*				It generates a set of sampling points at regular intervals within the specified region.
+*				It takes into account two meshes: an "outside" mesh and an "inside" mesh, and samples points only within the "outside" mesh while avoiding the "inside" mesh.
+* Parameters:
+* @outside_path: A string representing the path or filename of the "outside" mesh used for sampling.
+* @inside_path: A string representing the path or filename of the "inside" mesh. Sampling points will be generated only within the "outside" mesh and outside the "inside" mesh.
+* @d: percentage value of the length of the diagonal of the bounding box.
+* @sampling_points: An output parameter, a vector of three-dimensional points representing the generated sampling points within the specified region.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C2(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points)
 {
 	if (!(d > 0 && d < 1.0))
@@ -849,7 +1039,17 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C2(const char* outside
 	std::cerr << std::endl;
 }
 
-//d: percentage value of the length of the diagonal of the bounding box.
+/********************************************************
+* Function name: CGAL_3D_Cube_Surface_Sampling_C1
+* Description: This function generates a set of sampling points on the surfaces of a 3D cube. The cube is defined by its size and the distance between sampling points. The function computes points on the X, Y, and Z faces of the cube, and optionally computes neighboring relationships between these points.
+* Parameters:
+* @cube_size: A double value representing the size of the cube.
+* @d: percentage value of the length of the diagonal of the bounding box.
+* @sampling_points: An output parameter, a vector of vector of three-dimensional points representing the generated sampling points on the cube's surfaces.
+* @neighbors: An output parameter, a vector of pairs representing neighboring relationships between the sampling points. This parameter is computed only if compute_neighbors is set to true.
+* @compute_neighbors: A boolean indicating whether to compute neighboring relationships between sampling points.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Cube_Surface_Sampling_C1(const double& cube_size, const double& d, Vector3d2& sampling_points, VectorPI2& neighbors, const bool& compute_neighbors)
 {
 	auto half_cube = cube_size / 2.0;
@@ -880,13 +1080,15 @@ extern "C" PPGL_EXPORT void CGAL_3D_Cube_Surface_Sampling_C1(const double& cube_
 
 
 }
-//d: percentage value of the length of the diagonal of the bounding box.
+
+
 extern "C" PPGL_EXPORT void CGAL_3D_Cube_Surface_Sampling_C2(const double& cube_size, const double& d, Vector3d2& sampling_points)
 {
 	VectorPI2 neighbors;
 	CGAL_3D_Cube_Surface_Sampling_C1(cube_size, d, sampling_points, neighbors, false);
 }
-//d: percentage value of the length of the diagonal of the bounding box.
+
+
 extern "C" PPGL_EXPORT void CGAL_3D_Cube_Surface_Sampling_C3(const double& cube_size, const double& d, Vector3d2& sampling_points, VectorPI2& neighbors)
 {
 	CGAL_3D_Cube_Surface_Sampling_C1(cube_size, d, sampling_points, neighbors, true);
@@ -911,6 +1113,18 @@ extern "C" PPGL_EXPORT void CGAL_3D_Cube_Surface_Sampling_C3(const double& cube_
 //	}
 //}
 
+/********************************************************
+* Function name : CGAL_3D_Mesh_Regular_Sampling_C3
+* Description  : Regularly samples points on the surface of an outer 3D mesh while avoiding intersections
+*                with an inner 3D mesh. It computes neighbor relationships between the sampled points.
+* Parameters   :
+* @param outside_path : Path to the outer mesh for sampling.
+* @param inside_path : Path to the inner mesh used to avoid sampling points inside it.
+* @param d : Sampling spacing or distance between regularly sampled points (0 < d < 1.0).
+* @param sampling_points : Reference to a vector storing 3D points representing the sampled surface.
+* @param neighbors : Reference to a vector of pairs of integers storing neighbor relationships.
+* Return       : void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C3(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points,VectorPI1& neighbors)
 {
 	Functs::MAssert((d > 0 && d < 1.0), "CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
@@ -1030,17 +1244,32 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C3(const char* outside
 	std::cerr << std::endl;
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(const Vector3d1& ps, const Vector3d1& ns, const char* path, Vector3d1& inters)
+/********************************************************
+* Function name : CGAL_3D_Intersection_Rays_Mesh_Vector3d
+* Description  : Computes the intersection points between a list of rays and a 3D mesh.
+* Parameters   :
+* @ps : A vector containing 3D points representing ray starting positions.
+* @ns : A vector containing 3D vectors representing ray directions.
+* @path : Path to the 3D mesh for intersection.
+* @inters : Reference to a vector to store the intersection points.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(const Vector3d1 & ps, const Vector3d1 & ns, const char* path, Vector3d1 & inters)
 {
+	// Open and read the 3D mesh from the specified file.
 	std::ifstream input(path);
 	Mesh mesh;
 	input >> mesh;
+
+	// Create a mesh tree structure for efficient intersection queries.
 	Mesh_Tree tree(faces(mesh).first, faces(mesh).second, mesh);
 
 	for (int i = 0; i < ps.size(); i++)
 	{
+		// Create a ray with a starting point and direction.
 		Ray_3 ray(Point_3(ps[i][0], ps[i][1], ps[i][2]), Vector_3(ns[i][0], ns[i][1], ns[i][2]));
 
+		// Store intersections between the ray and the mesh.
 		std::list<Mesh_Ray_intersection> intersections;
 		tree.all_intersections(ray, std::back_inserter(intersections));
 
@@ -1077,6 +1306,16 @@ extern "C" PPGL_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(const Vector
 	}
 }
 
+/********************************************************
+* Function name : CGAL_3D_Distance_Point_Triangle
+* Description  : Computes the minimum distance between a 3D point and a triangle.
+* Parameters   :
+* @p : A 3D vector representing the point.
+* @t_0 : A 3D vector representing the first vertex of the triangle.
+* @t_1 : A 3D vector representing the second vertex of the triangle.
+* @t_2 : A 3D vector representing the third vertex of the triangle.
+* Return       : The minimum distance between the point and the triangle.
+**********************************************************/
 extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Triangle(const Vector3d & p, const Vector3d & t_0, const Vector3d & t_1, const Vector3d & t_2)
 {
 	KC::Point_3 a(t_0[0], t_0[1], t_0[2]);
@@ -1091,7 +1330,19 @@ extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Triangle(const Vector3d & p
 
 	return sqrt(tree.squared_distance(point_query));
 }
-extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Triangles(const Vector3d & p, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
+
+/********************************************************
+* Function name : CGAL_3D_Distance_Point_Triangles
+* Description  : Computes the minimum distance between a 3D point and a set of triangles forming a polyhedron.
+* Parameters   :
+* @p : A 3D vector representing the point.
+* @vecs : A vector of 3D vectors representing the vertices of the triangles in the polyhedron.
+* @face_id_0 : A vector of integers representing the first vertex of each triangle.
+* @face_id_1 : A vector of integers representing the second vertex of each triangle.
+* @face_id_2 : A vector of integers representing the third vertex of each triangle.
+* Return       : The minimum distance between the point and the polyhedron composed of the specified triangles.
+**********************************************************/
+extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Triangles(const Vector3d & p, const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2)
 {
 	//build polyhedron
 	Polyhedron_3 polyhedron;
@@ -1103,7 +1354,19 @@ extern "C" PPGL_EXPORT double CGAL_3D_Distance_Point_Triangles(const Vector3d & 
 
 	return sqrt(tree.squared_distance(Point_3(p[0], p[1], p[2])));
 }
-extern "C" PPGL_EXPORT Vector3d CGAL_3D_Nearest_Point_Triangles(const Vector3d & p, const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
+
+/********************************************************
+* Function name : CGAL_3D_Nearest_Point_Triangles
+* Description  : Finds the nearest point on a polyhedron, formed by a set of triangles, to a given 3D point.
+* Parameters   :
+* @p : A 3D vector representing the point.
+* @vecs : A vector of 3D vectors representing the vertices of the triangles in the polyhedron.
+* @face_id_0 : A vector of integers representing the first vertex of each triangle.
+* @face_id_1 : A vector of integers representing the second vertex of each triangle.
+* @face_id_2 : A vector of integers representing the third vertex of each triangle.
+* Return       : A 3D vector representing the nearest point on the polyhedron to the input point.
+**********************************************************/
+extern "C" PPGL_EXPORT Vector3d CGAL_3D_Nearest_Point_Triangles(const Vector3d & p, const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2)
 {
 	//build polyhedron
 	Polyhedron_3 polyhedron;
@@ -1117,13 +1380,24 @@ extern "C" PPGL_EXPORT Vector3d CGAL_3D_Nearest_Point_Triangles(const Vector3d &
 	return Vector3d(c_p[0], c_p[1], c_p[2]);
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Distance_Point_Mesh(const char* path, const Vector3d1 & query_points, std::vector<double>&distances)
+/********************************************************
+* Function name : CGAL_3D_Distance_Point_Mesh
+* Description  : Computes the minimum distances between a set of 3D query points and a 3D mesh.
+* Parameters   :
+* @path : Path to the 3D mesh for distance computation.
+* @query_points : A vector of 3D vectors representing the query points.
+* @distances : A vector to store the minimum distances for each query point.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Distance_Point_Mesh(const char* path, const Vector3d1 & query_points, Vector1d1 & distances)
 {
 	std::cout << "CGAL_3D_Distance_Point_Mesh" << std::endl;
 
+	// Build a polyhedron from the provided mesh file
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
 
+	// Build a distance query tree for the polyhedron and accelerate distance queries
 	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
 	tree.accelerate_distance_queries();
 
@@ -1133,16 +1407,31 @@ extern "C" PPGL_EXPORT void CGAL_3D_Distance_Point_Mesh(const char* path, const 
 		{
 			std::cout << (double)i / (double)query_points.size() << std::endl;
 		}
+
+		// Compute the minimum distance between each query point and the mesh
 		distances.push_back(sqrt(tree.squared_distance(VectorPoint3d(query_points[i]))));
 	}
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Neareast_Point_Mesh(const char* path, const Vector3d1 & ves, Vector3d1 & ners)
-{
-	std::cout << "CGAL_3D_Distance_Point_Mesh" << std::endl;
 
+/********************************************************
+* Function name : CGAL_3D_Nearest_Point_Mesh
+* Description  : Finds the nearest points on a 3D mesh for a set of input 3D vectors.
+* Parameters   :
+* @path : Path to the 3D mesh for nearest point computation.
+* @ves : A vector of 3D vectors representing the input points.
+* @ners : A vector to store the nearest points on the mesh for each input point.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Nearest_Point_Mesh(const char* path, const Vector3d1 & ves, Vector3d1 & ners)
+{
+	std::cout << "CGAL_3D_Nearest_Point_Mesh" << std::endl;
+
+	// Build a polyhedron from the provided mesh file
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
+
+	// Build a distance query tree for the polyhedron and accelerate distance queries
 	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
 	tree.accelerate_distance_queries();
 
@@ -1152,14 +1441,29 @@ extern "C" PPGL_EXPORT void CGAL_3D_Neareast_Point_Mesh(const char* path, const 
 		{
 			std::cout << (double)i / (double)ves.size() << std::endl;
 		}
+
+		// Find the nearest point on the mesh for each input point
 		Point_3 p = tree.closest_point(Point_3(ves[i][0], ves[i][1], ves[i][2]));
 
+		// Store the nearest point as a 3D vector
 		ners.push_back(Vector3d(p[0], p[1], p[2]));
 	}
 }
 
-
-extern "C" PPGL_EXPORT void  CGAL_3D_Mesh_Near_Triangles(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const Vector3d1 & points, const double& d, std::vector<std::vector<int>>&triangles)
+/********************************************************
+* Function name : CGAL_3D_Mesh_Near_Triangles
+* Description  : Finds triangles on a 3D mesh that are within a specified distance of a set of 3D points.
+* Parameters   :
+* @vecs : A vector of 3D vectors representing the vertices of the triangles in the mesh.
+* @face_id_0 : A vector of integers representing the first vertex of each triangle.
+* @face_id_1 : A vector of integers representing the second vertex of each triangle.
+* @face_id_2 : A vector of integers representing the third vertex of each triangle.
+* @points : A vector of 3D vectors representing the query points.
+* @d : A double value representing the maximum distance for triangle inclusion.
+* @triangles : A vector of vectors of integers to store the indices of the triangles within the specified distance for each query point.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void  CGAL_3D_Mesh_Near_Triangles(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, const Vector3d1 & points, const double& d, Vector1i2&triangles)
 {
 	//build polyhedron
 	Polyhedron_3 polyhedron;
@@ -1171,13 +1475,14 @@ extern "C" PPGL_EXPORT void  CGAL_3D_Mesh_Near_Triangles(const Vector3d1 & vecs,
 
 	for (int i = 0; i < points.size(); i++)
 	{
-		std::vector<int> triangle;
+
+		Vector1i1 triangle;
 
 		Point_3 query(points[i][0], points[i][1], points[i][2]);
 		Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
 
 		std::priority_queue<Polyhedron_3::Facet_handle> facets;
-		std::vector<int> save_index;
+		Vector1i1 save_index;
 		facets.push(pp.second);
 		save_index.push_back((int)pp.second->id());
 
@@ -1225,9 +1530,19 @@ extern "C" PPGL_EXPORT void  CGAL_3D_Mesh_Near_Triangles(const Vector3d1 & vecs,
 	}
 }
 
-
-
-extern "C" PPGL_EXPORT void CGAL_3D_Points_inside_Triangles_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const Vector3d1 & points, std::vector<bool>&insides)
+/********************************************************
+* Function name : CGAL_3D_Points_inside_Triangles_C1
+* Description  : Determines whether a set of 3D points are inside or outside a mesh composed of triangles.
+* Parameters   :
+* @vecs : A vector of 3D vectors representing the vertices of the triangles in the mesh.
+* @face_id_0 : A vector of integers representing the first vertex of each triangle.
+* @face_id_1 : A vector of integers representing the second vertex of each triangle.
+* @face_id_2 : A vector of integers representing the third vertex of each triangle.
+* @points : A vector of 3D vectors representing the query points.
+* @insides : A vector of boolean values indicating whether each point is inside (true) or outside (false) the mesh.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Points_inside_Triangles_C1(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, const Vector3d1 & points, Vector1b1&insides)
 {
 	//build polyhedron
 	Polyhedron_3 polyhedron;
@@ -1245,7 +1560,16 @@ extern "C" PPGL_EXPORT void CGAL_3D_Points_inside_Triangles_C1(const Vector3d1 &
 	}
 }
 
-extern "C" PPGL_EXPORT void CGAL_3D_Points_inside_Triangles_C2(const char* path, const Vector3d1 & points, std::vector<bool>&insides)
+/********************************************************
+* Function name : CGAL_3D_Points_inside_Triangles_C2
+* Description  : Determines whether a set of 3D points are inside or outside a mesh composed of triangles.
+* Parameters   :
+* @path : Path to the 3D mesh for inside/outside determination.
+* @points : A vector of 3D vectors representing the query points.
+* @insides : A vector of boolean values indicating whether each point is inside (true) or outside (false) the mesh.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Points_inside_Triangles_C2(const char* path, const Vector3d1 & points, Vector1b1&insides)
 {
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -1263,19 +1587,28 @@ extern "C" PPGL_EXPORT void CGAL_3D_Points_inside_Triangles_C2(const char* path,
 }
 
 
-
-extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2)
+/********************************************************
+* Function name : CGAL_Mesh_Loop_Subdivision_One_Step
+* Description  : Performs one step of Loop subdivision on a 3D mesh represented by vertices and face indices.
+* Parameters   :
+* @vecs : A vector of 3D vectors representing the vertices of the mesh.
+* @face_id_0 : A vector of integers representing the first vertex of each triangle.
+* @face_id_1 : A vector of integers representing the second vertex of each triangle.
+* @face_id_2 : A vector of integers representing the third vertex of each triangle.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2)
 {
 	Vector3d1 loop_vecs = vecs;
-	std::vector<int> loop_face_id_0;
-	std::vector<int> loop_face_id_1;
-	std::vector<int> loop_face_id_2;
+	Vector1i1 loop_face_id_0;
+	Vector1i1 loop_face_id_1;
+	Vector1i1 loop_face_id_2;
 
 	//edges
 	std::vector<Edge> edges;
 
-	std::vector<std::vector<int>> vecs_neighbors(vecs.size(), std::vector<int>());
-	std::vector<std::vector<int>> vecs_neighbors_labels(vecs.size(), std::vector<int>());
+	Vector1i2 vecs_neighbors(vecs.size(), Vector1i1());
+	Vector1i2 vecs_neighbors_labels(vecs.size(), Vector1i1());
 
 	for (int i = 0; i < face_id_0.size(); i++)
 	{
@@ -1342,7 +1675,7 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vecs
 
 	//loop faces
 	std::vector<Edge> face_edges;
-	std::vector<int> face_edges_id;
+	Vector1i1 face_edges_id;
 
 	for (int i = 0; i < face_id_0.size(); i++) {
 		int index_0 = face_id_0[i];
@@ -1399,9 +1732,9 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vecs
 
 	//release
 	Vector3d1().swap(vecs);
-	std::vector<int>().swap(face_id_0);
-	std::vector<int>().swap(face_id_1);
-	std::vector<int>().swap(face_id_2);
+	Vector1i1().swap(face_id_0);
+	Vector1i1().swap(face_id_1);
+	Vector1i1().swap(face_id_2);
 
 	vecs = loop_vecs;
 	face_id_0 = loop_face_id_0;
@@ -1409,17 +1742,26 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vecs
 	face_id_2 = loop_face_id_2;
 
 	Vector3d1().swap(loop_vecs);
-	std::vector<int>().swap(loop_face_id_0);
-	std::vector<int>().swap(loop_face_id_1);
-	std::vector<int>().swap(loop_face_id_2);
+	Vector1i1().swap(loop_face_id_0);
+	Vector1i1().swap(loop_face_id_1);
+	Vector1i1().swap(loop_face_id_2);
 
 	Vector3d1().swap(edge_middle_points);
 	std::vector<Edge>().swap(face_edges);
-	std::vector<int>().swap(face_edges_id);
+	Vector1i1().swap(face_edges_id);
 	std::vector<Edge>().swap(edges);
 }
 
-
+/********************************************************
+* Function name : CGAL_Mesh_Subdivision
+* Description  : Subdivides a 3D mesh using the specified subdivision method for a given number of steps.
+* Parameters   :
+* @in_path : Path to the input 3D mesh in OBJ format.
+* @sub : Subdivision method ("Loop" or "Sqrt") as a string.
+* @step : Number of subdivision steps.
+* @out_path : Path to the output 3D mesh in OBJ format.
+* Return       : void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_Mesh_Subdivision(const char* in_path, const char* sub, const int& step, const char* out_path)
 {
 	//load the input obj
@@ -1434,9 +1776,9 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Subdivision(const char* in_path, const cha
 		CGAL::Subdivision_method_3::Sqrt3_subdivision(polyhedron, step);
 
 	Vector3d1 vecs;
-	std::vector<int> face_id_0;
-	std::vector<int> face_id_1;
-	std::vector<int> face_id_2;
+	Vector1i1 face_id_0;
+	Vector1i1 face_id_1;
+	Vector1i1 face_id_2;
 
 	for (Polyhedron_3::Vertex_iterator iter = polyhedron.vertices_begin();
 		iter != polyhedron.vertices_end(); iter++)
@@ -1456,8 +1798,19 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Subdivision(const char* in_path, const cha
 }
 
 
-
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs)
+/********************************************************
+* Function name : CGAL_3D_Mesh_Curvature_C1
+* Description  : Computes the maximum and minimum curvatures of a 3D mesh represented by vertices and face indices.
+* Parameters   :
+* @vecs : The vertices of the mesh.
+* @face_id_0 : The first vertex of each triangle.
+* @face_id_1 : The second vertex of each triangle.
+* @face_id_2 : The third vertex of each triangle.
+* @max_curs : A vector of double values to store the maximum curvatures for each vertex.
+* @min_curs : A vector of double values to store the minimum curvatures for each vertex.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector1d1&max_curs, Vector1d1&min_curs)
 {
 	int verticeSize = vecs.size();
 	int faceindiceSize = face_id_0.size() * 3;
@@ -1488,9 +1841,19 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, co
 		min_curs.push_back(meshCurvature.GetMinCurvatures()[i]);
 	}
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs)
+/********************************************************
+* Function name : CGAL_3D_Mesh_Curvature_C2
+* Description  : Computes the maximum and minimum curvatures of a 3D mesh represented by vertices and face indices.
+* Parameters   :
+* @vecs : The vertices of the mesh.
+* @face_ids : Vertexs of each triangle.
+* @max_curs : A vector of double values to store the maximum curvatures for each vertex.
+* @min_curs : A vector of double values to store the minimum curvatures for each vertex.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, const Vector1i2&face_ids, Vector1d1&max_curs, Vector1d1&min_curs)
 {
-	std::vector<int> face_id_0, face_id_1, face_id_2;
+	Vector1i1 face_id_0, face_id_1, face_id_2;
 
 	for (int i = 0; i < face_ids.size(); i++)
 	{
@@ -1501,12 +1864,26 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, co
 
 	CGAL_3D_Mesh_Curvature_C1(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs);
 
-	std::vector<int>().swap(face_id_0);
-	std::vector<int>().swap(face_id_1);
-	std::vector<int>().swap(face_id_2);
+	Vector1i1().swap(face_id_0);
+	Vector1i1().swap(face_id_1);
+	Vector1i1().swap(face_id_2);
 
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
+/********************************************************
+* Function name : CGAL_3D_Mesh_Curvature_C3
+* Description  : Computes the curvature information of a 3D mesh, including both maximum and minimum curvatures and their corresponding directions.
+* Parameters   :
+* @vecs : Vertices of the 3D mesh.
+* @face_id_0 : Indices of the first vertex for each triangular face.
+* @face_id_1 : Indices of the second vertex for each triangular face.
+* @face_id_2 : Indices of the third vertex for each triangular face.
+* @max_curs : Maximum curvatures at each vertex.
+* @min_curs : Minimum curvatures at each vertex.
+* @max_curs_directions : Directions of maximum curvatures as 3D vectors for each vertex.
+* @min_curs_directions : Directions of minimum curvatures as 3D vectors for each vertex.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector1d1&max_curs, Vector1d1&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
 {
 	int verticeSize = vecs.size();
 	int faceindiceSize = face_id_0.size() * 3;
@@ -1543,9 +1920,21 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, co
 		min_curs_directions.push_back(Vector3d(min_curs_direction[0], min_curs_direction[1], min_curs_direction[2]));
 	}
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
+/********************************************************
+* Function name : CGAL_3D_Mesh_Curvature_C4
+* Description  : Computes the curvature information of a 3D mesh, including maximum and minimum curvatures, and their corresponding directions.
+* Parameters   :
+* @vecs : Vertices of the 3D mesh.
+* @face_ids : Indices of vertices forming each triangular face.
+* @max_curs : Maximum curvatures at each vertex.
+* @min_curs : Minimum curvatures at each vertex.
+* @max_curs_directions : Directions of maximum curvatures as 3D vectors for each vertex.
+* @min_curs_directions : Directions of minimum curvatures as 3D vectors for each vertex.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, const Vector1i2&face_ids, Vector1d1&max_curs, Vector1d1&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
 {
-	std::vector<int> face_id_0, face_id_1, face_id_2;
+	Vector1i1 face_id_0, face_id_1, face_id_2;
 
 	for (int i = 0; i < face_ids.size(); i++)
 	{
@@ -1556,11 +1945,26 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, co
 
 	CGAL_3D_Mesh_Curvature_C3(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions);
 
-	std::vector<int>().swap(face_id_0);
-	std::vector<int>().swap(face_id_1);
-	std::vector<int>().swap(face_id_2);
+	Vector1i1().swap(face_id_0);
+	Vector1i1().swap(face_id_1);
+	Vector1i1().swap(face_id_2);
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals)
+/********************************************************
+* Function name : CGAL_3D_Mesh_Curvature_C5
+* Description  : Computes the curvature information of a 3D mesh, including maximum and minimum curvatures, their directions, and vertex normals.
+* Parameters   :
+* @vecs : Vertices of the 3D mesh.
+* @face_id_0 : Indices of the first vertex for each triangular face.
+* @face_id_1 : Indices of the second vertex for each triangular face.
+* @face_id_2 : Indices of the third vertex for each triangular face.
+* @max_curs : Maximum curvatures at each vertex.
+* @min_curs : Minimum curvatures at each vertex.
+* @max_curs_directions : Directions of maximum curvatures as 3D vectors for each vertex.
+* @min_curs_directions : Directions of minimum curvatures as 3D vectors for each vertex.
+* @normals : Vertex normals for each vertex.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector1d1&max_curs, Vector1d1&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals)
 {
 	int verticeSize = vecs.size();
 	int faceindiceSize = face_id_0.size() * 3;
@@ -1599,10 +2003,22 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, co
 		normals.push_back(Vector3d(normal[0], normal[1], normal[2]));
 	}
 }
-
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, const std::vector<std::vector<int>>&face_ids, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals)
+/********************************************************
+* Function name : CGAL_3D_Mesh_Curvature_C6
+* Description  : Computes the curvature information of a 3D mesh, including maximum and minimum curvatures, their directions, and vertex normals.
+* Parameters   :
+* @vecs : Vertices of the 3D mesh.
+* @face_ids : Indices of vertices forming each triangular face.
+* @max_curs : Maximum curvatures at each vertex.
+* @min_curs : Minimum curvatures at each vertex.
+* @max_curs_directions : Directions of maximum curvatures as 3D vectors for each vertex.
+* @min_curs_directions : Directions of minimum curvatures as 3D vectors for each vertex.
+* @normals : Vertex normals for each vertex.
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, const Vector1i2&face_ids, Vector1d1&max_curs, Vector1d1&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals)
 {
-	std::vector<int> face_id_0, face_id_1, face_id_2;
+	Vector1i1 face_id_0, face_id_1, face_id_2;
 
 	for (int i = 0; i < face_ids.size(); i++)
 	{
@@ -1613,18 +2029,28 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, co
 
 	CGAL_3D_Mesh_Curvature_C5(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions, normals);
 
-	std::vector<int>().swap(face_id_0);
-	std::vector<int>().swap(face_id_1);
-	std::vector<int>().swap(face_id_2);
+	Vector1i1().swap(face_id_0);
+	Vector1i1().swap(face_id_1);
+	Vector1i1().swap(face_id_2);
 }
-
-extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C1(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, std::vector<bool>&bools)
+/********************************************************
+* Function name : CGAL_3D_Triangle_Mesh_Boundary_C1
+* Description  : Checks whether each vertex in a 3D triangle mesh is on the boundary.
+* Parameters   :
+* @vecs : Vertices of the 3D mesh.
+* @face_id_0 : Indices of the first vertex for each triangular face.
+* @face_id_1 : Indices of the second vertex for each triangular face.
+* @face_id_2 : Indices of the third vertex for each triangular face.
+* @bools : A boolean vector indicating whether each vertex is on the boundary (true) or not (false).
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C1(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector1b1&bools)
 {
-	std::vector<bool>().swap(bools);
+	Vector1b1().swap(bools);
 
-	std::vector<std::vector<int>> vecs_neigbor(vecs.size(), std::vector<int>());
-	std::vector<std::vector<int>> vecs_neigbor_lable(vecs.size(), std::vector<int>());
-	std::vector<int> edges;
+	Vector1i2 vecs_neigbor(vecs.size(), Vector1i1());
+	Vector1i2 vecs_neigbor_lable(vecs.size(), Vector1i1());
+	Vector1i1 edges;
 	for (int i = 0; i < face_id_0.size(); i++) {
 		int index_0 = face_id_0[i];
 		int index_1 = face_id_1[i];
@@ -1672,27 +2098,41 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C1(const Vector3d1 & 
 		bools.push_back(b);
 	}
 
-	std::vector<std::vector<int>>().swap(vecs_neigbor);
-	std::vector<std::vector<int>>().swap(vecs_neigbor_lable);
-	std::vector<int>().swap(edges);
+	Vector1i2().swap(vecs_neigbor);
+	Vector1i2().swap(vecs_neigbor_lable);
+	Vector1i1().swap(edges);
 }
-
-extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C2(const char* path, std::vector<bool>&bools)
+/********************************************************
+* Function name : CGAL_3D_Triangle_Mesh_Boundary_C2
+* Description  : Checks whether each vertex in a 3D triangle mesh is on the boundary.
+* Parameters   :
+* @path: A C-style string representing the file path to the 3D mesh.
+* @bools: A reference to a boolean vector indicating whether each vertex is on the boundary (true) or not (false).
+* Return       : void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C2(const char* path, Vector1b1&bools)
 {
 	Vector3d1 vecs;
-	std::vector<int> face_id_0;
-	std::vector<int> face_id_1;
-	std::vector<int> face_id_2;
+	Vector1i1 face_id_0;
+	Vector1i1 face_id_1;
+	Vector1i1 face_id_2;
 	Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, bools);
 }
-
+/********************************************************
+* Function name: CGAL_3D_Connecting_Segments_C1
+* Description: Connects line segments to form lines based on their endpoint proximity.
+* Parameters:
+* @segments: A list of line segments represented by pairs of 2D points.
+* @lines: A list of connected lines, where each line is represented by a sequence of 2D points.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments_C1(Vector2d2 & segments, Vector2d2 & lines)
 {
 	//save connecting relations
-	std::vector<bool> used(segments.size(), false);
+	Vector1b1 used(segments.size(), false);
 
-	std::vector<int> relations;
+	Vector1i1 relations;
 #pragma region get_relations
 	for (int i = 0; i < segments.size(); i++)
 	{
@@ -1748,7 +2188,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments_C1(Vector2d2 & segments,
 	}
 #pragma endregion
 
-	std::vector<std::vector<int>> ones;
+	Vector1i2 ones;
 
 
 	while (true)
@@ -1770,7 +2210,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments_C1(Vector2d2 & segments,
 
 		Vector2d1 line(1, segments[index][end]);
 
-		std::vector<int> one(1, index);
+		Vector1i1 one(1, index);
 
 		while (true)
 		{
@@ -1806,12 +2246,20 @@ extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments_C1(Vector2d2 & segments,
 		lines.push_back(line);
 	}
 }
+/********************************************************
+* Function name: CGAL_3D_Connecting_Segments_C2
+* Description: Connects line segments in 3D space to form lines based on the proximity of their endpoints.
+* Parameters:
+* @segments: A list of line segments represented by pairs of 3D points.
+* @lines: A list of connected lines, where each line is represented by a sequence of 3D points.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments_C2(Vector3d2 & segments, Vector3d2 & lines)
 {
 	//save connecting relations
-	std::vector<bool> used(segments.size(), false);
+	Vector1b1 used(segments.size(), false);
 
-	std::vector<int> relations;
+	Vector1i1 relations;
 #pragma region get_relations
 	for (int i = 0; i < segments.size(); i++)
 	{
@@ -1867,7 +2315,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments_C2(Vector3d2 & segments,
 	}
 #pragma endregion
 
-	std::vector<std::vector<int>> ones;
+	Vector1i2 ones;
 
 
 	while (true)
@@ -1889,7 +2337,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments_C2(Vector3d2 & segments,
 
 		Vector3d1 line(1, segments[index][end]);
 
-		std::vector<int> one(1, index);
+		Vector1i1 one(1, index);
 
 		while (true)
 		{
@@ -1925,14 +2373,24 @@ extern "C" PPGL_EXPORT void CGAL_3D_Connecting_Segments_C2(Vector3d2 & segments,
 		lines.push_back(line);
 	}
 }
-
-extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs, std::vector<int> &face_id_0, std::vector<int> &face_id_1, std::vector<int> &face_id_2, Vector3d2 & boundaries)
+/********************************************************
+* Function name: CGAL_3D_Triangle_Mesh_Boundary_C3
+* Description: Extracts the boundary edges of a 3D triangle mesh.
+* Parameters:
+* @vecs: A list of 3D points representing vertices.
+* @face_id_0: A list of indices for the first vertex of each triangle.
+* @face_id_1: A list of indices for the second vertex of each triangle.
+* @face_id_2: A list of indices for the third vertex of each triangle.
+* @boundaries: A list of 3D segments representing the extracted boundary edges.
+* Return: void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs, Vector1i1 &face_id_0, Vector1i1 &face_id_1, Vector1i1 &face_id_2, Vector3d2 & boundaries)
 {
 	Vector3d2 segments;
 
-	std::vector<std::vector<int>> vecs_neigbor(vecs.size(), std::vector<int>());
-	std::vector<std::vector<int>> vecs_neigbor_lable(vecs.size(), std::vector<int>());
-	std::vector<int> edges;
+	Vector1i2 vecs_neigbor(vecs.size(), Vector1i1());
+	Vector1i2 vecs_neigbor_lable(vecs.size(), Vector1i1());
+	Vector1i1 edges;
 	for (int i = 0; i < face_id_0.size(); i++) {
 		int index_0 = face_id_0[i];
 		int index_1 = face_id_1[i];
@@ -2004,15 +2462,24 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs, 
 	for (int i = 0; i < segments.size(); i++)
 		Vector3d1().swap(segments[i]);
 	Vector3d2().swap(segments);
-	std::vector<std::vector<int>>().swap(vecs_neigbor);
-	std::vector<std::vector<int>>().swap(vecs_neigbor_lable);
-	std::vector<int>().swap(edges);
+	Vector1i2().swap(vecs_neigbor);
+	Vector1i2().swap(vecs_neigbor_lable);
+	Vector1i1().swap(edges);
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C4(Vector3d1 & vecs, std::vector<std::vector<int>>&face_ids, Vector3d2 & boundaries)
+/********************************************************
+* Function name: CGAL_3D_Triangle_Mesh_Boundary_C4
+* Description: Extracts the boundary edges of a 3D triangle mesh using face indices.
+* Parameters:
+* @vecs: A list of 3D points representing vertices.
+* @face_ids: A list of indices for the vertices of each triangle face.
+* @boundaries: A list of 3D segments representing the extracted boundary edges.
+* Return: void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C4(Vector3d1 & vecs, Vector1i2&face_ids, Vector3d2 & boundaries)
 {
-	std::vector<int> face_id_0;
-	std::vector<int> face_id_1;
-	std::vector<int> face_id_2;
+	Vector1i1 face_id_0;
+	Vector1i1 face_id_1;
+	Vector1i1 face_id_2;
 
 	for (auto& face : face_ids)
 	{
@@ -2023,32 +2490,58 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C4(Vector3d1 & vecs, 
 
 	CGAL_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries);
 }
+/********************************************************
+* Function name: CGAL_3D_Triangle_Mesh_Boundary_C5
+* Description: Extracts the boundary edges of a 3D triangle mesh from an OBJ file.
+* Parameters:
+* @path: The path to the input OBJ file.
+* @boundaries: A list of 3D segments representing the extracted boundary edges.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C5(const char* path, Vector3d2 & boundaries)
 {
 	Vector3d1 vecs;
-	std::vector<int> face_id_0;
-	std::vector<int> face_id_1;
-	std::vector<int> face_id_2;
+	Vector1i1 face_id_0;
+	Vector1i1 face_id_1;
+	Vector1i1 face_id_2;
 	Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 	CGAL_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries);
 }
 
-
+/********************************************************
+* Function name: CGAL_Mesh_Laplace_Smooth_C1
+* Description: Smooths a 3D mesh using Laplace smoothing and saves the result to an OBJ file.
+* Parameters:
+* @in_path: The path to the input OBJ file.
+* @out_path: The path to the output OBJ file where the smoothed mesh will be saved.
+* @laplace_nb: The number of Laplacian smoothing iterations to perform.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_C1(const char* in_path, const char* out_path, const int laplace_nb)
 {
 	Vector3d1 vecs;
-	std::vector<int> face_id_0;
-	std::vector<int> face_id_1;
-	std::vector<int> face_id_2;
+	Vector1i1 face_id_0;
+	Vector1i1 face_id_1;
+	Vector1i1 face_id_2;
 	Functs::LoadObj3d(in_path, vecs, face_id_0, face_id_1, face_id_2);
 	CGAL_Mesh_Laplace_Smooth_C2(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
 	Functs::OutputObj3d(out_path, vecs, face_id_0, face_id_1, face_id_2);
 }
-
-extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbors(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, std::vector<std::vector<int>>&neighs)
+/********************************************************
+* Function name: CGAL_3D_Triangle_Mesh_Vecs_Neighbors
+* Description: Computes neighboring vertices for each vertex in a 3D triangle mesh.
+* Parameters:
+* @vecs: A vector containing the 3D vertex coordinates of the mesh.
+* @face_id_0: A vector of indices representing the first vertex of each triangle face.
+* @face_id_1: A vector of indices representing the second vertex of each triangle face.
+* @face_id_2: A vector of indices representing the third vertex of each triangle face.
+* @neighs: A 2D vector where each inner vector represents the neighboring vertices for a vertex.
+* Return: void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbors(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2, Vector1i2&neighs)
 {
 	for (int i = 0; i < vecs.size(); i++)
-		neighs.push_back(std::vector<int>());
+		neighs.push_back(Vector1i1());
 
 	for (int i = 0; i < face_id_0.size(); i++)
 	{
@@ -2072,12 +2565,22 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbors(Vector3d1 & vec
 		neighs[i].erase(unique(neighs[i].begin(), neighs[i].end()), neighs[i].end());
 	}
 }
-
-extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_C2(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, const int laplace_nb)
+/********************************************************
+* Function name: CGAL_Mesh_Laplace_Smooth_C2
+* Description: Applies Laplace smoothing to a 3D mesh.
+* Parameters:
+* @vecs: A vector containing the 3D vertex coordinates of the mesh.
+* @face_id_0: A vector of indices representing the first vertex of each triangle face.
+* @face_id_1: A vector of indices representing the second vertex of each triangle face.
+* @face_id_2: A vector of indices representing the third vertex of each triangle face.
+* @laplace_nb: The number of iterations for Laplace smoothing.
+* Return: void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_C2(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2, const int laplace_nb)
 {
-	std::vector<bool> vertices_boundary;
+	Vector1b1 vertices_boundary;
 	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, vertices_boundary);
-	std::vector<std::vector<int>> neighs;
+	Vector1i2 neighs;
 	CGAL_3D_Triangle_Mesh_Vecs_Neighbors(vecs, face_id_0, face_id_1, face_id_2, neighs);
 
 	for (int iter = 0; iter < laplace_nb; iter++)
@@ -2109,13 +2612,23 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_C2(Vector3d1 & vecs, std::v
 	}
 }
 
-
-extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Faces(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2,
-	std::vector<std::vector<int>>&surface_vectices_to_face)
+/********************************************************
+* Function name: CGAL_3D_Triangle_Mesh_Vecs_Faces
+* Description: Computes the faces adjacent to each vertex in a 3D triangle mesh.
+* Parameters:
+* @vecs: A vector containing the 3D vertex coordinates of the mesh.
+* @face_id_0: A vector of indices representing the first vertex of each triangle face.
+* @face_id_1: A vector of indices representing the second vertex of each triangle face.
+* @face_id_2: A vector of indices representing the third vertex of each triangle face.
+* @surface_vectices_to_face: Output vector containing the indices of faces adjacent to each vertex.
+* Return: void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Faces(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2,
+	Vector1i2&surface_vectices_to_face)
 {
-	surface_vectices_to_face = std::vector<std::vector<int>>(vecs.size(), std::vector<int>());
+	surface_vectices_to_face = Vector1i2(vecs.size(), Vector1i1());
 
-	std::vector<std::vector<int>> sets(vecs.size(), std::vector<int>());
+	Vector1i2 sets(vecs.size(), Vector1i1());
 	for (int i = 0; i < face_id_0.size(); i++)
 	{
 		//surface_vectices_to_face
@@ -2133,24 +2646,34 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Faces(Vector3d1 & vecs, s
 	}
 
 }
-
-extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2,
+/********************************************************
+* Function name: CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges
+* Description: Computes the edges neighboring each vertex in a 3D triangle mesh.
+* Parameters:
+* @vecs: A vector containing the 3D vertex coordinates of the mesh.
+* @face_id_0: A vector of indices representing the first vertex of each triangle face.
+* @face_id_1: A vector of indices representing the second vertex of each triangle face.
+* @face_id_2: A vector of indices representing the third vertex of each triangle face.
+* @surface_vectices_to_neighbor_edges: Output vector containing the indices of edges neighboring each vertex.
+* Return: void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2,
 	Vector1i3& surface_vectices_to_neighbor_edges)
 {
-	std::vector<std::vector<int>> surface_vectices_to_face;
+	Vector1i2 surface_vectices_to_face;
 	CGAL_3D_Triangle_Mesh_Vecs_Faces(vecs, face_id_0, face_id_1, face_id_2, surface_vectices_to_face);
 
 	for (int i = 0; i < vecs.size(); i++)
 	{
 		int vertice_id = i;
 
-		std::vector<std::vector<int>> edges;
+		Vector1i2 edges;
 
 		for (int j = 0; j < surface_vectices_to_face[i].size(); j++)
 		{
 			int surface_id = surface_vectices_to_face[i][j];
 
-			std::vector<int> face;
+			Vector1i1 face;
 			face.push_back(face_id_0[surface_id]);
 			face.push_back(face_id_1[surface_id]);
 			face.push_back(face_id_2[surface_id]);
@@ -2162,7 +2685,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges(Vector3d1 
 					int vertice_id_0 = face[(k + 1) % 3];
 					int vertice_id_1 = face[(k + 2) % 3];
 
-					std::vector<int> edge;
+					Vector1i1 edge;
 					edge.push_back(vertice_id_0);
 					edge.push_back(vertice_id_1);
 					edges.push_back(edge);
@@ -2174,25 +2697,35 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges(Vector3d1 
 	}
 }
 
-
-extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & vecs, std::vector<int>&face_id_0, std::vector<int>&face_id_1, std::vector<int>&face_id_2, double& low_curvature)
+/********************************************************
+* Function name: CGAL_Mesh_Laplace_Smooth_by_Curvature
+* Description: Performs Laplace smoothing on a 3D triangle mesh based on curvature constraints.
+* Parameters:
+* @vecs: A vector containing the 3D vertex coordinates of the mesh.
+* @face_id_0: A vector of indices representing the first vertex of each triangle face.
+* @face_id_1: A vector of indices representing the second vertex of each triangle face.
+* @face_id_2: A vector of indices representing the third vertex of each triangle face.
+* @low_curvature: A reference to the low curvature threshold used for constraints.
+* Return: void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2, double& low_curvature)
 {
-	std::vector<double> max_curvature;
-	std::vector<double> min_curvature;
+	Vector1d1 max_curvature;
+	Vector1d1 min_curvature;
 	Vector3d1 max_curvature_direction;
 	Vector3d1 min_curvature_direction;
 
-	std::vector<bool> boundary;
+	Vector1b1 boundary;
 	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, boundary);
 
 	Vector3d1 vecs_normals;
 
 	int last_nb = 0;
 
-	std::vector<std::vector<int>> vecs_neighbors;
+	Vector1i2 vecs_neighbors;
 	CGAL_3D_Triangle_Mesh_Vecs_Neighbors(vecs, face_id_0, face_id_1, face_id_2, vecs_neighbors);
 
-	std::vector<std::vector<std::vector<int>>> surface_vectices_to_neighbor_edges;
+	Vector1i3 surface_vectices_to_neighbor_edges;
 	CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges(vecs, face_id_0, face_id_1, face_id_2, surface_vectices_to_neighbor_edges);
 
 	int stop = 0;
@@ -2205,8 +2738,8 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & ve
 		//while (true)
 	{
 		//compute vertices curvature
-		std::vector<double>().swap(max_curvature);
-		std::vector<double>().swap(min_curvature);
+		Vector1d1().swap(max_curvature);
+		Vector1d1().swap(min_curvature);
 		Vector3d1().swap(max_curvature_direction);
 		Vector3d1().swap(min_curvature_direction);
 		Vector3d1().swap(vecs_normals);
@@ -2331,13 +2864,22 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & ve
 		Vector3d1().swap(iteration_vecs);
 	}
 }
-
+/********************************************************
+* Function name: CGAL_Mesh_Loop_Subdivision_Own_Version
+* Description: Performs a custom version of Loop subdivision and Laplace smoothing on a 3D triangle mesh.
+* Parameters:
+* @in_path: Input file path for the original mesh in OBJ format.
+* @step: The number of Loop subdivision steps to perform.
+* @out_path: Output file path for the subdivided and smoothed mesh in OBJ format.
+* @laplace_nb: The number of Laplace smoothing iterations to apply.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_Own_Version(const char* in_path, const int& step, const char* out_path, const int& laplace_nb)
 {
 	Vector3d1 vecs;
-	std::vector<int> face_id_0;
-	std::vector<int> face_id_1;
-	std::vector<int> face_id_2;
+	Vector1i1 face_id_0;
+	Vector1i1 face_id_1;
+	Vector1i1 face_id_2;
 
 	Functs::LoadObj3d(in_path, vecs, face_id_0, face_id_1, face_id_2);
 
@@ -2350,17 +2892,25 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Loop_Subdivision_Own_Version(const char* i
 	Functs::OutputObj3d(out_path, vecs, face_id_0, face_id_1, face_id_2);
 
 	Vector3d1().swap(vecs);
-	std::vector<int>().swap(face_id_0);
-	std::vector<int>().swap(face_id_1);
-	std::vector<int>().swap(face_id_2);
+	Vector1i1().swap(face_id_0);
+	Vector1i1().swap(face_id_1);
+	Vector1i1().swap(face_id_2);
 }
-
+/********************************************************
+* Function name: CGAL_Rotation_Obj
+* Description: Rotates a 3D triangle mesh loaded from an OBJ file.
+* Parameters:
+* @path: Input file path for the OBJ mesh.
+* @angle: The angle of rotation in degrees.
+* @axis: The rotation axis specified as a 3D vector.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_Rotation_Obj(const char* path, const double& angle, const Vector3d & axis)
 {
 	Vector3d1 vecs;
-	std::vector<int> face_id_0;
-	std::vector<int> face_id_1;
-	std::vector<int> face_id_2;
+	Vector1i1 face_id_0;
+	Vector1i1 face_id_1;
+	Vector1i1 face_id_2;
 
 	Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 	for (int i = 0; i < vecs.size(); i++)
@@ -2370,8 +2920,19 @@ extern "C" PPGL_EXPORT void CGAL_Rotation_Obj(const char* path, const double& an
 	}
 	Functs::OutputObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 }
+/********************************************************
+* Function name: CGAL_Slicer_Mesh
+* Description: Slices a 3D mesh using a set of planes and generates polylines.
+* Parameters:
+* @path: Input file path for the 3D mesh (assumed to be in OFF format).
+* @plane_normal: A 3D vector representing the normal of the slicing plane.
+* @plane_d: A vector of distances from the origin to the slicing planes.
+* @offsetses: A vector of vectors of circles representing the offset curves of the mesh.
+* @offsets: A vector of vectors of 3D points representing the vertices of the offset curves.
+* Return: void
+**********************************************************/
 
-extern "C" PPGL_EXPORT void CGAL_Slicer_Mesh(const char* path, const Vector3d & plane_normal, const std::vector<double> & plane_d, Vector3d3 & offsetses, Vector3d2 & offsets)
+extern "C" PPGL_EXPORT void CGAL_Slicer_Mesh(const char* path, const Vector3d & plane_normal, const Vector1d1 & plane_d, Vector3d3 & offsetses, Vector3d2 & offsets)
 {
 	std::ifstream input(path);
 	Mesh mesh;
@@ -2394,9 +2955,9 @@ extern "C" PPGL_EXPORT void CGAL_Slicer_Mesh(const char* path, const Vector3d & 
 
 		slicer_aabb(K::Plane_3(plane_normal[0], plane_normal[1], plane_normal[2], -plane_d[i]), std::back_inserter(polylines));
 
-		std::vector<std::vector<double>> xs;
-		std::vector<std::vector<double>> ys;
-		std::vector<std::vector<double>> zs;
+		Vector1d2 xs;
+		Vector1d2 ys;
+		Vector1d2 zs;
 
 		Vector3d2 circles;
 
@@ -2420,9 +2981,14 @@ extern "C" PPGL_EXPORT void CGAL_Slicer_Mesh(const char* path, const Vector3d & 
 
 
 
-/***************************************************************************************************/
-//shortest geodesic path
-/***************************************************************************************************/
+/********************************************************
+* Function name: CGAL_Shortest_Geodesic_Path_C1
+* Description: Computes the shortest geodesic path on a 3D polyhedron mesh.
+* Parameters:
+* @path: Input file path for the 3D polyhedron mesh.
+* @xyzs: A vector of 3D points representing the computed geodesic path.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C1(const char* path, Vector3d1 & xyzs)
 {
 	// read input polyhedron
@@ -2450,7 +3016,18 @@ extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C1(const char* path, Vec
 	}
 }
 
-
+/********************************************************
+* Function name: RelatedFaceAndBarycentric
+* Description: Finds the related face and its barycentric coordinates for a given 3D point in a polyhedron mesh.
+* Parameters:
+* @polyhedron: The input polyhedron mesh.
+* @tree: The AABB tree associated with the mesh.
+* @source: The 3D point for which to find the related face and barycentric coordinates.
+* @u, @v, @w: Output parameters for the barycentric coordinates of the point within the related face.
+* @nearest_point: Output parameter for the nearest point on the face.
+* @face_it: Output parameter for the iterator pointing to the related face.
+* Return: void
+**********************************************************/
 void RelatedFaceAndBarycentric(const Polyhedron_3& polyhedron, const Tree& tree, const Vector3d& source, double& u, double& v, double& w, Point_3& nearest_point, face_iterator& face_it)
 {
 	Point_3 query(source[0], source[1], source[2]);
@@ -2465,7 +3042,16 @@ void RelatedFaceAndBarycentric(const Polyhedron_3& polyhedron, const Tree& tree,
 	Functs::Barycentric(PointVector3d(pp.first), PointVector3d(p0), PointVector3d(p1), PointVector3d(p2), u,v , w);
 }
 
-
+/********************************************************
+* Function name: CGAL_Shortest_Geodesic_Path_C3
+* Description: Computes the shortest geodesic path on a polyhedron mesh between two 3D points.
+* Parameters:
+* @path: The path to the input polyhedron mesh.
+* @source: The 3D source point for the geodesic path.
+* @target: The 3D target point for the geodesic path.
+* @output: Output parameter to store the computed geodesic path as a list of 3D points.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C3(const char* path, Vector3d source, Vector3d target, Vector3d1 & output)
 {
 	Polyhedron_3 polyhedron;
@@ -2498,7 +3084,16 @@ extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C3(const char* path, Vec
 		output.push_back(Vector3d(points[i][0], points[i][1], points[i][2]));
 	}
 }
-
+/********************************************************
+* Function name: CGAL_Shortest_Geodesic_Path_C4
+* Description: Computes the shortest geodesic paths on a polyhedron mesh between multiple pairs of 3D points.
+* Parameters:
+* @path_: The path to the input polyhedron mesh.
+* @sources: A list of 3D source points for each path.
+* @targets: A list of 3D target points for each path.
+* @xyzes: Output parameter to store computed geodesic paths for each pair as lists of 3D points.
+* Return: void
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C4(const char* path_, Vector3d1 sources,
 	Vector3d1 targets, Vector3d2 & xyzes)
 {
@@ -2546,7 +3141,15 @@ extern "C" PPGL_EXPORT void CGAL_Shortest_Geodesic_Path_C4(const char* path_, Ve
 	}
 }
 
-
+/********************************************************
+* Function name: CGAL_Geodesic_Distance
+* Description: Computes the geodesic distance between two 3D points on a polyhedron mesh.
+* Parameters:
+* @path: The path to the input polyhedron mesh.
+* @source: The source 3D point.
+* @target: The target 3D point.
+* Return: The geodesic distance between the source and target points.
+**********************************************************/
 extern "C" PPGL_EXPORT double CGAL_Geodesic_Distance(const char* path, const Vector3d & source, const Vector3d & target)
 {
 	std::cout << "one time geodesic computing.." << std::endl;
@@ -2575,8 +3178,18 @@ extern "C" PPGL_EXPORT double CGAL_Geodesic_Distance(const char* path, const Vec
 
 	return shortest_paths.shortest_distance_to_source_points(*target_face, target_face_location).first;
 }
-
-extern "C" PPGL_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface_C1(const Vector3d1 & vecs, const std::vector<int> & face_id_0, const std::vector<int> & face_id_1, const std::vector<int> & face_id_2, const Vector3d1 & points)
+/********************************************************
+* Function name: CGAL_Project_Points_Onto_Surface_C1
+* Description: Projects a set of 3D points onto the surface of a polyhedron mesh.
+* Parameters:
+* @vecs: The vertex coordinates of the polyhedron.
+* @face_id_0: Indices of the first vertex of each triangle face.
+* @face_id_1: Indices of the second vertex of each triangle face.
+* @face_id_2: Indices of the third vertex of each triangle face.
+* @points: The 3D points to be projected onto the surface.
+* Return: A list of projected points on the surface.
+**********************************************************/
+extern "C" PPGL_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface_C1(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, const Vector3d1 & points)
 {
 	auto NearestPoint=[](const Polyhedron_3 & polyhedron, const Tree & tree, const Vector3d & source)
 	{
@@ -2599,7 +3212,14 @@ extern "C" PPGL_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface_C1(const Vecto
 	}
 	return temp;
 }
-
+/********************************************************
+* Function name: CGAL_Project_Points_Onto_Surface_C2
+* Description: Projects a set of 3D points onto the surface of a polyhedron mesh loaded from a file.
+* Parameters:
+* @path: The path to the input polyhedron mesh file.
+* @points: The 3D points to be projected onto the surface.
+* Return: A list of projected points on the surface.
+**********************************************************/
 extern "C" PPGL_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface_C2(const char* path, const Vector3d1 & points)
 {
 	auto NearestPoint = [](const Polyhedron_3& polyhedron, const Tree& tree, const Vector3d& source)
@@ -2624,11 +3244,21 @@ extern "C" PPGL_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface_C2(const char*
 }
 
 
-
-extern "C" PPGL_EXPORT void CGAL_3D_Triangel_Mesh_Most_Inside_Point(const Vector3d1 & vecs_, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, Vector3d & inside)
+/********************************************************
+* Function name: CGAL_3D_Triangel_Mesh_Most_Inside_Point
+* Description: Computes the most "inside" point of a 3D triangle mesh.
+* Parameters:
+* @vecs_: The list of 3D vertices of the mesh.
+* @face_id_0: The list of indices for the first vertex of each triangle face.
+* @face_id_1: The list of indices for the second vertex of each triangle face.
+* @face_id_2: The list of indices for the third vertex of each triangle face.
+* @inside: The most "inside" point found within the mesh.
+* Return: None (void).
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Triangel_Mesh_Most_Inside_Point(const Vector3d1 & vecs_, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector3d & inside)
 {
 	//inside
-	std::vector<bool> vec_boundary;
+	Vector1b1 vec_boundary;
 	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs_, face_id_0, face_id_1, face_id_2, vec_boundary);
 
 	kdtree* tree = kd_create(3);
@@ -2664,15 +3294,33 @@ extern "C" PPGL_EXPORT void CGAL_3D_Triangel_Mesh_Most_Inside_Point(const Vector
 		}
 	}
 
-	std::vector<bool>().swap(vec_boundary);
+	Vector1b1().swap(vec_boundary);
 }
-
+/********************************************************
+* Function name: CGAL_3D_One_Triangle_Area
+* Description: Calculates the area of a single triangle in 3D.
+* Parameters:
+* @v0: The first vertex of the triangle.
+* @v1: The second vertex of the triangle.
+* @v2: The third vertex of the triangle.
+* Return: The area of the triangle.
+**********************************************************/
 extern "C" PPGL_EXPORT double CGAL_3D_One_Triangle_Area(const Vector3d & v0, const Vector3d & v1, const Vector3d & v2)
 {
 	return Functs::GetTriangleArea(v0, v1, v2);
 }
 
-extern "C" PPGL_EXPORT double CGAL_3D_Triangle_Mesh_Area(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2)
+/********************************************************
+* Function name: CGAL_3D_Triangle_Mesh_Area
+* Description: Calculates the area of a 3D triangle mesh.
+* Parameters:
+* @vecs: The list of 3D vertices of the mesh.
+* @face_id_0: The list of indices for the first vertex of each triangle face.
+* @face_id_1: The list of indices for the second vertex of each triangle face.
+* @face_id_2: The list of indices for the third vertex of each triangle face.
+* Return: The area of the triangle mesh.
+* *********************************************************/
+extern "C" PPGL_EXPORT double CGAL_3D_Triangle_Mesh_Area(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2)
 {
 	double area = 0.0;
 
@@ -2691,7 +3339,14 @@ extern "C" PPGL_EXPORT double CGAL_3D_Triangle_Mesh_Area(const Vector3d1 & vecs,
 }
 
 
-
+/********************************************************
+* Function name:  CGAL_3D_Convex_Hulls_C1
+* Description: Computes the convex hull of a set of 3D points.
+* Parameters: 
+* @vec: The list of 3D points.
+* @hull_points: The list of 3D points representing the convex hull.
+* Return: void
+* *********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C1(const Vector3d1 & vec, Vector3d1 & hull_points)
 {
 	std::vector<Point_3> points;
@@ -2714,8 +3369,18 @@ extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C1(const Vector3d1 & vec, Vecto
 		hull_points.push_back(PointVector3d(p));
 	}
 }
-
-extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C2(const Vector3d1 & vec, Vector3d1 & hull_points, std::vector<int>&hulls_surface_0, std::vector<int>&hulls_surface_1, std::vector<int>&hulls_surface_2)
+/********************************************************
+* Function name: CGAL_3D_Convex_Hulls_C2
+* Description: Computes the convex hull of a set of 3D points and returns the indices of the vertices of the hull.
+* Parameters: 
+* @ vec: The list of 3D points.
+* @ hull_points: The list of 3D points representing the convex hull.
+* @ hulls_surface_0: The list of indices for the first vertex of each triangle face.
+* @ hulls_surface_1: The list of indices for the second vertex of each triangle face.
+* @ hulls_surface_2: The list of indices for the third vertex of each triangle face.
+* Return: void
+* *********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C2(const Vector3d1 & vec, Vector3d1 & hull_points, Vector1i1&hulls_surface_0, Vector1i1&hulls_surface_1, Vector1i1&hulls_surface_2)
 {
 	std::vector<R3> pts, pts2;
 	R3 pt;
@@ -2733,7 +3398,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C2(const Vector3d1 & vec, Vecto
 
 	std::vector<Tri> tris;
 
-	std::vector<int> outx;
+	Vector1i1 outx;
 	int nx = de_duplicateR3(pts, outx, pts2);
 	pts.clear();
 	int ts = NewtonApple_hull_3D(pts2, tris);
@@ -2765,6 +3430,16 @@ extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C2(const Vector3d1 & vec, Vecto
 	pts2.clear();
 
 }
+/********************************************************
+* Function name: CGAL_3D_Convex_Hulls_C3
+* Description: Computes the convex hull of a set of 3D points and returns the indices of the vertices of the hull and the plane parameters of each triangle face.
+* Parameters:
+* @ vec: The list of 3D points.
+* @ hull_points: The list of 3D points representing the convex hull.
+* @ hulls_surface_0: The list of indices for the first vertex of each triangle face.
+* @ hulls_surface_1: The list of indices for the second vertex of each triangle face.
+* Return:   void
+* *********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C3(const Vector3d1 & vec, Vector3d1 & hull_points, Vector3d1 & plane_p, Vector3d1 & plane_n)
 {
 	std::vector<R3> pts, pts2;
@@ -2783,7 +3458,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C3(const Vector3d1 & vec, Vecto
 
 	std::vector<Tri> tris;
 
-	std::vector<int> outx;
+	Vector1i1 outx;
 	int nx = de_duplicateR3(pts, outx, pts2);
 	pts.clear();
 
@@ -2813,8 +3488,17 @@ extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C3(const Vector3d1 & vec, Vecto
 	pts2.clear();
 	nx = de_duplicateR3(pts, outx, pts2);
 }
-
-extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C4(const Vector3d1 & vec, Vector3d1 & hull_points, std::vector<int>&hulls_surface_0, std::vector<int>&hulls_surface_1, std::vector<int>&hulls_surface_2, Vector3d1 & plane_p, Vector3d1 & plane_n)
+/********************************************************
+* Function name: CGAL_3D_Convex_Hulls_C4
+* Description: Computes the convex hull of a set of 3D points and returns the indices of the vertices of the hull, the plane parameters of each triangle face, and the indices of the vertices of each triangle face.
+* Parameters:   
+* @ vec: The list of 3D points.
+* @ hull_points: The list of 3D points representing the convex hull.
+* @ hulls_surface_0: The list of indices for the first vertex of each triangle face.
+* @ hulls_surface_1: The list of indices for the second vertex of each triangle face.
+* Return: void
+* *********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C4(const Vector3d1 & vec, Vector3d1 & hull_points, Vector1i1&hulls_surface_0, Vector1i1&hulls_surface_1, Vector1i1&hulls_surface_2, Vector3d1 & plane_p, Vector3d1 & plane_n)
 {
 	std::vector<R3> pts, pts2;
 	R3 pt;
@@ -2832,7 +3516,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C4(const Vector3d1 & vec, Vecto
 
 	std::vector<Tri> tris;
 
-	std::vector<int> outx;
+	Vector1i1 outx;
 	int nx = de_duplicateR3(pts, outx, pts2);
 	pts.clear();
 	int ts = NewtonApple_hull_3D(pts2, tris);
@@ -2879,7 +3563,16 @@ extern "C" PPGL_EXPORT void CGAL_3D_Convex_Hulls_C4(const Vector3d1 & vec, Vecto
 }
 
 
-
+/********************************************************
+* Function name: CGAL_Mesh_Field_Query_C1
+* Description: Computes the field value at a set of 3D points on a polyhedron mesh.
+* Parameters: 
+* @ path: The path to the input polyhedron mesh.
+* @ gradients: The list of gradient values at each vertex of the mesh.
+* @ input_points: The list of 3D points to query.
+* @ points_gradients: The list of field values at the query points.
+* Return: void
+* *********************************************************/
 extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C1(const char* path, const Vector3d1 & gradients, const Vector3d1 & input_points, Vector3d1 & points_gradients)
 {
 	Polyhedron_3 polyhedron;
@@ -2906,7 +3599,17 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C1(const char* path, const Vec
 		points_gradients.push_back((double)u * gradients[point_id_0] + (double)v * gradients[point_id_1] + (double)w * gradients[point_id_2]);
 	}
 }
-extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C2(const char* path, const std::vector<double>&gradient_values, const Vector3d1 & input_points, std::vector<double>&points_gradient_values)
+/********************************************************
+* Function name: CGAL_Mesh_Field_Query_C2
+* Description: Computes the field value at a set of 3D points on a polyhedron mesh loaded from a file.
+* Parameters:   
+* @ path: The path to the input polyhedron mesh.
+* @ gradients: The list of gradient values at each vertex of the mesh.
+* @ input_points: The list of 3D points to query.
+* @ points_gradients: The list of field values at the query points.
+* Return: void
+* *********************************************************/
+extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C2(const char* path, const Vector1d1&gradient_values, const Vector3d1 & input_points, Vector1d1&points_gradient_values)
 {
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -2931,7 +3634,17 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C2(const char* path, const std
 		points_gradient_values.push_back((double)u * gradient_values[point_id_0] + (double)v * gradient_values[point_id_1] + (double)w * gradient_values[point_id_2]);
 	}
 }
-extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C3(const char* path, const std::vector<double>&gradient_values, const Vector3d2 & input_point_es, std::vector<std::vector<double>>&points_gradient_value_es)
+/********************************************************
+* Function name: CGAL_Mesh_Field_Query_C3
+* Description: Computes the field value at a set of 3D points on a polyhedron mesh loaded from a file.
+* Parameters: 
+* @ path: The path to the input polyhedron mesh.
+* @ gradient_value: The list of gradient values at each vertex of the mesh.
+* @ input_point_es: The list of 3D points to query.
+* @ points_gradient_value_es: The list of field values at the query points.
+* Return: void
+* *********************************************************/
+extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C3(const char* path, const Vector1d1&gradient_values, const Vector3d2 & input_point_es, Vector1d2&points_gradient_value_es)
 {
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -2940,7 +3653,7 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C3(const char* path, const std
 
 	for (int i = 0; i < input_point_es.size(); i++)
 	{
-		std::vector<double> values;
+		Vector1d1 values;
 		for (int j = 0; j < input_point_es[i].size(); j++)
 		{
 			Point_3 query(input_point_es[i][j][0], input_point_es[i][j][1], input_point_es[i][j][2]);
@@ -2962,8 +3675,19 @@ extern "C" PPGL_EXPORT void CGAL_Mesh_Field_Query_C3(const char* path, const std
 		points_gradient_value_es.push_back(values);
 	}
 }
-
-extern "C" PPGL_EXPORT void CGAL_Curvature_Mesh(const char* path_, const Vector3d1 & input_points, std::vector<double>&max_curs, std::vector<double>&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
+/********************************************************
+* Function name: CGAL_Curvature_Mesh
+* Description: Computes the curvature of a polyhedron mesh loaded from a file.
+* Parameters:
+* @ path_: The path to the input polyhedron mesh.
+* @ input_points: The list of 3D points to query.
+* @ max_curs: The list of maximum curvature values at the query points.
+* @ min_curs: The list of minimum curvature values at the query points.
+* @ max_curs_directions: The list of maximum curvature directions at the query points.
+* @ min_curs_directions: The list of minimum curvature directions at the query points.
+* Return: void
+* *********************************************************/
+extern "C" PPGL_EXPORT void CGAL_Curvature_Mesh(const char* path_, const Vector3d1 & input_points, Vector1d1&max_curs, Vector1d1&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
 {
 	auto Curvature_Direction_Adjusting=[](Vector3d & cur_0, Vector3d & cur_1, Vector3d & cur_2)
 	{
@@ -3009,9 +3733,9 @@ extern "C" PPGL_EXPORT void CGAL_Curvature_Mesh(const char* path_, const Vector3
 		tree.accelerate_distance_queries();
 
 		//get mesh vertices and surface
-		//std::vector<double> mesh_xs, mesh_ys, mesh_zs;
+		//Vector1d1 mesh_xs, mesh_ys, mesh_zs;
 		Vector3d1 vecs;
-		std::vector<int> mesh_face_id_0, mesh_face_id_1, mesh_face_id_2;
+		Vector1i1 mesh_face_id_0, mesh_face_id_1, mesh_face_id_2;
 
 		//Functs::LoadObj3d(path, vecs, mesh_face_id_0, mesh_face_id_1, mesh_face_id_2);
 
@@ -3059,8 +3783,8 @@ extern "C" PPGL_EXPORT void CGAL_Curvature_Mesh(const char* path_, const Vector3
 
 		//meshCurvature((size_t)verticeSize, points, (size_t)(faceindiceSize / 3), indices, 1e-06f);
 
-		std::vector<double> mesh_max_curs;
-		std::vector<double> mesh_min_curs;
+		Vector1d1 mesh_max_curs;
+		Vector1d1 mesh_min_curs;
 
 		Vector3d1 mesh_max_curs_directions;
 		Vector3d1 mesh_min_curs_directions;
@@ -3109,7 +3833,15 @@ extern "C" PPGL_EXPORT void CGAL_Curvature_Mesh(const char* path_, const Vector3
 }
 
 
-
+/********************************************************
+* Function name:   CGAL_Normal_Mesh_C1
+* Description: Computes the normal of a polyhedron mesh loaded from a file.
+* Parameters:
+* @ path_: The path to the input polyhedron mesh.
+* @ mesh_points: The list of 3D points to query.
+* @ mesh_normals: The list of normal values at the query points.
+* Return: void
+* *********************************************************/
 extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C1(const char* path_, const Vector3d1 & mesh_points, Vector3d1 & mesh_normals)
 {
 	std::string path = path_;
@@ -3123,8 +3855,8 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C1(const char* path_, const Vector3
 		tree.accelerate_distance_queries();
 
 		//get mesh vertices and surface
-		std::vector<double> mesh_xs, mesh_ys, mesh_zs;
-		std::vector<int> mesh_face_id_0, mesh_face_id_1, mesh_face_id_2;
+		Vector1d1 mesh_xs, mesh_ys, mesh_zs;
+		Vector1i1 mesh_face_id_0, mesh_face_id_1, mesh_face_id_2;
 		for (Polyhedron_3::Vertex_iterator iter = polyhedron.vertices_begin();
 			iter != polyhedron.vertices_end(); iter++)
 		{
@@ -3180,9 +3912,9 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C1(const char* path_, const Vector3
 	if (path.substr(path.size() - 3, path.size()) == "obj")
 	{
 		Vector3d1 vecs;
-		std::vector<int> face_id_0;
-		std::vector<int> face_id_1;
-		std::vector<int> face_id_2;
+		Vector1i1 face_id_0;
+		Vector1i1 face_id_1;
+		Vector1i1 face_id_2;
 		Functs::LoadObj3d(path_, vecs, face_id_0, face_id_1, face_id_2);
 
 		Polyhedron_3 polyhedron;
@@ -3195,7 +3927,7 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C1(const char* path_, const Vector3
 		//compute normals
 		/**********************************************************/
 		Vector3d1 normals(vecs.size(), Vector3d(0.0, 0.0, 0.0));
-		std::vector<double> areas(vecs.size(), 0.0);
+		Vector1d1 areas(vecs.size(), 0.0);
 		for (int i = 0; i < face_id_0.size(); i++)
 		{
 			double area = CGAL_3D_One_Triangle_Area(vecs[face_id_0[i]], vecs[face_id_1[i]], vecs[face_id_2[i]]);
@@ -3227,6 +3959,15 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C1(const char* path_, const Vector3
 		}
 	}
 }
+/********************************************************
+* Function name:   CGAL_Normal_Mesh_C2
+* Description: Computes the normal of a polyhedron mesh loaded from a file.
+* Parameters:
+* @ path_: The path to the input polyhedron mesh.
+* @ mesh_pointses: The list of 3D points to query.
+* @ mesh_normalses: The list of normal values at the query points.
+* Return: void
+* *********************************************************/
 extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C2(const char* path_, const Vector3d2 & mesh_pointses, Vector3d2 & mesh_normalses)
 {
 	std::string path = path_;
@@ -3240,8 +3981,8 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C2(const char* path_, const Vector3
 		tree.accelerate_distance_queries();
 
 		//get mesh vertices and surface
-		std::vector<double> mesh_xs, mesh_ys, mesh_zs;
-		std::vector<int> mesh_face_id_0, mesh_face_id_1, mesh_face_id_2;
+		Vector1d1 mesh_xs, mesh_ys, mesh_zs;
+		Vector1i1 mesh_face_id_0, mesh_face_id_1, mesh_face_id_2;
 		for (Polyhedron_3::Vertex_iterator iter = polyhedron.vertices_begin();
 			iter != polyhedron.vertices_end(); iter++)
 		{
@@ -3303,9 +4044,9 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C2(const char* path_, const Vector3
 	if (path.substr(path.size() - 3, path.size()) == "obj")
 	{
 		Vector3d1 vecs;
-		std::vector<int> face_id_0;
-		std::vector<int> face_id_1;
-		std::vector<int> face_id_2;
+		Vector1i1 face_id_0;
+		Vector1i1 face_id_1;
+		Vector1i1 face_id_2;
 		Functs::LoadObj3d(path_, vecs, face_id_0, face_id_1, face_id_2);
 
 		Polyhedron_3 polyhedron;
@@ -3318,7 +4059,7 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C2(const char* path_, const Vector3
 		//compute normals
 		/**********************************************************/
 		Vector3d1 normals(vecs.size(), Vector3d(0.0, 0.0, 0.0));
-		std::vector<double> areas(vecs.size(), 0.0);
+		Vector1d1 areas(vecs.size(), 0.0);
 		for (int i = 0; i < face_id_0.size(); i++)
 		{
 			double area = CGAL_3D_One_Triangle_Area(vecs[face_id_0[i]], vecs[face_id_1[i]], vecs[face_id_2[i]]);
@@ -3357,7 +4098,16 @@ extern "C" PPGL_EXPORT void CGAL_Normal_Mesh_C2(const char* path_, const Vector3
 
 	}
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Normal_C1(const Vector3d1 & ps, const std::vector<std::vector<int>>&face_ids, Vector3d1 & normals)
+/********************************************************
+* Function name: CGAL_3D_Mesh_Normal_C1
+* Description: Computes the normals for a 3D mesh.
+* Parameters:
+* @ps: A vector of 3D vertices.
+* @face_ids: A vector of face indices (vertex indices for each face).
+* @normals: Output vector to store the computed normals.
+* Return: void
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Normal_C1(const Vector3d1 & ps, const Vector1i2&face_ids, Vector3d1 & normals)
 {
 	int verticeSize = ps.size();
 	int faceindiceSize = face_ids.size() * 3;
@@ -3386,7 +4136,17 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Normal_C1(const Vector3d1 & ps, const s
 		normals.push_back(Vector3d(normal[0], normal[1], normal[2]));
 	}
 }
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Normal_C2(const Vector3d1 & ps, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, Vector3d1 & normals)
+/********************************************************
+* Function name: CGAL_3D_Mesh_Normal_C2
+* Description: Computes the normals for a 3D mesh.
+* Parameters:
+* @ps: A vector of 3D vertices.
+* @face_id_0: A vector of vertex indices for the first vertex of each face.
+* @face_id_1: A vector of vertex indices for the second vertex of each face.
+* @face_id_2: A vector of vertex indices for the third vertex of each face.
+* @normals: Output vector to store the computed normals.
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Normal_C2(const Vector3d1 & ps, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector3d1 & normals)
 {
 	int verticeSize = ps.size();
 	int faceindiceSize = face_id_0.size() * 3;
@@ -3416,7 +4176,13 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Normal_C2(const Vector3d1 & ps, const s
 		normals.push_back(Vector3d(normal[0], normal[1], normal[2]));
 	}
 }
-
+/********************************************************
+* Function name: CGAL_3D_Mesh_Center_C1
+* Description: Computes the center point (center of mass) of a collection of 3D points.
+* Parameters:
+* @ps: A 2D vector containing collections of 3D points.
+* Return value: The center point (center of mass) of all the input 3D points.
+**********************************************************/
 
 extern "C" PPGL_EXPORT Vector3d CGAL_3D_Mesh_Center_C1(const Vector3d2 & ps)
 {
@@ -3424,6 +4190,13 @@ extern "C" PPGL_EXPORT Vector3d CGAL_3D_Mesh_Center_C1(const Vector3d2 & ps)
 	for (auto ps_ : ps)for (auto p : ps_)ps1.emplace_back(p);
 	return CGAL_3D_Mesh_Center_C2(ps1);
 }
+/********************************************************
+* Function name: CGAL_3D_Mesh_Center_C2
+* Description: Computes the center point (center of mass) of a collection of 3D points.
+* Parameters:
+* @ps: A vector containing 3D points.
+* Return value: The center point (center of mass) of all the input 3D points.
+**********************************************************/
 extern "C" PPGL_EXPORT Vector3d CGAL_3D_Mesh_Center_C2(const Vector3d1 & ps)
 {
 	Vector3d center(0.0, 0.0, 0.0);
@@ -3436,14 +4209,28 @@ extern "C" PPGL_EXPORT Vector3d CGAL_3D_Mesh_Center_C2(const Vector3d1 & ps)
 	center = center / (double)ps.size();
 	return center;
 }
-
+/********************************************************
+* Function name: CGAL_3D_Mesh_Boundingbox_C1
+* Description: Computes the bounding box of a collection of 3D points.
+* Parameters:
+* @ps: A vector containing 3D points.
+* @min_corner: Output parameter to store the minimum corner of the bounding box.
+* @max_corner: Output parameter to store the maximum corner of the bounding box.
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Boundingbox_C1(const Vector3d2 & ps, Vector3d & min_corner, Vector3d & max_corner)
 {
 	Vector3d1 ps1;
 	for (auto ps_ : ps)for (auto p : ps_)ps1.emplace_back(p);
 	CGAL_3D_Mesh_Boundingbox_C2(ps1, min_corner, max_corner);
 }
-
+/********************************************************
+* Function name: CGAL_3D_Mesh_Boundingbox_C2
+* Description: Computes the bounding box of a collection of 3D points.
+* Parameters:
+* @ps: A vector containing 3D points.
+* @min_corner: Output parameter to store the minimum corner of the bounding box.
+* @max_corner: Output parameter to store the maximum corner of the bounding box.
+**********************************************************/
 extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Boundingbox_C2(const Vector3d1 & ps, Vector3d & min_corner, Vector3d & max_corner)
 {
 	min_corner = ps[0];
@@ -3458,8 +4245,16 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Boundingbox_C2(const Vector3d1 & ps, Ve
 		max_corner[2] = std::max(max_corner[2], ps[i][2]);
 	}
 }
-
-extern "C" PPGL_EXPORT void CGAL_Surface_Decomposition(const char* path, std::vector<double>&face_sdf, int& regions_nb, std::vector<int>&face_segments)
+/********************************************************
+* Function name: CGAL_Surface_Decomposition
+* Description: Performs surface decomposition of a 3D mesh.
+* Parameters:
+* @path: The path to the 3D mesh file.
+* @face_sdf: A vector containing signed distance field (SDF) values for mesh faces.
+* @regions_nb: Output parameter to store the number of segmented regions.
+* @face_segments: Output parameter to store the segment ID for each face.
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_Surface_Decomposition(const char* path, Vector1d1&face_sdf, int& regions_nb, Vector1i1&face_segments)
 {
 	Polyhedron_3 polyhedron;
 
@@ -3501,8 +4296,18 @@ extern "C" PPGL_EXPORT void CGAL_Surface_Decomposition(const char* path, std::ve
 		face_segments.push_back(segment_property_map[facet_it]);
 	}
 }
-
-extern "C" PPGL_EXPORT void CGAL_Intergral_Curvature(const Vector2d1 & input_points, const int& sampling_points_nb, const double& radius, const double& thresholder, Vector2d1 & output_points, std::vector<double>&output_rates)
+/********************************************************
+* Function name: CGAL_Intergral_Curvature
+* Description: Computes integral curvature properties of input points.
+* Parameters:
+* @input_points: A vector of 2D input points.
+* @sampling_points_nb: Number of sampling points.
+* @radius: Radius parameter.
+* @thresholder: A threshold for filtering.
+* @output_points: Output vector containing selected points.
+* @output_rates: Output vector containing corresponding rates.
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_Intergral_Curvature(const Vector2d1 & input_points, const int& sampling_points_nb, const double& radius, const double& thresholder, Vector2d1 & output_points, Vector1d1&output_rates)
 {
 	auto Strip_Get_Total_length=[](const Vector2d1 & input_points)
 	{
@@ -3782,7 +4587,7 @@ extern "C" PPGL_EXPORT void CGAL_Intergral_Curvature(const Vector2d1 & input_poi
 			{
 				double total_length = Circuit_Get_Total_length(input_points);
 
-				std::vector<double> vec_ds;
+				Vector1d1 vec_ds;
 
 				vec_ds.push_back(0.0);
 				double length = 0.0;
@@ -3852,7 +4657,7 @@ extern "C" PPGL_EXPORT void CGAL_Intergral_Curvature(const Vector2d1 & input_poi
 					vecs.erase(vecs.begin());
 				}
 
-				std::vector<double>().swap(vec_ds);
+				Vector1d1().swap(vec_ds);
 			}
 		}
 	};
@@ -3921,8 +4726,19 @@ extern "C" PPGL_EXPORT void CGAL_Intergral_Curvature(const Vector2d1 & input_poi
 
 	}
 }
-
-extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Gradient(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&psd, Vector3d1 & vecs_gradients, Vector3d1 & faces_gradients)
+/********************************************************
+* Function name: CGAL_3D_Mesh_Gradient
+* Description: Calculates gradients for a 3D mesh.
+* Parameters:
+* @vecs: A vector of 3D vertex coordinates.
+* @face_id_0: A vector of indices for vertex 0 of each face.
+* @face_id_1: A vector of indices for vertex 1 of each face.
+* @face_id_2: A vector of indices for vertex 2 of each face.
+* @psd: A vector of scalar values corresponding to each vertex.
+* @vecs_gradients: Output vector for vertex gradients.
+* @faces_gradients: Output vector for face gradients.
+**********************************************************/
+extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Gradient(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, const Vector1d1&psd, Vector3d1 & vecs_gradients, Vector3d1 & faces_gradients)
 {
 	Vector3d1().swap(vecs_gradients);
 	Vector3d1().swap(faces_gradients);
@@ -3930,7 +4746,7 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Gradient(const Vector3d1 & vecs, const 
 	for (int i = 0; i < vecs.size(); i++)
 		vecs_gradients.push_back(Vector3d(0.0, 0.0, 0.0));
 
-	std::vector<double> areas(vecs.size(), 0.0);
+	Vector1d1 areas(vecs.size(), 0.0);
 
 	for (int i = 0; i < face_id_0.size(); i++)
 	{
@@ -3978,8 +4794,20 @@ extern "C" PPGL_EXPORT void CGAL_3D_Mesh_Gradient(const Vector3d1 & vecs, const 
 	}
 }
 
-
-extern "C" PPGL_EXPORT bool CGAL_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs, const std::vector<int>&face_id_0, const std::vector<int>&face_id_1, const std::vector<int>&face_id_2, const std::vector<double>&psd, const double& d, Vector3d2 & isolines)
+/********************************************************
+* Function name: CGAL_3D_Mesh_Extract_Isoline
+* Description: Extracts isolines from a 3D mesh based on scalar values.
+* Parameters:
+* @vecs: A vector of 3D vertex coordinates.
+* @face_id_0: A vector of indices for vertex 0 of each face.
+* @face_id_1: A vector of indices for vertex 1 of each face.
+* @face_id_2: A vector of indices for vertex 2 of each face.
+* @psd: A vector of scalar values corresponding to each vertex.
+* @d: The isovalue at which isolines are extracted.
+* @isolines: Output vector to store extracted isolines.
+* @return: Boolean indicating success (true) or failure (false).
+**********************************************************/
+extern "C" PPGL_EXPORT bool CGAL_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, const Vector1d1&psd, const double& d, Vector3d2 & isolines)
 {
 	auto InterpolationPoint=[](Vector3d v0, Vector3d v1, double psd0, double  psd1, double d, Vector3d & inter)
 	{
@@ -4185,6 +5013,16 @@ extern "C" PPGL_EXPORT void CGAL_BSplineCurveFit(const Vector3d1 & samples, Vect
 	//}
 }
 
+/********************************************************
+* Function name: CGAL_Cut_Surface
+* Description: Cuts a surface with a given boundary and inside point.
+* Parameters:
+* @boundary: A vector of 3D vertex coordinates representing the boundary of the surface.
+* @inside_point: A 3D point inside the surface.
+* @full_path: A path to the full surface geometry.
+* @output_path: A path to the output geometry after the cut operation.
+* @return: None (void).
+**********************************************************/
 //assumption: one projecting line can intersect with the three edges at most twice times
 //it's impossible to meet one edge for more than one times
 extern "C" PPGL_EXPORT void CGAL_Cut_Surface(const Vector3d1 & boundary, const Vector3d & inside_point, const char* full_path, char* output_path)
@@ -4199,12 +5037,21 @@ bool DebugInformation()
 	return true;
 }
 
-
-void ComputeEdgeLables(const int size_of_vertice, Halfedge_handle& start_hh, std::vector<std::pair<int, int>>& edges, std::vector<int>& lables)
+/********************************************************
+* Function name: ComputeEdgeLables
+* Description: Computes edge labels based on some criteria.
+* Parameters:
+* @size_of_vertice: The size of the vertex data.
+* @start_hh: A Halfedge_handle representing the starting half-edge.
+* @edges: A vector of pairs (VectorPI1) representing edges.
+* @lables: Output parameter - a vector of integer labels for each vertex.
+* @return: None (void).
+**********************************************************/
+void ComputeEdgeLables(const int size_of_vertice, Halfedge_handle& start_hh, VectorPI1& edges, Vector1i1& lables)
 {
-	std::vector<int> two_class_lables(size_of_vertice, 0);
-	std::vector<bool> edge_lables(size_of_vertice, false);
-	std::vector<bool> over(size_of_vertice, false);
+	Vector1i1 two_class_lables(size_of_vertice, 0);
+	Vector1b1 edge_lables(size_of_vertice, false);
+	Vector1b1 over(size_of_vertice, false);
 	for (int i = 0; i < edges.size(); i++)
 	{
 		edge_lables[edges[i].first] = true;
@@ -4321,7 +5168,13 @@ void ComputeEdgeLables(const int size_of_vertice, Halfedge_handle& start_hh, std
 	lables = two_class_lables;
 }
 
-
+/********************************************************
+* Function name: CGAL_2D_Polygon_Simple_0
+* Description: Checks if a 2D polygon defined by points is simple (non-self-intersecting).
+* Parameters:
+* @points_2d: A vector of 2D points representing the vertices of the polygon.
+* @return: None (void).
+**********************************************************/
 void CGAL_2D_Polygon_Simple_0(Vector2d1 points_2d)
 {
 	for (int i = 0; i < points_2d.size(); i++)
@@ -4343,14 +5196,27 @@ void CGAL_2D_Polygon_Simple_0(Vector2d1 points_2d)
 	}
 }
 
-void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_id_0, const std::vector<int>& face_id_1, const std::vector<int>& face_id_2,
-	const std::vector<std::pair<int, int>>& edges, const Vector3d1& cutting_points, const std::vector<int>& multi_cps, const std::vector<int>& two_class_lables, const std::string output_path)
+/********************************************************
+* Function name: ComputeRemeshTriangles
+* Description: Remeshes a set of triangles based on certain conditions.
+* Parameters:
+* @vecs: A vector of 3D points representing vertices.
+* @face_id_0, face_id_1, face_id_2: Vectors of integers representing the vertex indices of triangles.
+* @edges: A vector of pairs of integers representing edges.
+* @cutting_points: A vector of 3D points representing cutting points.
+* @multi_cps: A vector of integers indicating the number of cutting points for each section.
+* @two_class_lables: A vector of integers representing labels for vertices.
+* @output_path: A string specifying the output file path.
+* @return: None (void).
+**********************************************************/
+void ComputeRemeshTriangles(const Vector3d1& vecs, const Vector1i1& face_id_0, const Vector1i1& face_id_1, const Vector1i1& face_id_2,
+	const VectorPI1& edges, const Vector3d1& cutting_points, const Vector1i1& multi_cps, const Vector1i1& two_class_lables, const std::string output_path)
 {
-	auto HandleBoundaryTriangle = [](const Vector3d1& vecs, const std::vector<int>& remesh_lables, const std::vector<std::pair<int, int>>& edges, const Vector3d1& cutting_points,
-		std::vector<std::vector<int>>& remesh_triangles, std::vector<int>& remesh_triangles_lables, Vector3d1& new_points, std::vector<int>& cutting_point_ids,
+	auto HandleBoundaryTriangle = [](const Vector3d1& vecs, const Vector1i1& remesh_lables, const VectorPI1& edges, const Vector3d1& cutting_points,
+		Vector1i2& remesh_triangles, Vector1i1& remesh_triangles_lables, Vector3d1& new_points, Vector1i1& cutting_point_ids,
 		const int index_0, const int index_1, const int index_2)
 	{
-		auto GetEdgeMiddlePoint = [](const int index_0, const int index_1, const std::vector<std::pair<int, int>>& edges)
+		auto GetEdgeMiddlePoint = [](const int index_0, const int index_1, const VectorPI1& edges)
 		{
 			for (int i = 0; i < edges.size(); i++)
 				if ((edges[i].first == index_0 && edges[i].second == index_1) || (edges[i].second == index_0 && edges[i].first == index_1))
@@ -4379,7 +5245,7 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 		bool b_2 = CGAL_3D_Distance_Point_Point(v_0, v_0_2) <= 0.001;
 		bool b_3 = CGAL_3D_Distance_Point_Point(v_2, v_0_2) <= 0.001;
 
-		std::vector<int> triangle;
+		Vector1i1 triangle;
 		triangle.push_back(index_0);
 		triangle.push_back(index_1);
 		triangle.push_back(index_2);
@@ -4402,8 +5268,8 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 			new_points.push_back(v_0_2);
 			int index_0_2 = new_points.size() - 1 + vecs.size();
 
-			std::vector<int> triangle_0 = { index_0, index_1, index_0_2 };
-			std::vector<int> triangle_1 = { index_2, index_0_2, index_1 };
+			Vector1i1 triangle_0 = { index_0, index_1, index_0_2 };
+			Vector1i1 triangle_1 = { index_2, index_0_2, index_1 };
 
 			remesh_triangles.push_back(triangle_0);
 			remesh_triangles_lables.push_back(lable_0);
@@ -4424,8 +5290,8 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 			new_points.push_back(v_0_1);
 			int index_0_1 = new_points.size() - 1 + vecs.size();
 
-			std::vector<int> triangle_0 = { index_0, index_0_1, index_2 };
-			std::vector<int> triangle_1 = { index_1, index_2, index_0_1 };
+			Vector1i1 triangle_0 = { index_0, index_0_1, index_2 };
+			Vector1i1 triangle_1 = { index_1, index_2, index_0_1 };
 
 			remesh_triangles.push_back(triangle_0);
 			remesh_triangles_lables.push_back(lable_0);
@@ -4449,9 +5315,9 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 			int index_0_1 = new_points.size() - 2 + vecs.size();
 			int index_0_2 = new_points.size() - 1 + vecs.size();
 
-			std::vector<int> triangle_0 = { index_0, index_0_1, index_0_2 };
-			std::vector<int> triangle_1 = { index_1, index_0_2, index_0_1 };
-			std::vector<int> triangle_2 = { index_2, index_0_2, index_1 };
+			Vector1i1 triangle_0 = { index_0, index_0_1, index_0_2 };
+			Vector1i1 triangle_1 = { index_1, index_0_2, index_0_1 };
+			Vector1i1 triangle_2 = { index_2, index_0_2, index_1 };
 
 			remesh_triangles.push_back(triangle_0);
 			remesh_triangles_lables.push_back(lable_0);
@@ -4473,8 +5339,8 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 			new_points.push_back(v_0_1);
 			int index_0_1 = new_points.size() - 1 + vecs.size();
 
-			std::vector<int> triangle_0 = { index_0, index_0_1, index_2 };
-			std::vector<int> triangle_1 = { index_1, index_2, index_0_1 };
+			Vector1i1 triangle_0 = { index_0, index_0_1, index_2 };
+			Vector1i1 triangle_1 = { index_1, index_2, index_0_1 };
 
 			remesh_triangles.push_back(triangle_0);
 			remesh_triangles_lables.push_back(lable_1);
@@ -4495,8 +5361,8 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 			new_points.push_back(v_0_2);
 			int index_0_2 = new_points.size() - 1 + vecs.size();
 
-			std::vector<int> triangle_0 = { index_0, index_1, index_0_2 };
-			std::vector<int> triangle_1 = { index_2, index_0_2, index_1 };
+			Vector1i1 triangle_0 = { index_0, index_1, index_0_2 };
+			Vector1i1 triangle_1 = { index_2, index_0_2, index_1 };
 
 			remesh_triangles.push_back(triangle_0);
 			remesh_triangles_lables.push_back(lable_1);
@@ -4549,10 +5415,10 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 
 	Vector3d1 	remesh_points = vecs;
 	Vector3d1 add_points;
-	std::vector<std::vector<int>> remesh_triangles;
-	std::vector<int> remesh_triangles_lables;
+	Vector1i2 remesh_triangles;
+	Vector1i1 remesh_triangles_lables;
 
-	std::vector<int> cutting_point_ids(cutting_points.size(), -1);
+	Vector1i1 cutting_point_ids(cutting_points.size(), -1);
 
 	for (int i = 0; i < face_id_0.size(); i++)
 	{
@@ -4566,7 +5432,7 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 
 		if (lable_0 == lable_1 && lable_0 == lable_2)
 		{
-			std::vector<int> triangle;
+			Vector1i1 triangle;
 			triangle.push_back(index_0);
 			triangle.push_back(index_1);
 			triangle.push_back(index_2);
@@ -4596,7 +5462,7 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 	};
 
 
-	std::vector<int> new_index;
+	Vector1i1 new_index;
 	Vector3d1 new_points;
 	for (int i = 0; i < add_points.size(); i++)
 		new_index.push_back(GetAddPointIndex(new_points, add_points[i]));
@@ -4615,8 +5481,8 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 
 	///////////////////////////////////////////////////////
 	int nb = multi_cps[0];
-	std::vector<std::vector<int>>  cutting_id_points;
-	std::vector<int> points;
+	Vector1i2  cutting_id_points;
+	Vector1i1 points;
 	for (int i = 0; i < cutting_point_ids.size(); i++)
 	{
 		//if (cutting_point_ids[i] < 0)
@@ -4633,9 +5499,9 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 			if (i >= nb)
 			{
 				//remove duplicate points
-				auto RmoveDuplicatePoints = [](const std::vector<int>& points)
+				auto RmoveDuplicatePoints = [](const Vector1i1& points)
 				{
-					std::vector<int> ndps;
+					Vector1i1 ndps;
 					for (int i = 0; i < points.size(); i++)
 					{
 						if (i == 0)
@@ -4686,10 +5552,10 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 		}
 	}
 
-	auto TriangleMesh = [](const std::vector<int>& ids, const Vector3d1& remesh_points,
-		std::vector<std::vector<int>>& remesh_triangles, std::vector<int>& remesh_triangles_lables)
+	auto TriangleMesh = [](const Vector1i1& ids, const Vector3d1& remesh_points,
+		Vector1i2& remesh_triangles, Vector1i1& remesh_triangles_lables)
 	{
-		std::vector<int> nids;
+		Vector1i1 nids;
 		for (int i = 0; i < ids.size(); i++)
 		{
 			if (i == 0)
@@ -4715,7 +5581,7 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 
 		for (auto& triangle : triangles)
 		{
-			remesh_triangles.emplace_back(std::vector<int>{nids[triangle[2]], nids[triangle[1]], nids[triangle[0]]});
+			remesh_triangles.emplace_back(Vector1i1{nids[triangle[2]], nids[triangle[1]], nids[triangle[0]]});
 			remesh_triangles_lables.emplace_back(1);
 		}
 	};
@@ -4732,7 +5598,7 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const std::vector<int>& face_
 	//CGAL_Output_Obj(path_0, remesh_points, remesh_triangles, remesh_triangles_lables, 0);
 	Functs::OutputObj3d(output_path.c_str(), remesh_points, remesh_triangles, remesh_triangles_lables, 1);
 }
-//std::vector<std::vector<int>> surface_vectices_to_vectices;
+//Vector1i2 surface_vectices_to_vectices;
 
 
 //Cut a closed manifold mesh with boundaries
@@ -4746,7 +5612,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 {
 	auto Intersection = [](const Halfedge_handle& hh, const int nb, const Vector3d inside, const Vector3d outside, Halfedge_handle& handle, Vector3d& intersection)
 	{
-		std::vector<Vector3d> result_vecs;
+		Vector3d1 result_vecs;
 		std::vector<Halfedge_handle> result_handles;
 
 		Halfedge_handle hh_3d = hh;
@@ -4831,9 +5697,9 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 	};
 
 	//kd close query
-	auto KD_Close_Query = [](kdtree* kd_tree, Vector3d query, const std::vector<Vector3d>& full_vecs,
-		const std::vector<int>& full_face_id_0, const std::vector<int>& full_face_id_1, const std::vector<int>& full_face_id_2,
-		const std::vector<std::vector<int>>& surface_vectices_to_face)
+	auto KD_Close_Query = [](kdtree* kd_tree, Vector3d query, const Vector3d1& full_vecs,
+		const Vector1i1& full_face_id_0, const Vector1i1& full_face_id_1, const Vector1i1& full_face_id_2,
+		const Vector1i2& surface_vectices_to_face)
 	{
 		double* pos = new double[3];
 		pos[0] = query[0];
@@ -4843,14 +5709,14 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		double position[3];
 		int index = *(int*)kd_res_item(r, position);
 
-		std::vector<int> faces = surface_vectices_to_face[index];
-		std::vector<int> all_faces;
+		Vector1i1 faces = surface_vectices_to_face[index];
+		Vector1i1 all_faces;
 		int iter = 0;
 		while (true)
 		{
 			for (int i = 0; i < faces.size(); i++) all_faces.emplace_back(faces[i]);
 
-			std::vector<int> next_faces;
+			Vector1i1 next_faces;
 			for (int i = 0; i < faces.size(); i++)
 			{
 				auto vec_0 = full_face_id_0[faces[i]];
@@ -4903,9 +5769,9 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 	};
 
 
-	auto KD_Close_Query_0 = [](kdtree* kd_tree, Vector3d query, const std::vector<Vector3d>& full_vecs,
-		const std::vector<int>& full_face_id_0, const std::vector<int>& full_face_id_1, const std::vector<int>& full_face_id_2,
-		const std::vector<std::vector<int>>& surface_vectices_to_face)
+	auto KD_Close_Query_0 = [](kdtree* kd_tree, Vector3d query, const Vector3d1& full_vecs,
+		const Vector1i1& full_face_id_0, const Vector1i1& full_face_id_1, const Vector1i1& full_face_id_2,
+		const Vector1i2& surface_vectices_to_face)
 	{
 		double* pos = new double[3];
 		pos[0] = query[0];
@@ -4915,8 +5781,8 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		double position[3];
 		int index = *(int*)kd_res_item(r, position);
 
-		std::vector<int> faces = surface_vectices_to_face[index];
-		std::vector<int> all_faces;
+		Vector1i1 faces = surface_vectices_to_face[index];
+		Vector1i1 all_faces;
 		int iter = 0;
 		int return_face_id = -1;
 		double return_face_d = 1000000000000000.0;
@@ -4924,7 +5790,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		{
 			for (int i = 0; i < faces.size(); i++) all_faces.emplace_back(faces[i]);
 
-			std::vector<int> next_faces;
+			Vector1i1 next_faces;
 			for (int i = 0; i < faces.size(); i++)
 			{
 				auto vec_0 = full_face_id_0[faces[i]];
@@ -4986,7 +5852,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 
 
 	auto AAA = [](const char* path, Vector3d2& multi_projects, std::vector<std::vector<Poly_facet_iterator>>& multi_project_faces,
-		const std::vector<Vector3d>& full_vecs, const std::vector<int>& full_face_id_0, const std::vector<int>& full_face_id_1, const std::vector<int>& full_face_id_2)
+		const Vector3d1& full_vecs, const Vector1i1& full_face_id_0, const Vector1i1& full_face_id_1, const Vector1i1& full_face_id_2)
 	{
 		std::ofstream  export_file_output("Z:\\Documents\\Windows\\SmartSFC\\workspace\\CFS\\projects.obj");
 		int export_index_0 = 1;
@@ -5003,10 +5869,10 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		export_file_output.clear();
 		export_file_output.close();
 
-		std::vector<Vector3d> vecs;
-		std::vector<int> face_id_0;
-		std::vector<int> face_id_1;
-		std::vector<int> face_id_2;
+		Vector3d1 vecs;
+		Vector1i1 face_id_0;
+		Vector1i1 face_id_1;
+		Vector1i1 face_id_2;
 		for (int i = 0; i < multi_project_faces.size(); i++)
 		{
 			for (int j = 0; j < multi_project_faces[i].size(); j++)
@@ -5095,7 +5961,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		export_file_output.close();
 	};
 
-	auto DDDD = [](const char* path, std::vector<std::pair<int, int>>& edges,
+	auto DDDD = [](const char* path, VectorPI1& edges,
 		std::vector<Halfedge_handle>& handles, Vector3d1& cutting_points, Vector3d1& full_vecs)
 	{
 		std::ofstream  export_file_output_0(path);
@@ -5145,9 +6011,9 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 	//build polyhedron from the full_path obj
 	Polyhedron_3 polyhedron;
 	Vector3d1 full_vecs;
-	std::vector<int> full_face_id_0;
-	std::vector<int> full_face_id_1;
-	std::vector<int> full_face_id_2;
+	Vector1i1 full_face_id_0;
+	Vector1i1 full_face_id_1;
+	Vector1i1 full_face_id_2;
 	Construct_Polyhedron(polyhedron, full_path, full_vecs, full_face_id_0, full_face_id_1, full_face_id_2);
 
 	if (full_vecs.empty() || full_face_id_0.empty() || full_face_id_1.empty() || full_face_id_2.empty())
@@ -5174,13 +6040,13 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 	}
 
 	//surface_vectices_to_face and surface_vectices_to_vectices
-	std::vector<std::vector<int>> surface_vectices_to_face;
+	Vector1i2 surface_vectices_to_face;
 	CGAL_3D_Triangle_Mesh_Vecs_Faces(full_vecs, full_face_id_0, full_face_id_1, full_face_id_2, surface_vectices_to_face);
-	std::vector<std::vector<int>> surface_vectices_to_vectices;
+	Vector1i2 surface_vectices_to_vectices;
 	CGAL_3D_Triangle_Mesh_Vecs_Neighbors(full_vecs, full_face_id_0, full_face_id_1, full_face_id_2, surface_vectices_to_vectices);
 
 	//kd tree
-	std::vector<int> full_vec_ids(full_vecs.size(), 0);
+	Vector1i1 full_vec_ids(full_vecs.size(), 0);
 	for (int i = 0; i < full_vecs.size(); i++) full_vec_ids[i] = i;
 	kdtree* kd_tree = kd_create(3);
 	for (int i = 0; i < full_vecs.size(); i++)
@@ -5215,9 +6081,9 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 
 	//searching for all of the cutting points on edges
 	Vector3d1 cutting_points;
-	std::vector<int> multi_cps;
+	Vector1i1 multi_cps;
 	std::vector<Halfedge_handle> handles;
-	std::vector<bool> face_used(full_face_id_0.size(), false);
+	Vector1b1 face_used(full_face_id_0.size(), false);
 	for (int i = 0; i < multi_projects.size(); i++)
 	{
 		std::cerr << "multi_projects: " << i << " / " << multi_projects.size() << std::endl;
@@ -5331,7 +6197,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 	}
 
 	/*******************************************/
-	std::vector<std::pair<int, int>> edges;
+	VectorPI1 edges;
 	/*******************************************/
 	for (int i = 0; i < handles.size(); i++)
 		edges.emplace_back(handles[i]->vertex()->id(), handles[i]->opposite()->vertex()->id());
@@ -5348,7 +6214,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 	}
 
 	//lables
-	std::vector<int> two_class_lables;
+	Vector1i1 two_class_lables;
 	ComputeEdgeLables((int)full_vecs.size(), full_face_iters[fid]->halfedge(), edges, two_class_lables);
 
 	Vector3d1 lable_0_vecs;

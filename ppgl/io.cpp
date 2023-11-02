@@ -1,21 +1,35 @@
 #include "geom.h"
 
+// Transformation
+// Input: 3d point from cgal 
+// Output: 3d vector from glm
 Vector3d PointVector3d(Point_3 p) {
     return Vector3d(p[0], p[1], p[2]);
 }
 
+// Transformation
+// Input: 3d vector from glm
+// Output: 3d point from cgal 
 Point_3 VectorPoint3d(Vector3d p) {
     return Point_3(p[0], p[1], p[2]);
 }
 
+// Transformation
+// Input: 2d point from cgal 
+// Output: 2d vector from glm
 Vector2d PointVector2d(Point_2 p) {
     return Vector2d(p[0], p[1]);
 }
 
+// Transformation
+// Input: 2d vector from glm
+// Output: 2d point from cgal   
 Point_2 VectorPoint2d(Vector2d p) {
     return Point_2(p[0], p[1]);
 }
 
+// Test function
+// Input: 3d vector from glm and char* to print
 extern "C" PPGL_EXPORT void CGAL_Test_PGL(const Vector3d& n, const char* str, const char* char_)
 {
 	Functs::CerrLine(char_);
