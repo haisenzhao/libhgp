@@ -243,4 +243,3 @@ int main(int argc, char* argv[])
 	Functs::MAssert("Successfully finishing the post processing...", 1.5);
 	return 0;
 }
-

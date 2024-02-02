@@ -148,3 +148,4 @@ build/
 build1/
 /.vs/
 .vs/
+test/main.cpp
