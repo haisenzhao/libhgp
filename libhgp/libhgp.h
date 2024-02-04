@@ -106,7 +106,6 @@ typedef void (*CGAL_Test_PGL)(const Vector3d& n, const char* str, const char* ch
 //Usage: Get a vector which is perpenticular to the input vector;
 //Input: input vector "n"; 
 //Output: output vector "r";
-typedef void (*CGAL_Vector_Base)(const Vector3d& n, Vector3d& r);
 //implementation in "twoD.cpp"
 //####################################################################################
 typedef double (*CGAL_2D_Distance_Point_Point)(const Vector2d& p_0, const Vector2d& p_1);
@@ -317,7 +316,6 @@ class CGALPL
 		//Usage: Get a vector which is perpenticular to the input vector;
 		//Input: input vector "n"; 
 		//Output: output vector "r";
-		CGAL_Vector_Base_C = (CGAL_Vector_Base)GetProcAddress(hModule, "CGAL_Vector_Base");
 		//implementation in "twoD.cpp"
 		//####################################################################################
 		CGAL_2D_Distance_Point_Point_C = (CGAL_2D_Distance_Point_Point)GetProcAddress(hModule, "CGAL_2D_Distance_Point_Point");
@@ -529,7 +527,6 @@ class CGALPL
 	//Usage: Get a vector which is perpenticular to the input vector;
 	//Input: input vector "n"; 
 	//Output: output vector "r";
-	CGAL_Vector_Base CGAL_Vector_Base_C;
 	//implementation in "twoD.cpp"
 	//####################################################################################
 	CGAL_2D_Distance_Point_Point CGAL_2D_Distance_Point_Point_C;
