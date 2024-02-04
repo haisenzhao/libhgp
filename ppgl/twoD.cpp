@@ -1015,7 +1015,7 @@ void OutputRectangle(const char* path, const Vector2d2  &points) {
     for (int i = 0; i < points.size(); i++) {
         file << "f ";
         for (int j = 0; j < points[i].size(); j++) {
-            file << Functs::IntString(nb) << " ";
+            file << Functs::Int2String(nb) << " ";
             nb++;
         }
         file << "" << std::endl;

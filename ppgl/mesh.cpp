@@ -1054,18 +1054,19 @@ extern "C" PPGL_EXPORT void CGAL_3D_Cube_Surface_Sampling_C1(const double& cube_
 {
 	auto half_cube = cube_size / 2.0;
 
-	VectorPI1 sneighbors;
-	Vector3d1 z3d = Functs::Vector2d3d(CGAL_2D_Square_Regular_Sampling_C3(d, sneighbors, compute_neighbors));
-	z3d = Functs::PosApplyM(z3d, Functs::ScaleMatrix(Vector3d(cube_size, cube_size, 0.0)));//-z +z
-	auto y3d = Functs::PosApplyM(z3d, Functs::RotationMatrix(Vector3d(1.0, 0.0, 0.0), Math_PI / 2.0));//-y +y
-	auto x3d = Functs::PosApplyM(z3d, Functs::RotationMatrix(Vector3d(0.0, 1.0, 0.0), Math_PI / 2.0));//-x +x
 
-	sampling_points.push_back(Functs::PosApplyM(x3d, Functs::TranslationMatrix(Vector3d(half_cube, 0.0, 0.0))));//x
-	sampling_points.push_back(Functs::PosApplyM(x3d, Functs::TranslationMatrix(Vector3d(-half_cube, 0.0, 0.0))));//x
-	sampling_points.push_back(Functs::PosApplyM(y3d, Functs::TranslationMatrix(Vector3d(0.0, half_cube, 0.0))));//y
-	sampling_points.push_back(Functs::PosApplyM(y3d, Functs::TranslationMatrix(Vector3d(0.0, -half_cube, 0.0))));//y
-	sampling_points.push_back(Functs::PosApplyM(z3d, Functs::TranslationMatrix(Vector3d(0.0, 0.0, half_cube))));//z
-	sampling_points.push_back(Functs::PosApplyM(z3d, Functs::TranslationMatrix(Vector3d(0.0, 0.0, -half_cube))));//z
+	VectorPI1 sneighbors;
+	Vector3d1 z3d = Functs::Vector2dto3d(CGAL_2D_Square_Regular_Sampling_C3(d, sneighbors, compute_neighbors));
+	z3d = Functs::PosApplyMatrix(z3d, Functs::ScaleMatrix(Vector3d(cube_size, cube_size, 0.0)));//-z +z
+	auto y3d = Functs::PosApplyMatrix(z3d, Functs::RotationMatrix(Vector3d(1.0, 0.0, 0.0), Math_PI / 2.0));//-y +y
+	auto x3d = Functs::PosApplyMatrix(z3d, Functs::RotationMatrix(Vector3d(0.0, 1.0, 0.0), Math_PI / 2.0));//-x +x
+
+	sampling_points.push_back(Functs::PosApplyMatrix(x3d, Functs::TranslationMatrix(Vector3d(half_cube, 0.0, 0.0))));//x
+	sampling_points.push_back(Functs::PosApplyMatrix(x3d, Functs::TranslationMatrix(Vector3d(-half_cube, 0.0, 0.0))));//x
+	sampling_points.push_back(Functs::PosApplyMatrix(y3d, Functs::TranslationMatrix(Vector3d(0.0, half_cube, 0.0))));//y
+	sampling_points.push_back(Functs::PosApplyMatrix(y3d, Functs::TranslationMatrix(Vector3d(0.0, -half_cube, 0.0))));//y
+	sampling_points.push_back(Functs::PosApplyMatrix(z3d, Functs::TranslationMatrix(Vector3d(0.0, 0.0, half_cube))));//z
+	sampling_points.push_back(Functs::PosApplyMatrix(z3d, Functs::TranslationMatrix(Vector3d(0.0, 0.0, -half_cube))));//z
 
 	if (compute_neighbors)
 	{
@@ -4937,7 +4938,7 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs,
 
 	//for (int i = 0; i < segments.size(); i++)
 	//{
-	//	Functs::Export_Segment(export_fie, export_int, "segment_" + Functs::IntString(i), 1.0, 0.0, 0.0, segments[i][0], segments[i][1], 0.002);
+	//	Functs::ExportSegment(export_fie, export_int, "segment_" + Functs::Int2String(i), 1.0, 0.0, 0.0, segments[i][0], segments[i][1], 0.002);
 	//}
 
 	//export_fie.clear();
@@ -4955,7 +4956,7 @@ extern "C" PPGL_EXPORT bool CGAL_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs,
 	//{
 	//	for (int j = 0; j < isolines.size()-1; j++)
 	//	{
-	//		Functs::Export_Segment(export_fie_0, export_int, "isolines_" + Functs::IntString(i) + "_" + Functs::IntString(j), 1.0, 0.0, 0.0, isolines[i][j], isolines[i][(j + 1)], 0.002);
+	//		Functs::ExportSegment(export_fie_0, export_int, "isolines_" + Functs::Int2String(i) + "_" + Functs::Int2String(j), 1.0, 0.0, 0.0, isolines[i][j], isolines[i][(j + 1)], 0.002);
 	//	}
 
 	//}
@@ -5087,7 +5088,7 @@ void ComputeEdgeLables(const int size_of_vertice, Halfedge_handle& start_hh, Vec
 			std::ofstream  export_file_output_0("Z:\\Documents\\Windows\\SmartSFC\\workspace\\CFS\\cutting\\" + std::to_string(iter) + "_" + std::to_string(hh->vertex()->id()) + "_" + std::to_string(queue_1.front()) + ".obj");
 			int export_index_0 = 1;
 			std::string str = "inside" + std::to_string(iter) + "_" + std::to_string(hh->vertex()->id()) + "_" + std::to_string(queue_1.front());
-			Functs::Export_Point(export_file_output_0, export_index_0,
+			Functs::ExportPoint(export_file_output_0, export_index_0,
 				str.c_str(), v, 0.1);
 			export_file_output_0.clear();
 			export_file_output_0.close();
@@ -5152,9 +5153,10 @@ void ComputeEdgeLables(const int size_of_vertice, Halfedge_handle& start_hh, Vec
 		while (true)
 		{
 			if (start_search >= 0)
-				Functs::Export_Point(export_file_output_0, export_index_0, "point", dsd[start_search].first, 0.1);
+				Functs::ExportPoint(export_file_output_0, export_index_0, "point", dsd[start_search].first, 0.1);
 			else
 				break;
+
 
 			start_search = dsd[start_search].second;
 		}
@@ -5544,7 +5546,7 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const Vector1i1& face_id_0, c
 			int export_index = 1;
 			for (int j = 0; j < cutting_id_points[i].size(); j++)
 			{
-				Functs::Export_Segment(export_file_output, export_index, "intersection",Vector3d(1, 0, 0),
+				Functs::ExportSegment(export_file_output, export_index, "intersection",Vector3d(1, 0, 0),
 					remesh_points[cutting_id_points[i][j]], remesh_points[cutting_id_points[i][(j + 1) % cutting_id_points[i].size()]], 0.05);
 			}
 			export_file_output.clear();
@@ -5567,7 +5569,7 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const Vector1i1& face_id_0, c
 
 		Vector3d1 points_3d;
 		for (auto& id : nids) points_3d.emplace_back(remesh_points[id]);
-		Vector2d1 points_2d = Functs::Vector3d2d(points_3d);
+		Vector2d1 points_2d = Functs::Vector3dto2d(points_3d);
 
 		if (!CGAL_2D_Polygon_Simple(points_2d))
 		{
@@ -5862,8 +5864,8 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 			{
 				Vector3d end_0 = multi_projects[i][j];
 				Vector3d end_1 = multi_projects[i][(j + 1) % multi_projects[i].size()];
-				std::string str = "projection_" + Functs::IntString(i);
-				Functs::Export_Segment(export_file_output, export_index_0, str.c_str(),  end_0, end_1, 0.002);
+				std::string str = "projection_" + Functs::Int2String(i);
+				Functs::ExportSegment(export_file_output, export_index_0, str.c_str(),  end_0, end_1, 0.002);
 			}
 		}
 		export_file_output.clear();
@@ -5912,9 +5914,9 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		std::string file_path;
 
 		if (b)
-			file_path = "Z:\\Documents\\Windows\\SmartSFC\\workspace\\CFS\\cutting\\cutting_points_" + Functs::IntString(iteration) + "_" + Functs::IntString(next_index) + "_1.obj";
+			file_path = "Z:\\Documents\\Windows\\SmartSFC\\workspace\\CFS\\cutting\\cutting_points_" + Functs::Int2String(iteration) + "_" + Functs::Int2String(next_index) + "_1.obj";
 		else
-			file_path = "Z:\\Documents\\Windows\\SmartSFC\\workspace\\CFS\\cutting\\cutting_points_" + Functs::IntString(iteration) + "_" + Functs::IntString(next_index) + "_0.obj";
+			file_path = "Z:\\Documents\\Windows\\SmartSFC\\workspace\\CFS\\cutting\\cutting_points_" + Functs::Int2String(iteration) + "_" + Functs::Int2String(next_index) + "_0.obj";
 
 
 		std::ofstream  export_file_output(file_path);
@@ -5924,24 +5926,24 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 			{
 				Vector3d end_0 = cutting_points[j];
 				Vector3d end_1 = cutting_points[j + 1];
-				std::string str = "cutting_points_" + Functs::IntString(j);
-				Functs::Export_Segment(export_file_output, export_index, str.c_str(),  end_0, end_1, 0.05);
+				std::string str = "cutting_points_" + Functs::Int2String(j);
+				Functs::ExportSegment(export_file_output, export_index, str.c_str(),  end_0, end_1, 0.05);
 			}
-		//Functs::Export_Segment(export_file_output, export_index, "inside_outside_segment", 1.0, 0.0, 0.0, inside, multi_projects[i][next_index], 0.01);
-		Functs::Export_Segment(export_file_output, export_index, "cur_tri_edge",  v1, v3, 0.001);
+		//Functs::ExportSegment(export_file_output, export_index, "inside_outside_segment", 1.0, 0.0, 0.0, inside, multi_projects[i][next_index], 0.01);
+		Functs::ExportSegment(export_file_output, export_index, "cur_tri_edge",  v1, v3, 0.001);
 		std::string str = "cur_tri_center_" + std::to_string(cur_handle->face()->id());
-		Functs::Export_Point(export_file_output, export_index, str.c_str(),  center, 0.002);
-		Functs::Export_Point(export_file_output, export_index, "cur_tri_inside",  inside, 0.002);
+		Functs::ExportPoint(export_file_output, export_index, str.c_str(),  center, 0.002);
+		Functs::ExportPoint(export_file_output, export_index, "cur_tri_inside",  inside, 0.002);
 		str = "cur_tri_outside_" + std::to_string(multi_project_faces[i][next_index]->id());
-		Functs::Export_Point(export_file_output, export_index, str.c_str(), multi_projects[i][next_index], 0.002);
+		Functs::ExportPoint(export_file_output, export_index, str.c_str(), multi_projects[i][next_index], 0.002);
 
 		if (b)
 		{
 			Vector3d vv0 = PointVector3d(handle->vertex()->point());
 			Vector3d vv1 = PointVector3d(handle->opposite()->vertex()->point());
-			Functs::Export_Segment(export_file_output, export_index, "next_edge",  vv0, vv1, 0.001);
+			Functs::ExportSegment(export_file_output, export_index, "next_edge",  vv0, vv1, 0.001);
 
-			Functs::Export_Point(export_file_output, export_index, "inters_point",  intersection, 0.002);
+			Functs::ExportPoint(export_file_output, export_index, "inters_point",  intersection, 0.002);
 		}
 
 		export_file_output.clear();
@@ -5954,8 +5956,8 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		int export_index = 1;
 		for (int i = 0; i < cutting_points.size() - 1; i++)
 		{
-			std::string str = "intersection_" + Functs::IntString(i);
-			Functs::Export_Segment(export_file_output, export_index, str.c_str(),  cutting_points[i], cutting_points[i + 1], 0.05);
+			std::string str = "intersection_" + Functs::Int2String(i);
+			Functs::ExportSegment(export_file_output, export_index, str.c_str(),  cutting_points[i], cutting_points[i + 1], 0.05);
 		}
 		export_file_output.clear();
 		export_file_output.close();
@@ -5970,8 +5972,8 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		for (int i = 0; i < handles.size(); i++)
 		{
 			auto name = "edge_" + std::to_string(i) + "_" + std::to_string(handles[i]->face()->id());
-			Functs::Export_Segment(export_file_output_0, export_index_0, name.c_str(),  full_vecs[edges[i].first], full_vecs[edges[i].second], 0.03);
-			Functs::Export_Point(export_file_output_0, export_index_0, name.c_str(),  cutting_points[i], 0.05);
+			Functs::ExportSegment(export_file_output_0, export_index_0, name.c_str(),  full_vecs[edges[i].first], full_vecs[edges[i].second], 0.03);
+			Functs::ExportPoint(export_file_output_0, export_index_0, name.c_str(),  cutting_points[i], 0.05);
 
 			Point_3 p0 = handles[i]->next()->next()->vertex()->point();
 			Point_3 p1 = handles[i]->vertex()->point();
@@ -5980,7 +5982,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 			Vector3d v1 = PointVector3d(p1);
 			Vector3d v2 = PointVector3d(p2);
 			Vector3d center = (v0 + v1 + v2) / (double)3.0;
-			Functs::Export_Point(export_file_output_0, export_index_0, name.c_str(),  center, 0.05);
+			Functs::ExportPoint(export_file_output_0, export_index_0, name.c_str(),  center, 0.05);
 
 		}
 
@@ -5992,7 +5994,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 	{
 		std::ofstream  export_file_output_0("Z:\\Documents\\Windows\\SmartSFC\\workspace\\CFS\\inside.obj");
 		int export_index_0 = 1;
-		Functs::Export_Point(export_file_output_0, export_index_0, "start_point",  inside, 0.05);
+		Functs::ExportPoint(export_file_output_0, export_index_0, "start_point",  inside, 0.05);
 		export_file_output_0.clear();
 		export_file_output_0.close();
 	};
@@ -6002,7 +6004,7 @@ extern "C" PPGL_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2
 		std::ofstream  export_file_output_0(path);
 		int export_index_0 = 1;
 		for (auto inside : insides)
-			Functs::Export_Point(export_file_output_0, export_index_0, "start_point",  inside, 0.05);
+			Functs::ExportPoint(export_file_output_0, export_index_0, "start_point",  inside, 0.05);
 		export_file_output_0.clear();
 		export_file_output_0.close();
 	};

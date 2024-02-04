@@ -1,9 +1,9 @@
-#include "pgl_functs.hpp"
+#include "liblgp/liblgp.hpp"
 
 #include <iostream>
 
 using namespace std;
-using namespace PGL;
+using namespace liblgp;
 
 void Generate_CGAL_H(std::string input_path, std::string output_path)
 {
@@ -145,8 +145,6 @@ void Generate_CGAL_H(std::string input_path, std::string output_path)
 	cgal_file << "		std::cerr << \"LoadLibrary success\\n\";" << std::endl;
 	cgal_file << "	return hModule;" << std::endl;
 	cgal_file << "};" << std::endl;
-
-
 
 
 	//define functions

@@ -11,10 +11,11 @@
 #include <list>
 #include <ppgl_export.h>
 
-#include "pgl_functs.hpp"
+#include "liblgp/liblgp.hpp"
 #include "include_cgal.h"
 
-using namespace PGL;
+using namespace liblgp;
+
 
 struct GridEdge {
 	int s_i, s_j;
