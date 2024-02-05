@@ -17,20 +17,20 @@ Polygon_2 Polygon2D(const Vector2d1& py)
 };
 
 /********************************************************
-* Function name: CGAL_2D_Distance_Point_Point
+* Function name: HGP_2D_Distance_Point_Point
 * Description: Calculate the Euclidean distance between two 2D points.
 * Parameters:
 * @p_0: The first 2D point.
 * @p_1: The second 2D point.
 * Return: The Euclidean distance between the two input points.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Point_Point(const Vector2d& p_0, const Vector2d& p_1)
+extern "C" LIBHGP_EXPORT double HGP_2D_Distance_Point_Point(const Vector2d& p_0, const Vector2d& p_1)
 {
     return sqrt(pow((p_0[0] - p_1[0]), 2.0) + pow((p_0[1] - p_1[1]), 2.0));
 }
 
 /********************************************************
-* Function name: CGAL_2D_Distance_Point_Segment
+* Function name: HGP_2D_Distance_Point_Segment
 * Description: Calculate the distance between a 2D point and a line segment.
 * Parameters:
 * @v: The 2D point for which the distance is calculated.
@@ -38,12 +38,12 @@ extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Point_Point(const Vector2d& p_0
 * @s_1: The ending point of the line segment.
 * Return: The distance between the point and the line segment.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Point_Segment(const Vector2d& v, const Vector2d & s_0, const Vector2d & s_1) {
+extern "C" LIBHGP_EXPORT double HGP_2D_Distance_Point_Segment(const Vector2d& v, const Vector2d & s_0, const Vector2d & s_1) {
     return sqrt((double) CGAL::squared_distance(Point_2(v[0], v[1]), Segment_2(Point_2(s_0[0], s_0[1]), Point_2(s_1[0], s_1[1]))));
 }
 
 /********************************************************
-* Function name: CGAL_2D_Distance_Segment_Segment
+* Function name: HGP_2D_Distance_Segment_Segment
 * Description: Calculate the minimum distance between two 2D line segments.
 * Parameters:
 * @s_0: The starting point of the first line segment.
@@ -52,11 +52,11 @@ extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Point_Segment(const Vector2d& v
 * @e_1: The ending point of the second line segment.
 * Return: The minimum distance between the two line segments.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Segment_Segment(const Vector2d& s_0, const Vector2d & s_1, const Vector2d & e_0, const Vector2d & e_1) {
-    double d0 = CGAL_2D_Distance_Point_Segment(s_0, e_0, e_1);
-    double d1 = CGAL_2D_Distance_Point_Segment(s_1, e_0, e_1);
-    double d2 = CGAL_2D_Distance_Point_Segment(e_0, s_0, s_1);
-    double d3 = CGAL_2D_Distance_Point_Segment(e_1, s_0, s_1);
+extern "C" LIBHGP_EXPORT double HGP_2D_Distance_Segment_Segment(const Vector2d& s_0, const Vector2d & s_1, const Vector2d & e_0, const Vector2d & e_1) {
+    double d0 = HGP_2D_Distance_Point_Segment(s_0, e_0, e_1);
+    double d1 = HGP_2D_Distance_Point_Segment(s_1, e_0, e_1);
+    double d2 = HGP_2D_Distance_Point_Segment(e_0, s_0, s_1);
+    double d3 = HGP_2D_Distance_Point_Segment(e_1, s_0, s_1);
     double min_d = d0;
     min_d = std::min(min_d, d1);
     min_d = std::min(min_d, d2);
@@ -65,7 +65,7 @@ extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Segment_Segment(const Vector2d&
 }
 
 /********************************************************
-* Function name: CGAL_2D_Distance_Point_Line
+* Function name: HGP_2D_Distance_Point_Line
 * Description: Calculate the distance between a 2D point and a 2D line.
 * Parameters:
 * @v: The 2D point for which you want to calculate the distance.
@@ -73,47 +73,47 @@ extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Segment_Segment(const Vector2d&
 * @l_1: The second point on the line.
 * Return: The distance between the point and the line.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Point_Line(const Vector2d& v, const Vector2d & l_0, const Vector2d & l_1) {
+extern "C" LIBHGP_EXPORT double HGP_2D_Distance_Point_Line(const Vector2d& v, const Vector2d & l_0, const Vector2d & l_1) {
     return sqrt((double) CGAL::squared_distance(Point_2(v[0], v[1]),
                                                 Line_2(Point_2(l_0[0], l_0[1]), Point_2(l_1[0], l_1[1]))));
 }
 
 /********************************************************
-* Function name: CGAL_2D_Distance_Point_Polygon
+* Function name: HGP_2D_Distance_Point_Polygon
 * Description: Calculate the minimum distance between a 2D point and a 2D polygon.
 * Parameters:
 * @p: The 2D point for which you want to calculate the distance.
 * @py: A vector of 2D points representing the vertices of the polygon.
 * Return: The minimum distance between the point and the polygon.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Point_Polygon(const Vector2d& p, const Vector2d1 & py) {
+extern "C" LIBHGP_EXPORT double HGP_2D_Distance_Point_Polygon(const Vector2d& p, const Vector2d1 & py) {
     double distance = 1000000000000.0;
     for (int i = 0; i < py.size(); i++)
     {
         int ii = (static_cast<int>(i) + 1) % py.size();
-		distance = std::min(distance, CGAL_2D_Distance_Point_Segment(p, py[i], py[ii]));
+		distance = std::min(distance, HGP_2D_Distance_Point_Segment(p, py[i], py[ii]));
     }
     return distance;
 }
 
 /********************************************************
-* Function name: CGAL_2D_Distance_Point_Polygons
+* Function name: HGP_2D_Distance_Point_Polygons
 * Description: Calculate the minimum distance between a 2D point and a collection of 2D polygons.
 * Parameters:
 * @p: The 2D point for which you want to calculate the distance.
 * @pys: A vector of vectors, where each inner vector represents a 2D polygon defined by its vertices.
 * Return: The minimum distance between the point and the collection of polygons.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Point_Polygons(const Vector2d & p, const Vector2d2 & pys)
+extern "C" LIBHGP_EXPORT double HGP_2D_Distance_Point_Polygons(const Vector2d & p, const Vector2d2 & pys)
 {
 	double distance = 1000000000000.0;
 	for (int i = 0; i < pys.size(); i++)
-		distance = std::min(distance, CGAL_2D_Distance_Point_Polygon(p, pys[i]));
+		distance = std::min(distance, HGP_2D_Distance_Point_Polygon(p, pys[i]));
 	return distance;
 }
 
 /********************************************************
-* Function name: CGAL_2D_Is_Point_OutCGALPolygon
+* Function name: HGP_2D_Is_Point_OutCGALPolygon
 * Description: Check if a 2D point is outside a CGAL polygon.
 * Parameters:
 * @p: The 2D point you want to check.
@@ -122,12 +122,12 @@ extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Point_Polygons(const Vector2d &
 * - true if the point is outside the polygon (on the unbounded side).
 * - false if the point is inside or on the boundary of the polygon.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Is_Point_OutCGALPolygon(const Vector2d &p, const Polygon_2 &py) {
+extern "C" LIBHGP_EXPORT bool HGP_2D_Is_Point_OutCGALPolygon(const Vector2d &p, const Polygon_2 &py) {
     return py.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_UNBOUNDED_SIDE;
 }
 
 /********************************************************
-* Function name: CGAL_Construct_Polygon
+* Function name: HGP_Construct_Polygon
 * Description: Construct a CGAL polygon from a list of 2D points and check if it is simple.
 * Parameters:
 * @py: A list of 2D points (Vector2d1) that represent the vertices of the polygon.
@@ -136,7 +136,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Is_Point_OutCGALPolygon(const Vector2d &p,
 * - true if the constructed polygon is simple (has no self-intersections).
 * - false if the constructed polygon is not simple (has self-intersections).
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_Construct_Polygon(const Vector2d1 &py, Polygon_2 &poly) {
+extern "C" LIBHGP_EXPORT bool HGP_Construct_Polygon(const Vector2d1 &py, Polygon_2 &poly) {
     poly.clear();
     for (auto i : py)
         poly.push_back(Point_2(i[0], i[1]));
@@ -144,7 +144,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_Construct_Polygon(const Vector2d1 &py, Polygo
 }
 
 /********************************************************
-* Function name: CGAL_Construct_InOutSide_Polygon
+* Function name: HGP_Construct_InOutSide_Polygon
 * Description: Construct a CGAL polygon from a list of 2D points, check if it is simple,
 * and determine if two points are inside or outside the polygon.
 * Parameters:
@@ -156,52 +156,52 @@ extern "C" LIBHGP_EXPORT bool CGAL_Construct_Polygon(const Vector2d1 &py, Polygo
 * Return:- true if the polygon is successfully constructed, is simple, and points 'p' and 'q' are checked; - false if the polygon construction fails or if it is not simple.
 *********************************************************/
 extern "C" LIBHGP_EXPORT bool
-CGAL_Construct_InOutSide_Polygon(const Vector2d1 &py, const Vector2d &p, const Vector2d &q, bool &isPInside,
+HGP_Construct_InOutSide_Polygon(const Vector2d1 &py, const Vector2d &p, const Vector2d &q, bool &isPInside,
                                  bool &isQInside) {
     Polygon_2 poly = Polygon2D(py);
     if (!poly.is_simple()) return false;
 
-    isPInside = CGAL_2D_Is_Point_OutCGALPolygon(p, poly);
-    isQInside = CGAL_2D_Is_Point_OutCGALPolygon(q, poly);
+    isPInside = HGP_2D_Is_Point_OutCGALPolygon(p, poly);
+    isQInside = HGP_2D_Is_Point_OutCGALPolygon(q, poly);
     return true;
 }
 
 /********************************************************
-* Function name: CGAL_2D_Location_Point_Polygon
+* Function name: HGP_2D_Location_Point_Polygon
 * Description: Check the location of a 2D point relative to a CGAL polygon.
 * Parameters:
 * @p: The 2D point (Vector2d) to be checked for its location.
 * @py: A list of 2D points (Vector2d1) that represent the vertices of the CGAL polygon.
 * Return: - true if the point 'p' is located inside the polygon (bounded side). - false if the point 'p' is located outside the polygon (unbounded side).
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Location_Point_Polygon(const Vector2d & p, const Vector2d1 & py) {
+extern "C" LIBHGP_EXPORT bool HGP_2D_Location_Point_Polygon(const Vector2d & p, const Vector2d1 & py) {
 	Polygon_2 poly = Polygon2D(py);
 
     return poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_BOUNDED_SIDE;
 }
 
 /********************************************************
-* Function name: CGAL_2D_Is_Point_OutPolygon
+* Function name: HGP_2D_Is_Point_OutPolygon
 * Description: Check if a 2D point is outside a CGAL polygon.
 * Parameters:
 * @p: The 2D point (Vector2d) to be checked for its location.
 * @py: A list of 2D points (Vector2d1) that represent the vertices of the CGAL polygon.
 * Return: - true if the point 'p' is located outside the polygon (unbounded side). - false if the point 'p' is located inside the polygon (bounded side).
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Is_Point_OutPolygon(Vector2d p, Vector2d1 py) {
+extern "C" LIBHGP_EXPORT bool HGP_2D_Is_Point_OutPolygon(Vector2d p, Vector2d1 py) {
     Polygon_2 poly = Polygon2D(py);
     return poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_UNBOUNDED_SIDE;
 }
 
 /********************************************************
-* Function name: CGAL_2D_Location_Points_Polygon
+* Function name: HGP_2D_Location_Points_Polygon
 * Description: Check if a list of 2D points are all located inside a CGAL polygon.
 * Parameters:
 * @ps: A list of 2D points (Vector2d1) to be checked for their locations.
 * @py: A list of 2D points (Vector2d1) that represent the vertices of the CGAL polygon.
 * Return: - true if all points in the list 'ps' are located inside the polygon (bounded side). - false if at least one point in the list 'ps' is located outside the polygon (unbounded side).
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &ps,
+extern "C" LIBHGP_EXPORT bool HGP_2D_Location_Points_Polygon(const Vector2d1 &ps,
                                                                       const Vector2d1 &py) {
 	Polygon_2 poly = Polygon2D(py);
 
@@ -213,7 +213,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &p
 }
 
 /********************************************************
-* Function name: CGAL_2D_Polygon_Dart_Sampling
+* Function name: HGP_2D_Polygon_Dart_Sampling
 * Description: Sample points inside a CGAL polygon using the dart throwing algorithm.
 * Parameters:
 * @py: A list of 2D points (Vector2d1) representing the vertices of the CGAL polygon.
@@ -222,9 +222,9 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Location_Points_Polygon(const Vector2d1 &p
 * @total_iter: The maximum number of iterations to attempt for point sampling.
 * Return: This function doesn't return a value, but it populates the 'sampling_points' list with the sampled points.
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1 & py, const double& d, Vector2d1 & sampling_points, const int& total_iter)
+extern "C" LIBHGP_EXPORT void HGP_2D_Polygon_Dart_Sampling(const Vector2d1 & py, const double& d, Vector2d1 & sampling_points, const int& total_iter)
 {
-	Functs::MAssert(d>0&&d<1.0,"CGAL_2D_Polygon_Dart_Sampling if (!(d > 0 && d < 1.0))");
+	Functs::MAssert(d>0&&d<1.0,"HGP_2D_Polygon_Dart_Sampling if (!(d > 0 && d < 1.0))");
 
 	Polygon_2 poly = Polygon2D(py);
 
@@ -233,7 +233,7 @@ extern "C" LIBHGP_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1 & py
 	double xmax = poly.bbox().xmax();
 	double ymax = poly.bbox().ymax();
 
-	double diagonal_length = CGAL_2D_Distance_Point_Point(Vector2d(xmin,ymin), Vector2d(xmax,ymax));
+	double diagonal_length = HGP_2D_Distance_Point_Point(Vector2d(xmin,ymin), Vector2d(xmax,ymax));
 	double minimal_d = d * diagonal_length;
 
 	int run = 0;
@@ -251,7 +251,7 @@ extern "C" LIBHGP_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1 & py
 		{
 			double distance = CGAL_IA_MAX_DOUBLE;
 			for (int i = 0; i < insert_points.size(); i++)
-				distance = std::min(distance, CGAL_2D_Distance_Point_Point(insert_points[i], Vector2d(x, y)));
+				distance = std::min(distance, HGP_2D_Distance_Point_Point(insert_points[i], Vector2d(x, y)));
 
 			if (distance > minimal_d)
 			{
@@ -265,26 +265,26 @@ extern "C" LIBHGP_EXPORT void CGAL_2D_Polygon_Dart_Sampling(const Vector2d1 & py
 	{
 		double distance = CGAL_IA_MAX_DOUBLE;
 		for (int j = 0; j < py.size(); j++)
-			distance = std::min(distance, CGAL_2D_Distance_Point_Point(py[j], insert_points[i]));
+			distance = std::min(distance, HGP_2D_Distance_Point_Point(py[j], insert_points[i]));
 		if (distance > d / 2.0)
 			sampling_points.push_back(insert_points[i]);
 	}
 }
 
-extern "C" LIBHGP_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C1(const Vector2d1& py, const double& d)
+extern "C" LIBHGP_EXPORT Vector2d1 HGP_2D_Polygon_Regular_Sampling_C1(const Vector2d1& py, const double& d)
 {
 	VectorPI1 neighbors;
-	return CGAL_2D_Polygon_Regular_Sampling_C3(py, d, neighbors, false);
+	return HGP_2D_Polygon_Regular_Sampling_C3(py, d, neighbors, false);
 }
 
 
-extern "C" LIBHGP_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C2(const Vector2d1& py, const double& d, VectorPI1& neighbors)
+extern "C" LIBHGP_EXPORT Vector2d1 HGP_2D_Polygon_Regular_Sampling_C2(const Vector2d1& py, const double& d, VectorPI1& neighbors)
 {
-	return CGAL_2D_Polygon_Regular_Sampling_C3(py, d, neighbors, true);
+	return HGP_2D_Polygon_Regular_Sampling_C3(py, d, neighbors, true);
 }
 
 /********************************************************
-* Function name: CGAL_2D_Polygon_Regular_Sampling_C3
+* Function name: HGP_2D_Polygon_Regular_Sampling_C3
 * Description: Computes a regular sampling of a 2D polygon.
 * Parameters:
 * @py: A vector of 2D points representing a polygon.
@@ -293,12 +293,12 @@ extern "C" LIBHGP_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C2(const Vec
 * @compute_neighbors: A flag to indicate whether to compute neighbor relationships (optional).
 * Return: A vector of regularly sampled 2D points within the polygon.
 * *********************************************************/
-extern "C" LIBHGP_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C3(const Vector2d1& py, const double& d, VectorPI1& neighbors, const bool& compute_neighbors)
+extern "C" LIBHGP_EXPORT Vector2d1 HGP_2D_Polygon_Regular_Sampling_C3(const Vector2d1& py, const double& d, VectorPI1& neighbors, const bool& compute_neighbors)
 {
 	//check input
-	Functs::MAssert(d > 0 && d < 1.0, "CGAL_2D_Polygon_Regular_Sampling_C1 if (!(d > 0 && d < 1.0))");
-	Functs::MAssert(py.size() >= 3, "CGAL_2D_Polygon_Regular_Sampling_C1: py.size()>=3");
-	Functs::MAssert(CGAL_2D_Polygon_Area(py) > 0.0, "CGAL_2D_Polygon_Regular_Sampling_C1: CGAL_2D_Polygon_Area(py)>0.0");
+	Functs::MAssert(d > 0 && d < 1.0, "HGP_2D_Polygon_Regular_Sampling_C1 if (!(d > 0 && d < 1.0))");
+	Functs::MAssert(py.size() >= 3, "HGP_2D_Polygon_Regular_Sampling_C1: py.size()>=3");
+	Functs::MAssert(HGP_2D_Polygon_Area(py) > 0.0, "HGP_2D_Polygon_Regular_Sampling_C1: HGP_2D_Polygon_Area(py)>0.0");
 
 	Polygon_2 poly = Polygon2D(py);
 
@@ -351,7 +351,7 @@ extern "C" LIBHGP_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C3(const Vec
 				{
 					int index_0 = xyb[xy2i[0]][xy2i[1]];
 					int index_1 = xyb[v2i[0]][v2i[1]];
-					if (!CGAL_2D_Intersection_Segment_Polygon(sampling_points[index_0], sampling_points[index_1], py))
+					if (!HGP_2D_Intersection_Segment_Polygon(sampling_points[index_0], sampling_points[index_1], py))
 					{
 						neighbors.push_back(std::pair<int, int>(index_0, index_1));
 					}
@@ -378,22 +378,22 @@ extern "C" LIBHGP_EXPORT Vector2d1 CGAL_2D_Polygon_Regular_Sampling_C3(const Vec
 }
 
 
-extern "C" LIBHGP_EXPORT Vector2d1 CGAL_2D_Square_Regular_Sampling_C1(const double& d)
+extern "C" LIBHGP_EXPORT Vector2d1 HGP_2D_Square_Regular_Sampling_C1(const double& d)
 {
-	return CGAL_2D_Polygon_Regular_Sampling_C1(Functs::GetUnitSquare(), d);
+	return HGP_2D_Polygon_Regular_Sampling_C1(Functs::GetUnitSquare(), d);
 }
-extern "C" LIBHGP_EXPORT Vector2d1 CGAL_2D_Square_Regular_Sampling_C2(const double& d, VectorPI1& neighbors)
+extern "C" LIBHGP_EXPORT Vector2d1 HGP_2D_Square_Regular_Sampling_C2(const double& d, VectorPI1& neighbors)
 {
-	return CGAL_2D_Polygon_Regular_Sampling_C2(Functs::GetUnitSquare(), d, neighbors);
+	return HGP_2D_Polygon_Regular_Sampling_C2(Functs::GetUnitSquare(), d, neighbors);
 }
 
-extern "C" LIBHGP_EXPORT Vector2d1 CGAL_2D_Square_Regular_Sampling_C3(const double& d, VectorPI1& neighbors, const bool& compute_neighbors)
+extern "C" LIBHGP_EXPORT Vector2d1 HGP_2D_Square_Regular_Sampling_C3(const double& d, VectorPI1& neighbors, const bool& compute_neighbors)
 {
-	return CGAL_2D_Polygon_Regular_Sampling_C3(Functs::GetUnitSquare(), d, neighbors, compute_neighbors);
+	return HGP_2D_Polygon_Regular_Sampling_C3(Functs::GetUnitSquare(), d, neighbors, compute_neighbors);
 }
 
 /********************************************************
-* Function name: CGAL_2D_Intersection_Segment_Segment
+* Function name: HGP_2D_Intersection_Segment_Segment
 * Description: Computes the intersection point between two line segments in 2D, if it exists.
 * Parameters:
 * @s_0_s: Starting point of the first line segment.
@@ -403,7 +403,7 @@ extern "C" LIBHGP_EXPORT Vector2d1 CGAL_2D_Square_Regular_Sampling_C3(const doub
 * @inter: If an intersection point exists, it is stored in this vector (x, y).
 * Return: True if an intersection point exists, false otherwise.
 * *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Segment_Segment
+extern "C" LIBHGP_EXPORT bool HGP_2D_Intersection_Segment_Segment
         (const Vector2d & s_0_s, const Vector2d & s_0_e, const Vector2d & s_1_s, const Vector2d & s_1_e, Vector2d &inter) {
     CGAL::Object result = intersection(Segment_2(Point_2(s_0_s[0], s_0_s[1]), Point_2(s_0_e[0], s_0_e[1])),
                                        Segment_2(Point_2(s_1_s[0], s_1_s[1]), Point_2(s_1_e[0], s_1_e[1])));
@@ -417,7 +417,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Segment_Segment
 }
 
 /********************************************************
-* Function name: CGAL_2D_Intersection_Ray_Segment
+* Function name: HGP_2D_Intersection_Ray_Segment
 * Description: Computes the intersection point between a ray and a line segment in 2D, if it exists.
 * Parameters:
 * @s_0_s: Starting point of the ray.
@@ -427,12 +427,12 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Segment_Segment
 * @inter: If an intersection point exists, it is stored in this vector (x, y).
 * Return: True if an intersection point exists, false otherwise.
 * *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Ray_Segment
+extern "C" LIBHGP_EXPORT bool HGP_2D_Intersection_Ray_Segment
         (const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter) {
     Point_2 st(s_0_s[0], s_0_s[1]);
 
-    /*std::cerr << "CGAL_2D_Intersection_Ray_Segment " << st << std::endl;
-    std::cerr << "CGAL_2D_Intersection_Ray_Segment " << s_0_e[0] << " " << s_0_e[1] << std::endl;
+    /*std::cerr << "HGP_2D_Intersection_Ray_Segment " << st << std::endl;
+    std::cerr << "HGP_2D_Intersection_Ray_Segment " << s_0_e[0] << " " << s_0_e[1] << std::endl;
     std::cerr << "Ray_Segment " << s_1_s[0] << " " << s_1_s[1] << std::endl;
     std::cerr << "Ray_Segment " << s_1_e[0] << " " << s_1_e[1] << std::endl;*/
 
@@ -478,7 +478,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Ray_Segment
 }
 
 /********************************************************
-* Function name: CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints
+* Function name: HGP_2D_Intersection_Ray_Segment_Ignore_Endpoints
 * Description: Computes the intersection point between a ray and a line segment in 2D, excluding endpoints of the segment.
 * Parameters:
 * @s_0_s: Starting point of the ray.
@@ -488,7 +488,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Ray_Segment
 * @inter: If an intersection point exists and is not an endpoint of the segment, it is stored in this vector (x, y).
 * Return: True if a valid intersection point exists, false otherwise.
 * *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints
+extern "C" LIBHGP_EXPORT bool HGP_2D_Intersection_Ray_Segment_Ignore_Endpoints
         (const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter) {
     Point_2 st(s_0_s[0], s_0_s[1]);
     Vector_2 dir(s_0_e[0], s_0_e[1]);
@@ -514,7 +514,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints
 
 
 /********************************************************
-* Function name: CGAL_2D_Intersection_Ray_Polygon
+* Function name: HGP_2D_Intersection_Ray_Polygon
 * Description: Determines if a ray intersects a 2D polygon and, if so, returns the intersection point.
 * Parameters:
 * @r_s: Starting point of the ray.
@@ -523,7 +523,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints
 * @pnt: If an intersection point exists, it is stored in this vector (x, y).
 * Return: True if the ray intersects the polygon and a valid intersection point is found, false otherwise.
 * *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Ray_Polygon(
+extern "C" LIBHGP_EXPORT bool HGP_2D_Intersection_Ray_Polygon(
         const Vector2d &r_s,
         const Vector2d &r_d,
         const Vector2d1 &poly,
@@ -532,7 +532,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Ray_Polygon(
     for (int i = 0; i < poly.size(); i++) {
         Vector2d inter;
         int ii = (static_cast<int>(i) + 1) % poly.size();
-        if (CGAL_2D_Intersection_Ray_Segment(r_s, r_d, poly[i], poly[ii], inter)) {
+        if (HGP_2D_Intersection_Ray_Segment(r_s, r_d, poly[i], poly[ii], inter)) {
             ++nIntersect;
             return true;
         }
@@ -541,7 +541,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Ray_Polygon(
 }
 
 /********************************************************
-* Function name: CGAL_2D_Intersection_Line_Line
+* Function name: HGP_2D_Intersection_Line_Line
 * Description: Determines if two 2D lines intersect and, if so, returns the intersection point.
 * Parameters:
 * @s_0_s: Starting point of the first line.
@@ -551,7 +551,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Ray_Polygon(
 * @inter: If lines intersect, the intersection point (x, y) is stored in this vector.
 * Return: True if the lines intersect and a valid intersection point is found, false otherwise.
 * *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Line_Line
+extern "C" LIBHGP_EXPORT bool HGP_2D_Intersection_Line_Line
         (const Vector2d &s_0_s, const Vector2d &s_0_e, const Vector2d &s_1_s, const Vector2d &s_1_e, Vector2d &inter) {
     CGAL::Object result = intersection(Line_2(Point_2(s_0_s[0], s_0_s[1]), Point_2(s_0_e[0], s_0_e[1])),
                                        Line_2(Point_2(s_1_s[0], s_1_s[1]), Point_2(s_1_e[0], s_1_e[1])));
@@ -565,7 +565,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Line_Line
 }
 
 /********************************************************
-* Function name: CGAL_2D_Intersection_Segment_Line
+* Function name: HGP_2D_Intersection_Segment_Line
 * Description: Determines if a 2D line segment and a 2D line intersect, and if so, returns the intersection point.
 * Parameters:
 * @s_s: Starting point of the line segment.
@@ -575,7 +575,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Line_Line
 * @inter: If the line segment and line intersect, the intersection point (x, y) is stored in this vector.
 * Return: True if they intersect and a valid intersection point is found, false otherwise.
 * *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Segment_Line(const Vector2d & s_s, const Vector2d & s_e, const Vector2d & l_s, const Vector2d & l_e, Vector2d & inter)
+extern "C" LIBHGP_EXPORT bool HGP_2D_Intersection_Segment_Line(const Vector2d & s_s, const Vector2d & s_e, const Vector2d & l_s, const Vector2d & l_e, Vector2d & inter)
 {
 	CGAL::Object result = CGAL::intersection(Segment_2(Point_2(s_s[0], s_s[1]), Point_2(s_e[0], s_e[1])),
 		Line_2(Point_2(l_s[0], l_s[1]), Point_2(l_e[0], l_e[1])));
@@ -593,7 +593,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Segment_Line(const Vector2d &
 }
 
 /********************************************************
-* Function name: CGAL_2D_Intersection_Segment_Polygon
+* Function name: HGP_2D_Intersection_Segment_Polygon
 * Description: Determines if a 2D line segment intersects with a 2D polygon by checking for segment-polygon intersection.
 * Parameters:
 * @s_s: Starting point of the line segment.
@@ -602,21 +602,21 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Segment_Line(const Vector2d &
 * Return: True if the line segment intersects with the polygon, false otherwise.
 * *********************************************************/
 extern "C" LIBHGP_EXPORT bool
-CGAL_2D_Intersection_Segment_Polygon(const Vector2d & s_s, const Vector2d & s_e, const Vector2d1 &p) {
+HGP_2D_Intersection_Segment_Polygon(const Vector2d & s_s, const Vector2d & s_e, const Vector2d1 &p) {
     for (int i = 0; i < p.size(); i++) {
         Vector2d inter;
         int ii = (static_cast<int>(i) + 1) % p.size();
-        if (CGAL_2D_Intersection_Segment_Segment(s_s, s_e, p[i], p[ii], inter)) {
+        if (HGP_2D_Intersection_Segment_Segment(s_s, s_e, p[i], p[ii], inter)) {
             return true;
         }
     }
     return false;
 }
 
-//extern "C" LIBHGP_EXPORT bool CGAL_2D_Intersection_Polygon_Polygon(const Vector2d1 & p1, const Vector2d1 & p2);
+//extern "C" LIBHGP_EXPORT bool HGP_2D_Intersection_Polygon_Polygon(const Vector2d1 & p1, const Vector2d1 & p2);
 
 extern "C" LIBHGP_EXPORT bool
-CGAL_2D_Intersection_Polygon_Polygon(const Vector2d1 & p1, const Vector2d1 & p2) {
+HGP_2D_Intersection_Polygon_Polygon(const Vector2d1 & p1, const Vector2d1 & p2) {
 
 	Polygon_2 poly1 = Polygon2D(p1);
 	Polygon_2 poly2 = Polygon2D(p2);
@@ -625,20 +625,20 @@ CGAL_2D_Intersection_Polygon_Polygon(const Vector2d1 & p1, const Vector2d1 & p2)
 }
 
 
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Polygon_Is_Clockwise_Oriented(const Vector2d1 &ps) {
+extern "C" LIBHGP_EXPORT bool HGP_2D_Polygon_Is_Clockwise_Oriented(const Vector2d1 &ps) {
 	Polygon_2 poly = Polygon2D(ps);
     return poly.is_clockwise_oriented();
 }
 
 /********************************************************
-* Function name: CGAL_2D_Two_Polygons_Intersection
+* Function name: HGP_2D_Two_Polygons_Intersection
 * Description: Calculates the intersection area of two 2D polygons.
 * Parameters:
 * @poly_0: First polygon defined by a vector of 2D points.
 * @poly_1: Second polygon defined by a vector of 2D points.
 * Return: The intersection area of the two polygons.
 * *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d1 &poly_0,
+extern "C" LIBHGP_EXPORT double HGP_2D_Two_Polygons_Intersection(const Vector2d1 &poly_0,
                                                                           const Vector2d1 &poly_1) {
     double scale = 1000000.0;
 
@@ -670,7 +670,7 @@ extern "C" LIBHGP_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d
 }
 
 /********************************************************
-* Function name: CGAL_2D_Two_Polygons_Union
+* Function name: HGP_2D_Two_Polygons_Union
 * Description: Calculates the union area of two 2D polygons and provides the resulting polygons.
 * Parameters:
 * @poly_0: First polygon defined by a vector of 2D points.
@@ -679,7 +679,7 @@ extern "C" LIBHGP_EXPORT double CGAL_2D_Two_Polygons_Intersection(const Vector2d
 * Return: The union area of the two polygons.
 * *********************************************************/
 extern "C" LIBHGP_EXPORT double
-CGAL_2D_Two_Polygons_Union(const Vector2d1& poly_0, const Vector2d1 & poly_1, Vector2d2  &inter_polygons) {
+HGP_2D_Two_Polygons_Union(const Vector2d1& poly_0, const Vector2d1 & poly_1, Vector2d2  &inter_polygons) {
     double scale = 1000000.0;
 
     ClipperLib::Paths subj(1);
@@ -721,14 +721,14 @@ CGAL_2D_Two_Polygons_Union(const Vector2d1& poly_0, const Vector2d1 & poly_1, Ve
 }
 
 /********************************************************
-* Function name: CGAL_2D_Polygon_One_Offsets
+* Function name: HGP_2D_Polygon_One_Offsets
 * Description: Computes one-side offsets of a 2D polygon.
 * Parameters:
 * @poly: Input polygon defined by a vector of 2D points.
 * @d: Offset distance.
 * @offset_polys: Output parameter for resulting offset polygons.
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_2D_Polygon_One_Offsets(const Vector2d1 &poly, const double& d, Vector2d2  &offset_polys) {
+extern "C" LIBHGP_EXPORT void HGP_2D_Polygon_One_Offsets(const Vector2d1 &poly, const double& d, Vector2d2  &offset_polys) {
     if (!(poly.size() > 0)) return;
 
     double scale = 1000000.0;
@@ -776,14 +776,14 @@ extern "C" LIBHGP_EXPORT void CGAL_2D_Polygon_One_Offsets(const Vector2d1 &poly,
 
 
 /********************************************************
-* Function name: CGAL_2D_Polygons_One_Offsets
+* Function name: HGP_2D_Polygons_One_Offsets
 * Description: Computes one-side offsets of a collection of 2D polygons.
 * Parameters:
 * @polys: Input polygons defined by a vector of vector of 2D points.
 * @d: Offset distance.
 * @offset_polys: Output parameter for resulting offset polygons.
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_2D_Polygons_One_Offsets(const Vector2d2 & polys, const double& d, Vector2d2 & offset_polys)
+extern "C" LIBHGP_EXPORT void HGP_2D_Polygons_One_Offsets(const Vector2d2 & polys, const double& d, Vector2d2 & offset_polys)
 {
 	if (!(polys.size() > 0 && polys[0].size() > 0)) return;
 
@@ -837,28 +837,28 @@ extern "C" LIBHGP_EXPORT void CGAL_2D_Polygons_One_Offsets(const Vector2d2 & pol
 	}
 }
 
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Polygons_Simple(const Vector2d2 & poly)
+extern "C" LIBHGP_EXPORT bool HGP_2D_Polygons_Simple(const Vector2d2 & poly)
 {
 	for (auto& py : poly)
-		if (!CGAL_2D_Polygon_Simple(py))
+		if (!HGP_2D_Polygon_Simple(py))
 			return false;
 	return true;
 }
 
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Polygon_Simple(const Vector2d1 & py)
+extern "C" LIBHGP_EXPORT bool HGP_2D_Polygon_Simple(const Vector2d1 & py)
 {
 	Polygon_2 poly = Polygon2D(py);
 	return poly.is_simple();
 }
 
 /********************************************************
-* Function name: CGAL_2D_Polygon_Simple_Inter
+* Function name: HGP_2D_Polygon_Simple_Inter
 * Description: Checks if a 2D polygon is simple (non-self-intersecting) by testing all non-adjacent edge pairs for intersections.
 * Parameters:
 * @poly: Input polygon defined by a vector of 2D points.
 * Return: True if the polygon is simple; false otherwise.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Polygon_Simple_Inter(const Vector2d1 & poly)
+extern "C" LIBHGP_EXPORT bool HGP_2D_Polygon_Simple_Inter(const Vector2d1 & poly)
 {
 	for (int i = 0; i < poly.size(); i++)
 	{
@@ -873,7 +873,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Polygon_Simple_Inter(const Vector2d1 & pol
 			if (i != j && i != (j + 1) % poly.size() && (i + 1) % poly.size() != j && (i + 1) % poly.size() != (j + 1) % poly.size())
 			{
 				Vector2d inter;
-				bool b = CGAL_2D_Intersection_Segment_Segment(s_0, e_0, s_1, e_1, inter);
+				bool b = HGP_2D_Intersection_Segment_Segment(s_0, e_0, s_1, e_1, inter);
 
 				if (b)
 				{
@@ -886,13 +886,13 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Polygon_Simple_Inter(const Vector2d1 & pol
 }
 
 /********************************************************
-* Function name: CGAL_2D_Convex_Hulls
+* Function name: HGP_2D_Convex_Hulls
 * Description: Computes the convex hull of a set of 2D points using CGAL's convex_hull_2 algorithm.
 * Parameters:
 * @vec: Input vector of 2D points.
 * @hull_points: Output vector to store the points on the convex hull.
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_2D_Convex_Hulls(const Vector2d1 & vec, Vector2d1 & hull_points)
+extern "C" LIBHGP_EXPORT void HGP_2D_Convex_Hulls(const Vector2d1 & vec, Vector2d1 & hull_points)
 {
 	std::vector<Point_2> points;
 	std::vector<Point_2> results;
@@ -908,7 +908,7 @@ extern "C" LIBHGP_EXPORT void CGAL_2D_Convex_Hulls(const Vector2d1 & vec, Vector
 }
 
 /********************************************************
-* Function name: CGAL_2D_OBB_Box
+* Function name: HGP_2D_OBB_Box
 * Description: Computes the oriented bounding box (OBB) of a set of 2D points.
 * Parameters:
 * @vec: Input vector of 2D points.
@@ -918,7 +918,7 @@ extern "C" LIBHGP_EXPORT void CGAL_2D_Convex_Hulls(const Vector2d1 & vec, Vector
 * @extent_0: Output variable to store the extent along the first axis.
 * @extent_1: Output variable to store the extent along the second axis.
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_2D_OBB_Box(const Vector2d1 & vec, Vector2d & center, Vector2d & axis_0, Vector2d & axis_1, double& entent_0, double& entent_1)
+extern "C" LIBHGP_EXPORT void HGP_2D_OBB_Box(const Vector2d1 & vec, Vector2d & center, Vector2d & axis_0, Vector2d & axis_1, double& entent_0, double& entent_1)
 {
 	gte::Vector2<double>* points = new gte::Vector2<double>[vec.size()];
 
@@ -942,7 +942,7 @@ extern "C" LIBHGP_EXPORT void CGAL_2D_OBB_Box(const Vector2d1 & vec, Vector2d & 
 }
 
 extern "C" LIBHGP_EXPORT void
-CGAL_Decompose_Polyline(const Vector2d1 &polyline, const double& threshold, Vector1i1& result) {
+HGP_Decompose_Polyline(const Vector2d1 &polyline, const double& threshold, Vector1i1& result) {
     for (auto &p : polyline) 
     {
 
@@ -950,7 +950,7 @@ CGAL_Decompose_Polyline(const Vector2d1 &polyline, const double& threshold, Vect
 }
 
 /********************************************************
-* Function name: CGAL_Identify_Polycut_NotExtend
+* Function name: HGP_Identify_Polycut_NotExtend
 * Description: Identifies if a line segment does not extend into a polygon.
 * Parameters:
 * @polygon: Input vector representing the polygon vertices.
@@ -959,7 +959,7 @@ CGAL_Decompose_Polyline(const Vector2d1 &polyline, const double& threshold, Vect
 * Returns: True if the segment does not extend into the polygon, false otherwise.
 *********************************************************/
 // This one is used to intersect a polygon with a segment
-extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_NotExtend(
+extern "C" LIBHGP_EXPORT bool HGP_Identify_Polycut_NotExtend(
         const Vector2d1 &polygon,
         const Vector2d &s, const Vector2d &e) {
     const Vector2d dir = normalize(e - s);
@@ -979,7 +979,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_NotExtend(
             continue;
         }
         // 2. if segment point is on the end-points of segment, then ignore it as well
-        if (CGAL_2D_Intersection_Ray_Segment_Ignore_Endpoints(s, dir, pop1, pop2, inter1)) {
+        if (HGP_2D_Intersection_Ray_Segment_Ignore_Endpoints(s, dir, pop1, pop2, inter1)) {
             //const Vector2d intDir(inter1 - s);
             //if (glm::abs(glm::dot(intDir, dir)) < 0.99)
             if (!Functs::IsAlmostZero(length(inter1 - s)) &&
@@ -1027,21 +1027,21 @@ void OutputRectangle(const char* path, const Vector2d2  &points) {
 }
 
 /********************************************************
-* Function name: CGAL_Get_Angle_Kerf_Offset_Tan
+* Function name: HGP_Get_Angle_Kerf_Offset_Tan
 * Description: Calculate the tangent of the angle between two 2D vectors.
 * Parameters:
 * @a: First 2D vector.
 * @b: Second 2D vector.
 * Return: The tangent of the angle between the vectors.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_Get_Angle_Kerf_Offset_Tan(const Vector2d &a, const Vector2d &b) {
+extern "C" LIBHGP_EXPORT double HGP_Get_Angle_Kerf_Offset_Tan(const Vector2d &a, const Vector2d &b) {
     auto na = normalize(a);
     auto nb = normalize(b);
     return glm::tan(glm::acos(glm::abs(dot(na, nb))));
 }
 
 /********************************************************
-* Function name: CGAL_2D_Projection_Point_Segment
+* Function name: HGP_2D_Projection_Point_Segment
 * Description: Project a 2D point onto a line segment defined by two endpoints.
 * Parameters:
 * @p: The 2D point to be projected.
@@ -1049,14 +1049,14 @@ extern "C" LIBHGP_EXPORT double CGAL_Get_Angle_Kerf_Offset_Tan(const Vector2d &a
 * @e: The ending endpoint of the line segment.
 * Return: Vector2d representing the projected point on the line segment.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector2d CGAL_2D_Projection_Point_Segment(const Vector2d & p, const Vector2d & s, const Vector2d & e)
+extern "C" LIBHGP_EXPORT Vector2d HGP_2D_Projection_Point_Segment(const Vector2d & p, const Vector2d & s, const Vector2d & e)
 {
 	Line_2 l(VectorPoint2d(s), VectorPoint2d(e));
 	Point_2 m_p = l.projection(VectorPoint2d(p));
 
-	double d_m_s = CGAL_2D_Distance_Point_Point(Vector2d(m_p[0], m_p[1]), s);
-	double d_m_e = CGAL_2D_Distance_Point_Point(Vector2d(m_p[0], m_p[1]), e);
-	double d_s_e = CGAL_2D_Distance_Point_Point(s,e);
+	double d_m_s = HGP_2D_Distance_Point_Point(Vector2d(m_p[0], m_p[1]), s);
+	double d_m_e = HGP_2D_Distance_Point_Point(Vector2d(m_p[0], m_p[1]), e);
+	double d_s_e = HGP_2D_Distance_Point_Point(s,e);
 
 	if (d_m_s >= d_s_e) return e;
 	if (d_m_e >= d_s_e) return s;
@@ -1064,14 +1064,14 @@ extern "C" LIBHGP_EXPORT Vector2d CGAL_2D_Projection_Point_Segment(const Vector2
 }
 
 /********************************************************
-* Function name: CGAL_2D_Detect_Polygon_Inside_C1
+* Function name: HGP_2D_Detect_Polygon_Inside_C1
 * Description: Detect if a 2D point is inside or near the boundary of a polygon.
 * Parameters:
 * @outside_py: A vector of 2D points defining the outer boundary of the polygon.
 * @p: The 2D point to be tested.
 * Return: A boolean indicating if the point is inside or near the boundary of the polygon.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C1(const Vector2d1 & outside_py, const Vector2d & p)
+extern "C" LIBHGP_EXPORT bool HGP_2D_Detect_Polygon_Inside_C1(const Vector2d1 & outside_py, const Vector2d & p)
 {
 	Vector2d outside_max, outside_min;
     Functs::GetBoundingBox(outside_py, outside_min, outside_max);
@@ -1084,7 +1084,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C1(const Vector2d1 &
 	Polygon_2 poly = Polygon2D(outside_py);
 	if (poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_UNBOUNDED_SIDE)
 	{
-		double dis = CGAL_2D_Distance_Point_Polygon(p, outside_py);
+		double dis = HGP_2D_Distance_Point_Polygon(p, outside_py);
 		if (dis > 0.1)
 			return false;
 	}
@@ -1093,14 +1093,14 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C1(const Vector2d1 &
 }
 
 /********************************************************
-* Function name: CGAL_2D_Detect_Polygon_Inside_C2
+* Function name: HGP_2D_Detect_Polygon_Inside_C2
 * Description: Detect if a set of 2D points are inside or near the boundary of a polygon.
 * Parameters:
 * @outside_py: A vector of 2D points defining the outer boundary of the polygon.
 * @inside_py: A vector of 2D points to be tested for being inside or near the polygon.
 * Return: A boolean indicating if all points are inside or near the boundary of the polygon.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C2(const Vector2d1 & outside_py, const Vector2d1 & inside_py)
+extern "C" LIBHGP_EXPORT bool HGP_2D_Detect_Polygon_Inside_C2(const Vector2d1 & outside_py, const Vector2d1 & inside_py)
 {
 	Vector2d outside_max, outside_min, inside_max, inside_min;
     Functs::GetBoundingBox(outside_py, outside_min, outside_max);
@@ -1119,7 +1119,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C2(const Vector2d1 &
 	{
 		if (poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_UNBOUNDED_SIDE)
 		{
-			double dis = CGAL_2D_Distance_Point_Polygon(p, outside_py);
+			double dis = HGP_2D_Distance_Point_Polygon(p, outside_py);
 			if (dis > 0.1)
 				return false;
 		}
@@ -1128,23 +1128,23 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C2(const Vector2d1 &
 }
 
 /********************************************************
-* Function name: CGAL_2D_Detect_Polygon_Inside_C3
+* Function name: HGP_2D_Detect_Polygon_Inside_C3
 * Description: Detect if a 2D point is inside or near the boundary of multiple polygons.
 * Parameters:
 * @outside_pys: A vector of vectors of 2D points, each defining the outer boundary of a polygon.
 * @p: A 2D point to be tested for being inside or near any of the polygons.
 * Return: A boolean indicating if the point is inside or near the boundary of any of the polygons.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C3(const Vector2d2 & outside_pys, const Vector2d & p)
+extern "C" LIBHGP_EXPORT bool HGP_2D_Detect_Polygon_Inside_C3(const Vector2d2 & outside_pys, const Vector2d & p)
 {
-	if (!CGAL_2D_Detect_Polygon_Inside_C1(outside_pys[0], p)) return false;
+	if (!HGP_2D_Detect_Polygon_Inside_C1(outside_pys[0], p)) return false;
 
 	for (int i = 1; i < outside_pys.size(); i++)
 	{
 		Polygon_2 poly = Polygon2D(outside_pys[i]);
 		if (poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_BOUNDED_SIDE)
 		{
-			double dis = CGAL_2D_Distance_Point_Polygon(p, outside_pys[i]);
+			double dis = HGP_2D_Distance_Point_Polygon(p, outside_pys[i]);
 			if (dis > 0.1)
 				return false;
 		}
@@ -1154,16 +1154,16 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C3(const Vector2d2 &
 }
 
 /********************************************************
-* Function name: CGAL_2D_Detect_Polygon_Inside_C4
+* Function name: HGP_2D_Detect_Polygon_Inside_C4
 * Description: Detect if a set of 2D points are inside or near the boundary of multiple polygons.
 * Parameters:
 * @outside_pys: A vector of vectors of 2D points, each defining the outer boundary of a polygon.
 * @inside_py: A vector of 2D points defining a polygon that should be inside or near the boundary of the outer polygons.
 * Return: A boolean indicating if the inner polygon is inside or near the boundary of any of the outer polygons.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C4(const Vector2d2 & outside_pys, const Vector2d1 & inside_py)
+extern "C" LIBHGP_EXPORT bool HGP_2D_Detect_Polygon_Inside_C4(const Vector2d2 & outside_pys, const Vector2d1 & inside_py)
 {
-	if (!CGAL_2D_Detect_Polygon_Inside_C2(outside_pys[0], inside_py)) return false;
+	if (!HGP_2D_Detect_Polygon_Inside_C2(outside_pys[0], inside_py)) return false;
 
 	for (int i = 1; i < outside_pys.size(); i++)
 	{
@@ -1173,7 +1173,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C4(const Vector2d2 &
 		{
 			if (poly.bounded_side(Point_2(p[0], p[1])) == CGAL::ON_BOUNDED_SIDE)
 			{
-				double dis = CGAL_2D_Distance_Point_Polygon(p, outside_pys[i]);
+				double dis = HGP_2D_Distance_Point_Polygon(p, outside_pys[i]);
 				if (dis > 0.1)
 					return false;
 			}
@@ -1183,11 +1183,11 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C4(const Vector2d2 &
 	return true;
 }
 
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C5(const Vector2d2 & outside_pys, const Vector2d2 & inside_pys)
+extern "C" LIBHGP_EXPORT bool HGP_2D_Detect_Polygon_Inside_C5(const Vector2d2 & outside_pys, const Vector2d2 & inside_pys)
 {
 	for (auto inside_py : inside_pys)
 	{
-		if (!CGAL_2D_Detect_Polygon_Inside_C4(outside_pys, inside_py))
+		if (!HGP_2D_Detect_Polygon_Inside_C4(outside_pys, inside_py))
 		{
 			return false;
 		}
@@ -1196,20 +1196,20 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Detect_Polygon_Inside_C5(const Vector2d2 &
 }
 
 /********************************************************
-* Function name: CGAL_2D_Distance_Polygon_Polygon
+* Function name: HGP_2D_Distance_Polygon_Polygon
 * Description: Calculate the minimum distance between two 2D polygons.
 * Parameters:
 * @poly_0: A vector of 2D points defining the first polygon.
 * @poly_1: A vector of 2D points defining the second polygon.
 * Return: The minimum distance between the two polygons.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Polygon_Polygon(const Vector2d1 & poly_0, const Vector2d1 & poly_1)
+extern "C" LIBHGP_EXPORT double HGP_2D_Distance_Polygon_Polygon(const Vector2d1 & poly_0, const Vector2d1 & poly_1)
 {
 	double min_d = 1000000000.0;
 	for (int i = 0; i < poly_0.size(); i++)
 	{
-		Vector2d v = CGAL_2D_Nearest_Point_Polygon_C1(poly_0[i], poly_1);
-		double l = CGAL_2D_Distance_Point_Point(poly_0[i], v);
+		Vector2d v = HGP_2D_Nearest_Point_Polygon_C1(poly_0[i], poly_1);
+		double l = HGP_2D_Distance_Point_Point(poly_0[i], v);
 		if (l < min_d)
 		{
 			min_d = l;
@@ -1219,21 +1219,21 @@ extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Polygon_Polygon(const Vector2d1
 }
 
 /********************************************************
-* Function name: CGAL_2D_Distance_Polygons_Polygons
+* Function name: HGP_2D_Distance_Polygons_Polygons
 * Description: Calculate the minimum distance between sets of 2D polygons.
 * Parameters:
 * @poly_0: A vector of vectors of 2D points defining the first set of polygons.
 * @poly_1: A vector of vectors of 2D points defining the second set of polygons.
 * Return: The minimum distance between the two sets of polygons.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Polygons_Polygons(const Vector2d2 & poly_0, const Vector2d2 & poly_1)
+extern "C" LIBHGP_EXPORT double HGP_2D_Distance_Polygons_Polygons(const Vector2d2 & poly_0, const Vector2d2 & poly_1)
 {
 	double min_d = 1000000000.0;
 	for (auto poly_ : poly_0)
 	{
 		for (auto poly__ : poly_1)
 		{
-			double l = CGAL_2D_Distance_Polygon_Polygon(poly_, poly__);
+			double l = HGP_2D_Distance_Polygon_Polygon(poly_, poly__);
 			if (l < min_d)
 			{
 				min_d = l;
@@ -1244,21 +1244,21 @@ extern "C" LIBHGP_EXPORT double CGAL_2D_Distance_Polygons_Polygons(const Vector2
 }
 
 /********************************************************
-* Function name: CGAL_2D_Nearest_Point_Polygon_C1
+* Function name: HGP_2D_Nearest_Point_Polygon_C1
 * Description: Find the nearest point on a 2D polygon to a given point.
 * Parameters:
 * @v: The 2D point for which the nearest point on the polygon is to be found.
 * @poly: A vector of 2D points defining the polygon.
 * Return: The nearest point on the polygon to the input point.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygon_C1(const Vector2d & v, const Vector2d1 & poly)
+extern "C" LIBHGP_EXPORT Vector2d HGP_2D_Nearest_Point_Polygon_C1(const Vector2d & v, const Vector2d1 & poly)
 {
 	double min_d = 1000000000.0;
 	int min_i = -1;
 
 	for (int i = 0; i < poly.size(); i++)
 	{
-		double l = CGAL_2D_Distance_Point_Segment(v, poly[i], poly[(i + 1) % poly.size()]);
+		double l = HGP_2D_Distance_Point_Segment(v, poly[i], poly[(i + 1) % poly.size()]);
 
 		if (l < min_d)
 		{
@@ -1267,11 +1267,11 @@ extern "C" LIBHGP_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygon_C1(const Vector2
 		}
 	}
 
-	return CGAL_2D_Projection_Point_Segment(v, poly[min_i], poly[(min_i + 1) % poly.size()]);
+	return HGP_2D_Projection_Point_Segment(v, poly[min_i], poly[(min_i + 1) % poly.size()]);
 }
 
 /********************************************************
-* Function name: CGAL_2D_Nearest_Point_Polygon_C2
+* Function name: HGP_2D_Nearest_Point_Polygon_C2
 * Description: Find the nearest point on a 2D polygon to a given point and return both the nearest point and the minimum distance.
 * Parameters:
 * @v: The 2D point for which the nearest point on the polygon is to be found.
@@ -1279,14 +1279,14 @@ extern "C" LIBHGP_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygon_C1(const Vector2
 * @p: The nearest point on the polygon to the input point.
 * @min_d: The minimum distance from the input point to the polygon.
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_2D_Nearest_Point_Polygon_C2(const Vector2d & v, const Vector2d1 & poly, Vector2d & p, double& min_d)
+extern "C" LIBHGP_EXPORT void HGP_2D_Nearest_Point_Polygon_C2(const Vector2d & v, const Vector2d1 & poly, Vector2d & p, double& min_d)
 {
 	min_d = 1000000000.0;
 	int min_i = -1;
 
 	for (int i = 0; i < poly.size(); i++)
 	{
-		double l = CGAL_2D_Distance_Point_Segment(v, poly[i], poly[(i + 1) % poly.size()]);
+		double l = HGP_2D_Distance_Point_Segment(v, poly[i], poly[(i + 1) % poly.size()]);
 
 		if (l < min_d)
 		{
@@ -1295,18 +1295,18 @@ extern "C" LIBHGP_EXPORT void CGAL_2D_Nearest_Point_Polygon_C2(const Vector2d & 
 		}
 	}
 
-    p= CGAL_2D_Projection_Point_Segment(v, poly[min_i], poly[(min_i + 1) % poly.size()]);
+    p= HGP_2D_Projection_Point_Segment(v, poly[min_i], poly[(min_i + 1) % poly.size()]);
 }
 
 /********************************************************
-* Function name: CGAL_2D_Nearest_Point_Polygons
+* Function name: HGP_2D_Nearest_Point_Polygons
 * Description: Find the nearest point on a collection of 2D polygons to a given point.
 * Parameters:
 * @v: The 2D point for which the nearest point on the polygons is to be found.
 * @polys: A vector of vectors of 2D points representing a collection of polygons.
 * Return: The nearest 2D point on any of the polygons to the input point.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygons(const Vector2d & v, const Vector2d2 & polys)
+extern "C" LIBHGP_EXPORT Vector2d HGP_2D_Nearest_Point_Polygons(const Vector2d & v, const Vector2d2 & polys)
 {
 	Vector2d result;
 	double min_d = 1000000000.0;
@@ -1314,7 +1314,7 @@ extern "C" LIBHGP_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygons(const Vector2d 
 	{
 		Vector2d p;
 		double p_d;
-		CGAL_2D_Nearest_Point_Polygon_C2(v, polys[i], p, p_d);
+		HGP_2D_Nearest_Point_Polygon_C2(v, polys[i], p, p_d);
 
 		if (p_d < min_d)
 		{
@@ -1326,39 +1326,39 @@ extern "C" LIBHGP_EXPORT Vector2d CGAL_2D_Nearest_Point_Polygons(const Vector2d 
 }
 
 /********************************************************
-* Function name: CGAL_2d_Polygon_Boundingbox
+* Function name: HGP_2d_Polygon_Boundingbox
 * Description: Compute the bounding box (axis-aligned) of a collection of 2D points.
 * Parameters:
 * @ps: A vector of 2D points for which the bounding box is to be computed.
 * @min_corner: A vector to store the minimum corner (bottom-left) of the bounding box.
 * @max_corner: A vector to store the maximum corner (top-right) of the bounding box.
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_2d_Polygon_Boundingbox(const Vector2d1 & ps, Vector2d & min_corner, Vector2d & max_corner)
+extern "C" LIBHGP_EXPORT void HGP_2d_Polygon_Boundingbox(const Vector2d1 & ps, Vector2d & min_corner, Vector2d & max_corner)
 {
     Functs::GetBoundingBox(ps, min_corner, max_corner);
 }
 
 /********************************************************
-* Function name: CGAL_2D_Polygon_Area
+* Function name: HGP_2D_Polygon_Area
 * Description: Compute the signed area of a 2D polygon defined by a vector of 2D points.
 * Parameters:
 * @py: A vector of 2D points representing the vertices of the polygon.
 * Return: The signed area of the polygon (positive if vertices are in counterclockwise order, negative if clockwise).
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_2D_Polygon_Area(const Vector2d1 & py)
+extern "C" LIBHGP_EXPORT double HGP_2D_Polygon_Area(const Vector2d1 & py)
 {
 	Polygon_2 poly = Polygon2D(py);
 	return abs(poly.area());
 }
 
 /********************************************************
-* Function name: CGAL_2D_Polygon_Inside_Point_C1
+* Function name: HGP_2D_Polygon_Inside_Point_C1
 * Description: Find the approximate center of a convex or concave 2D polygon defined by a vector of 2D points.
 * Parameters:
 * @py: A vector of 2D points representing the vertices of the polygon.
 * Return: A 2D point representing the approximate center of the polygon.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector2d CGAL_2D_Polygon_Inside_Point_C1(const Vector2d1 & py)
+extern "C" LIBHGP_EXPORT Vector2d HGP_2D_Polygon_Inside_Point_C1(const Vector2d1 & py)
 {
 	double inside_x, inside_y;
 	Polygon_2 poly = Polygon2D(py);
@@ -1372,7 +1372,7 @@ extern "C" LIBHGP_EXPORT Vector2d CGAL_2D_Polygon_Inside_Point_C1(const Vector2d
 			double p_y = (py[i][0] + py[j][0]) / 2.0;
 			if (poly.bounded_side(Point_2(p_x, p_y)) == CGAL::ON_BOUNDED_SIDE)
 			{
-				double dis = CGAL_2D_Distance_Point_Point(py[i], py[j]);
+				double dis = HGP_2D_Distance_Point_Point(py[i], py[j]);
 				if (dis > max_dis)
 				{
 					max_dis = dis;
@@ -1386,14 +1386,14 @@ extern "C" LIBHGP_EXPORT Vector2d CGAL_2D_Polygon_Inside_Point_C1(const Vector2d
 }
 
 /********************************************************
-* Function name: CGAL_2D_Polygon_Inside_Point_C2
+* Function name: HGP_2D_Polygon_Inside_Point_C2
 * Description: Find a point inside multiple 2D polygons. The function generates random points and checks if they are inside all given polygons.
 * Parameters:
 * @polys: A vector of vectors, where each inner vector represents the vertices of a polygon.
 * @inner_vec: A 2D point representing the found point inside the polygons (if successful).
 * Return: A boolean indicating if a point inside all polygons was found.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_2D_Polygon_Inside_Point_C2(const Vector2d2 & polys, Vector2d & inner_vec)
+extern "C" LIBHGP_EXPORT bool HGP_2D_Polygon_Inside_Point_C2(const Vector2d2 & polys, Vector2d & inner_vec)
 {
 	auto CheckValid = [](std::vector<Polygon_2>& cgal_polys, double p_x, double p_y)
 	{
@@ -1438,13 +1438,13 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Polygon_Inside_Point_C2(const Vector2d2 & 
 		{
 			if (success_iter == 0)
 			{
-				dis_success = CGAL_2D_Distance_Point_Polygons(Vector2d(p_x, p_y), polys);
+				dis_success = HGP_2D_Distance_Point_Polygons(Vector2d(p_x, p_y), polys);
 				inner_vec[0] = p_x;
 				inner_vec[1] = p_y;
 			}
 			else
 			{
-				//double distance = CGAL_2D_Distance_Point_Polygon(Vector2d(p_x, p_y), polys);
+				//double distance = HGP_2D_Distance_Point_Polygon(Vector2d(p_x, p_y), polys);
 				double distance = p_y;
 				if (distance > dis_success)
 				{
@@ -1467,7 +1467,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Polygon_Inside_Point_C2(const Vector2d2 & 
 }
 
 /********************************************************
-* Function name: CGAL_Identify_Polycut_Extend
+* Function name: HGP_Identify_Polycut_Extend
 * Description: Identifies and extends the boundary of a polygon cut. Given a polygon, a starting point (s), and an ending point (e), this function calculates the extended points (ns and ne) for the cut.
 * Parameters:
 * @polygon: A vector of 2D points representing the vertices of the polygon.
@@ -1478,7 +1478,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_2D_Polygon_Inside_Point_C2(const Vector2d2 & 
 * Return: A boolean indicating if the operation was successful.
 *********************************************************/
 // This one is used to intersect a polygon with a line
-extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_Extend(
+extern "C" LIBHGP_EXPORT bool HGP_Identify_Polycut_Extend(
         const Vector2d1 &polygon,
         const Vector2d &s, const Vector2d &e,
         Vector2d &ns, Vector2d &ne) {
@@ -1492,21 +1492,21 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_Extend(
     const int polySize = (int)polygon.size();
     Vector2d1 rayD1Int, rayD2Int;
 
-    const auto pd1 = CGAL_2D_Distance_Point_Polygon(s, polygon);
-    const auto pd2 = CGAL_2D_Distance_Point_Polygon(e, polygon);
+    const auto pd1 = HGP_2D_Distance_Point_Polygon(s, polygon);
+    const auto pd2 = HGP_2D_Distance_Point_Polygon(e, polygon);
 
     // if the points are in the outside of polygon, then we intersect them with polygon
     Polygon_2 cgalPoly;
 
-    if (!CGAL_Construct_Polygon(polygon, cgalPoly)) {
-        std::cerr << "Fatal error: CGAL_Construct_Polygon" << std::endl;
+    if (!HGP_Construct_Polygon(polygon, cgalPoly)) {
+        std::cerr << "Fatal error: HGP_Construct_Polygon" << std::endl;
         return false;
     }
 
 
     bool isoutside1 = false, isoutside2 = false;
-    isoutside1 = CGAL_2D_Is_Point_OutCGALPolygon(s, cgalPoly);
-    isoutside2 = CGAL_2D_Is_Point_OutCGALPolygon(e, cgalPoly);
+    isoutside1 = HGP_2D_Is_Point_OutCGALPolygon(s, cgalPoly);
+    isoutside2 = HGP_2D_Is_Point_OutCGALPolygon(e, cgalPoly);
     //std::cerr << "inside1 = " << inside1 << " inside2 = " << inside2 << std::endl;
 
     if (Functs::IsAlmostZero(pd1)) {
@@ -1523,8 +1523,8 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_Extend(
                 raySnap.push_back(pop1);
                 raySnap.push_back(pop2);
             }
-            if (CGAL_2D_Intersection_Ray_Segment(s - eps * cutDir, cutDir, pop1, pop2, inter)) {
-                auto tanAngle = CGAL_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
+            if (HGP_2D_Intersection_Ray_Segment(s - eps * cutDir, cutDir, pop1, pop2, inter)) {
+                auto tanAngle = HGP_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
                 inter -= (1.5875 / tanAngle * cutDir);
                 //std::cerr << "ray snap 1 angle" << tanAngle << std::endl;
                 //std::cerr << "inter = " << inter[0] << " " << inter[1] << std::endl;
@@ -1554,8 +1554,8 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_Extend(
             const auto &pop2 = polygon[(i + 1) % polySize];
             Vector2d segDir = normalize(pop1 - pop2);
 
-            if (CGAL_2D_Intersection_Ray_Segment(s + eps * cutDir, -cutDir, pop1, pop2, inter)) {
-                auto tanAngle = CGAL_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
+            if (HGP_2D_Intersection_Ray_Segment(s + eps * cutDir, -cutDir, pop1, pop2, inter)) {
+                auto tanAngle = HGP_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
                 //std::cerr << "rayd1int" << tanAngle << std::endl;
                 inter -= (1.5875 / tanAngle * cutDir);
                 rayD1Int.push_back(inter);
@@ -1589,8 +1589,8 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_Extend(
                 glm::abs(dot(cutDir, conDir)) > 0.9999) {
                 raySnap.push_back(pop1);
                 raySnap.push_back(pop2);
-            } else if (CGAL_2D_Intersection_Ray_Segment(e + eps * cutDir, -cutDir, pop1, pop2, inter)) {
-                auto tanAngle = CGAL_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
+            } else if (HGP_2D_Intersection_Ray_Segment(e + eps * cutDir, -cutDir, pop1, pop2, inter)) {
+                auto tanAngle = HGP_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
                 inter += (1.5875 / tanAngle * cutDir);
                 raySnap.push_back(inter);
             }
@@ -1624,9 +1624,9 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_Extend(
             Vector2d inter;
             const auto &pop1 = polygon[i];
             const auto &pop2 = polygon[(i + 1) % polySize];
-            if (CGAL_2D_Intersection_Ray_Segment(e - eps * cutDir, cutDir, pop1, pop2, inter)) {
+            if (HGP_2D_Intersection_Ray_Segment(e - eps * cutDir, cutDir, pop1, pop2, inter)) {
                 Vector2d segDir = normalize(pop1 - pop2);
-                auto tanAngle = CGAL_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
+                auto tanAngle = HGP_Get_Angle_Kerf_Offset_Tan(segDir, cutDir);
                 //std::cerr << "angle = " << tanAngle << std::endl;
                 inter += (1.5875 / tanAngle * cutDir);
                 rayD2Int.push_back(inter);
@@ -1654,7 +1654,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_Extend(
 }
 
 /********************************************************
-* Function name: CGAL_Identify_Polycut_ExtendOld
+* Function name: HGP_Identify_Polycut_ExtendOld
 * Description: An alternative implementation to identify and extend the boundary of a polygon cut. Given a polygon, a starting point (s), and an ending point (e), this function calculates the extended points (ns and ne) for the cut.
 * Parameters:
 * @polygon: A vector of 2D points representing the vertices of the polygon.
@@ -1665,7 +1665,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_Extend(
 * Return: A boolean indicating if the operation was successful.
 *********************************************************/
 // This one is used to intersect a polygon with a line
-extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
+extern "C" LIBHGP_EXPORT bool HGP_Identify_Polycut_ExtendOld(
         const Vector2d1 &polygon,
         const Vector2d &s, const Vector2d &e,
         Vector2d &ns, Vector2d &ne) {
@@ -1676,18 +1676,18 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
     const int polySize = (int)polygon.size();
     Vector2d1 rayD1Int, rayD2Int;
 
-    const auto pd1 = CGAL_2D_Distance_Point_Polygon(s, polygon);
-    const auto pd2 = CGAL_2D_Distance_Point_Polygon(e, polygon);
+    const auto pd1 = HGP_2D_Distance_Point_Polygon(s, polygon);
+    const auto pd2 = HGP_2D_Distance_Point_Polygon(e, polygon);
     bool isoutside1 = false, isoutside2 = false;
 
     if (!Functs::IsAlmostZero(pd1)) {
-        isoutside1 = CGAL_2D_Is_Point_OutPolygon(s, polygon);
+        isoutside1 = HGP_2D_Is_Point_OutPolygon(s, polygon);
         //std::cerr << "inside1 = " << inside1 << " inside2 = " << inside2 << std::endl;
         if (isoutside1) {
             Vector2d1 raySnap;
             Vector2d inter;
             for (int i = 0; i < polySize; i++) {
-                if (CGAL_2D_Intersection_Ray_Segment(s - eps * cutDir, cutDir, polygon[i],
+                if (HGP_2D_Intersection_Ray_Segment(s - eps * cutDir, cutDir, polygon[i],
                                                      polygon[(i + 1) % polySize], inter))
                     raySnap.push_back(inter);
             }
@@ -1706,12 +1706,12 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
     }
 
     if (!Functs::IsAlmostZero(pd2)) {
-        isoutside2 = CGAL_2D_Is_Point_OutPolygon(e, polygon);
+        isoutside2 = HGP_2D_Is_Point_OutPolygon(e, polygon);
         if (isoutside2) {
             Vector2d1 raySnap;
             Vector2d inter;
             for (int i = 0; i < polySize; i++) {
-                if (CGAL_2D_Intersection_Ray_Segment(e + eps * cutDir, -cutDir, polygon[i],
+                if (HGP_2D_Intersection_Ray_Segment(e + eps * cutDir, -cutDir, polygon[i],
                                                      polygon[(i + 1) % polySize], inter))
                     raySnap.push_back(inter);
             }
@@ -1741,7 +1741,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
     if (!Functs::IsAlmostZero(pd1)) {
         for (int i = 0; i < polySize; i++) {
             Vector2d inter1;
-            if (CGAL_2D_Intersection_Ray_Segment(ts + eps * cutDir, -cutDir, polygon[i],
+            if (HGP_2D_Intersection_Ray_Segment(ts + eps * cutDir, -cutDir, polygon[i],
                                                  polygon[(i + 1) % polySize], inter1))
                 rayD1Int.push_back(inter1);
         }
@@ -1765,7 +1765,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
     if (!Functs::IsAlmostZero(pd2)) {
         for (int i = 0; i < polySize; i++) {
             Vector2d inter2;
-            if (CGAL_2D_Intersection_Ray_Segment(te - eps * cutDir, cutDir, polygon[i],
+            if (HGP_2D_Intersection_Ray_Segment(te - eps * cutDir, cutDir, polygon[i],
                                                  polygon[(i + 1) % polySize], inter2))
                 rayD2Int.push_back(inter2);
         }
@@ -1786,7 +1786,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
 }
 
 /********************************************************
-* Function name: CGAL_Identify_Polycut
+* Function name: HGP_Identify_Polycut
 * Description: Identifies the intersection points of a cutting line with a polygon's boundary.
 * Parameters:
 * @polygon: A vector of 2D points representing the vertices of the polygon.
@@ -1794,7 +1794,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut_ExtendOld(
 * @result: Output parameter, a vector of pairs of boolean values indicating whether the cutting line enters and exits the polygon at each segment. The vector's size is one less than the size of cutLine.
 * Return: A boolean indicating if the operation was successful.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_Identify_Polycut(const Vector2d1 &polygon,const Vector2d1 &cutLine, VectorPB1 &result) {
+extern "C" LIBHGP_EXPORT bool HGP_Identify_Polycut(const Vector2d1 &polygon,const Vector2d1 &cutLine, VectorPB1 &result) {
     // N-1 edges, default 0 -> cant be fabricated
     result = VectorPB1(cutLine.size() - 1, std::make_pair<bool, bool>(false, false));
 
@@ -1951,14 +1951,14 @@ void Decomposition_Mapping(VectorPI1& one_boundary,
 }
 
 /********************************************************
-* Function name: CGAL_Image_Grid_Decomposition_C1
+* Function name: HGP_Image_Grid_Decomposition_C1
 * Description: Decomposes an image represented as a grid into boundaries and stores the x and y coordinates of these boundaries.
 * Parameters:
 * @image: A 2D vector representing the image grid.
 * @boundary_xs: A vector of vectors that will store the x-coordinates of the detected boundaries.
 * @boundary_ys: A vector of vectors that will store the y-coordinates of the detected boundaries.
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_Image_Grid_Decomposition_C1(Vector1i2&image, Vector1d2&boundary_xs, Vector1d2&boundary_ys)
+extern "C" LIBHGP_EXPORT void HGP_Image_Grid_Decomposition_C1(Vector1i2&image, Vector1d2&boundary_xs, Vector1d2&boundary_ys)
 {
 	//refine  lables
 	Vector1i2 grid;
@@ -2162,7 +2162,7 @@ extern "C" LIBHGP_EXPORT void CGAL_Image_Grid_Decomposition_C1(Vector1i2&image, 
 
 
 /********************************************************
-* Function name: CGAL_Image_Grid_Decomposition_Conservative_C1
+* Function name: HGP_Image_Grid_Decomposition_Conservative_C1
 * Description: Decomposes an image represented as a grid into conservative boundaries and stores the x and y coordinates of these boundaries.
 * Parameters:
 * @image: A 2D vector representing the image grid.
@@ -2170,7 +2170,7 @@ extern "C" LIBHGP_EXPORT void CGAL_Image_Grid_Decomposition_C1(Vector1i2&image, 
 * @boundary_ys: A vector of vectors that will store the y-coordinates of the detected boundaries.
 *********************************************************/
 
-extern "C" LIBHGP_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(Vector1i2&image, Vector1d2&boundary_xs, Vector1d2&boundary_ys)
+extern "C" LIBHGP_EXPORT void HGP_Image_Grid_Decomposition_Conservative_C1(Vector1i2&image, Vector1d2&boundary_xs, Vector1d2&boundary_ys)
 {
 	VectorPI2 boundaries;
 
@@ -2315,18 +2315,18 @@ extern "C" LIBHGP_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C1(Vect
 }
 
 /********************************************************
-* Function name: CGAL_Image_Grid_Decomposition_C2
+* Function name: HGP_Image_Grid_Decomposition_C2
 * Description: Decomposes an image represented as a grid into boundaries and stores the boundary point coordinates.
 * Parameters:
 * @image: A 2D vector representing the image grid.
 * @boundaries: A vector of vectors that will store the boundary point coordinates (as pairs of x and y coordinates).
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_Image_Grid_Decomposition_C2(Vector1i2&image, Vector2d2 & boundaries)
+extern "C" LIBHGP_EXPORT void HGP_Image_Grid_Decomposition_C2(Vector1i2&image, Vector2d2 & boundaries)
 {
 	Vector1d2 xs;
 	Vector1d2 ys;
 
-	CGAL_Image_Grid_Decomposition_C1(image, xs, ys);
+	HGP_Image_Grid_Decomposition_C1(image, xs, ys);
 
 	for (int i = 0; i < xs.size(); i++)
 	{
@@ -2340,18 +2340,18 @@ extern "C" LIBHGP_EXPORT void CGAL_Image_Grid_Decomposition_C2(Vector1i2&image, 
 }
 
 /********************************************************
-* Function name: CGAL_Image_Grid_Decomposition_Conservative_C2
+* Function name: HGP_Image_Grid_Decomposition_Conservative_C2
 * Description: Decomposes an image represented as a grid using conservative method into boundaries and stores the boundary point coordinates.
 * Parameters:
 * @image: A 2D vector representing the image grid.
 * @boundaries: A vector of vectors that will store the boundary point coordinates (as pairs of x and y coordinates).
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_Image_Grid_Decomposition_Conservative_C2(Vector1i2&image, Vector2d2 & boundaries)
+extern "C" LIBHGP_EXPORT void HGP_Image_Grid_Decomposition_Conservative_C2(Vector1i2&image, Vector2d2 & boundaries)
 {
 	Vector1d2 xs;
 	Vector1d2 ys;
 
-	CGAL_Image_Grid_Decomposition_Conservative_C1(image, xs, ys);
+	HGP_Image_Grid_Decomposition_Conservative_C1(image, xs, ys);
 
 	for (int i = 0; i < xs.size(); i++)
 	{

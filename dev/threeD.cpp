@@ -24,7 +24,7 @@ Point_2 point_to_2d(const Point_3& p, Plane_3& pl)
 }
 
 /********************************************************
-* Function name: CGAL_3D_Distance_Point_Segment
+* Function name: HGP_3D_Distance_Point_Segment
 * Description: Calculate the Euclidean distance between a 3D point and a line segment.
 * Parameters:
 * @p: 3D point for which the distance is to be calculated.
@@ -32,11 +32,11 @@ Point_2 point_to_2d(const Point_3& p, Plane_3& pl)
 * @s_e: End point of the line segment.
 * Return: Euclidean distance between the 3D point @p and the line segment defined by @s_s and @s_e.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Point_Segment(const Vector3d& p, const Vector3d & s_s, const Vector3d & s_e) {
+extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Point_Segment(const Vector3d& p, const Vector3d & s_s, const Vector3d & s_e) {
     return sqrt((double) CGAL::squared_distance(VectorPoint3d(p), Segment_3(VectorPoint3d(s_s), VectorPoint3d(s_e))));
 }
 /********************************************************
-* Function name: CGAL_3D_Plane_Fitting
+* Function name: HGP_3D_Plane_Fitting
 * Description: Fit a plane to a set of 3D points using linear least squares fitting.
 * Parameters:
 * @points: A vector of 3D points to fit the plane to.
@@ -44,7 +44,7 @@ extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Point_Segment(const Vector3d& p
 * @plane_n: The normal vector of the fitted plane.
 * Return: void
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_Fitting(const Vector3d1 &points, Vector3d &plane_p, Vector3d &plane_n) {
+extern "C" LIBHGP_EXPORT void HGP_3D_Plane_Fitting(const Vector3d1 &points, Vector3d &plane_p, Vector3d &plane_n) {
     // centroid of 3D points
     std::vector<Point_3> points_3;
     for (int i = 0; i < points.size(); i++)
@@ -68,7 +68,7 @@ extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_Fitting(const Vector3d1 &points, Vec
     plane_n[2] = plane.orthogonal_vector().z();
 }
 /********************************************************
-* Function name: CGAL_3D_Plane_Point_Projection
+* Function name: HGP_3D_Plane_Point_Projection
 * Description: Project a 3D point onto a plane defined by a point on the plane and its normal vector.
 * Parameters:
 * @plane_p: A point on the plane.
@@ -77,13 +77,13 @@ extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_Fitting(const Vector3d1 &points, Vec
 * @result: The projected point on the plane.
 * Return: void
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_Point_Projection(const Vector3d &plane_p, const Vector3d &plane_n, const Vector3d &p, Vector3d &result) 
+extern "C" LIBHGP_EXPORT void HGP_3D_Plane_Point_Projection(const Vector3d &plane_p, const Vector3d &plane_n, const Vector3d &p, Vector3d &result) 
 {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     result = PointVector3d(plane.projection(VectorPoint3d(p)));
 }
 /********************************************************
-* Function name: CGAL_3D_Plane_Points_Projection
+* Function name: HGP_3D_Plane_Points_Projection
 * Description: Project a list of 3D points onto a plane defined by a point on the plane and its normal vector.
 * Parameters:
 * @plane_p: A point on the plane.
@@ -92,7 +92,7 @@ extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_Point_Projection(const Vector3d &pla
 * @project_points: The list of projected points on the plane.
 * Return: void
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_Points_Projection
+extern "C" LIBHGP_EXPORT void HGP_3D_Plane_Points_Projection
 (const Vector3d &plane_p, const Vector3d &plane_n, const Vector3d1 &points,Vector3d1 &project_points) 
 {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
@@ -100,7 +100,7 @@ extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_Points_Projection
         project_points.push_back(PointVector3d(plane.projection(VectorPoint3d(points[i]))));
 }
 /********************************************************
-* Function name: CGAL_3D_Plane_3D_to_2D_Point
+* Function name: HGP_3D_Plane_3D_to_2D_Point
 * Description: Project a 3D point onto a 2D plane defined by a point on the plane and its normal vector.
 * Parameters:
 * @plane_p: A point on the 2D plane.
@@ -110,14 +110,14 @@ extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_Points_Projection
 * Return: void
 *********************************************************/
 extern "C" LIBHGP_EXPORT void
-CGAL_3D_Plane_3D_to_2D_Point(const Vector3d &plane_p, const Vector3d &plane_n, const Vector3d &point_3d, Vector2d &result) 
+HGP_3D_Plane_3D_to_2D_Point(const Vector3d &plane_p, const Vector3d &plane_n, const Vector3d &point_3d, Vector2d &result) 
 {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     result = PointVector2d(point_to_2d(VectorPoint3d(point_3d), plane));
 }
 
 /********************************************************
-* Function name: CGAL_3D_Plane_2D_to_3D_Point
+* Function name: HGP_3D_Plane_2D_to_3D_Point
 * Description: Project a 2D point onto a 3D plane defined by a point on the plane and its normal vector.
 * Parameters:
 * @plane_p: A point on the 3D plane.
@@ -127,13 +127,13 @@ CGAL_3D_Plane_3D_to_2D_Point(const Vector3d &plane_p, const Vector3d &plane_n, c
 * Return: void
 *********************************************************/
 extern "C" LIBHGP_EXPORT void
-CGAL_3D_Plane_2D_to_3D_Point(const Vector3d &plane_p, const Vector3d &plane_n, const Vector2d &points_2d, Vector3d &result) 
+HGP_3D_Plane_2D_to_3D_Point(const Vector3d &plane_p, const Vector3d &plane_n, const Vector2d &points_2d, Vector3d &result) 
 {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
     result = PointVector3d(point_to_3d(VectorPoint2d(points_2d), plane));
 }
 /********************************************************
-* Function name: CGAL_3D_Plane_3D_to_2D_Points
+* Function name: HGP_3D_Plane_3D_to_2D_Points
 * Description: Project multiple 3D points onto a 2D plane defined by a point on the plane and its normal vector.
 * Parameters:
 * @plane_p: A point on the 3D plane.
@@ -142,7 +142,7 @@ CGAL_3D_Plane_2D_to_3D_Point(const Vector3d &plane_p, const Vector3d &plane_n, c
 * @points_2d: A vector to store the resulting 2D points after projection.
 * Return: void
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_3D_to_2D_Points
+extern "C" LIBHGP_EXPORT void HGP_3D_Plane_3D_to_2D_Points
 (const Vector3d &plane_p, const Vector3d &plane_n, const Vector3d1 &points_3d, Vector2d1 &points_2d) 
 {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
@@ -150,7 +150,7 @@ extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_3D_to_2D_Points
         points_2d.push_back(PointVector2d(plane.to_2d(VectorPoint3d(points_3d[i]))));
 }
 /********************************************************
-* Function name: CGAL_3D_Plane_3Ds_to_2Ds_Points
+* Function name: HGP_3D_Plane_3Ds_to_2Ds_Points
 * Description: Project multiple sets of 3D points onto a 2D plane defined by a point on the plane and its normal vector.
 * Parameters:
 * @plane_p: A point on the 3D plane.
@@ -159,17 +159,17 @@ extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_3D_to_2D_Points
 * @points_2d: A vector of vectors to store the resulting 2D points after projection for each set of 3D points.
 * Return: void
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_3Ds_to_2Ds_Points(const Vector3d& plane_p, const Vector3d& plane_n, const Vector3d2& points_3d, Vector2d2& points_2d)
+extern "C" LIBHGP_EXPORT void HGP_3D_Plane_3Ds_to_2Ds_Points(const Vector3d& plane_p, const Vector3d& plane_n, const Vector3d2& points_3d, Vector2d2& points_2d)
 {
 	for (auto& p3ds : points_3d)
 	{
 		Vector2d1 points_2d_;
-		CGAL_3D_Plane_3D_to_2D_Points(plane_p, plane_n, p3ds, points_2d_);
+		HGP_3D_Plane_3D_to_2D_Points(plane_p, plane_n, p3ds, points_2d_);
 		points_2d.push_back(points_2d_);
 	}
 }
 /********************************************************
-* Function name: CGAL_3D_Plane_2D_to_3D_Points
+* Function name: HGP_3D_Plane_2D_to_3D_Points
 * Description: Project a set of 2D points onto a 3D plane.
 * Parameters:
 * @plane_p: A point on the 3D plane where the 2D points will be projected.
@@ -178,7 +178,7 @@ extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_3Ds_to_2Ds_Points(const Vector3d& pl
 * @points_3d: A vector to store the resulting 3D points after projection.
 * Return: void
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_2D_to_3D_Points
+extern "C" LIBHGP_EXPORT void HGP_3D_Plane_2D_to_3D_Points
 (const Vector3d &plane_p, const Vector3d &plane_n, const Vector2d1 &points_2d, Vector3d1 &points_3d) 
 {
     Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
@@ -186,7 +186,7 @@ extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_2D_to_3D_Points
         points_3d.push_back(PointVector3d(plane.to_3d(VectorPoint2d(points_2d[i]))));
 }
 /********************************************************
-* Function name: CGAL_3D_Distance_Point_Point
+* Function name: HGP_3D_Distance_Point_Point
 * Description: Calculate the 3D Euclidean distance between two points.
 * Parameters:
 * @v0: The first 3D point.
@@ -194,13 +194,13 @@ extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_2D_to_3D_Points
 * Return: The Euclidean distance between the two points.
 *********************************************************/
 extern "C" LIBHGP_EXPORT
-double CGAL_3D_Distance_Point_Point(const Vector3d& v0, const Vector3d& v1)
+double HGP_3D_Distance_Point_Point(const Vector3d& v0, const Vector3d& v1)
 {
 	return sqrt((double)CGAL::squared_distance(Point_3(v0[0], v0[1], v0[2]), Point_3(v1[0], v1[1], v1[2])));
 }
 
 /********************************************************
-* Function name: CGAL_3D_Projection_Point_Segment
+* Function name: HGP_3D_Projection_Point_Segment
 * Description: Project a 3D point onto a line segment defined by two 3D points.
 * Parameters:
 * @p: The 3D point to be projected.
@@ -208,12 +208,12 @@ double CGAL_3D_Distance_Point_Point(const Vector3d& v0, const Vector3d& v1)
 * @s_e: The end point of the line segment.
 * Return: The projected point on the line segment.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(const Vector3d& p, const Vector3d & s_s, const Vector3d & s_e) {
+extern "C" LIBHGP_EXPORT Vector3d HGP_3D_Projection_Point_Segment(const Vector3d& p, const Vector3d & s_s, const Vector3d & s_e) {
     Line_3 l(VectorPoint3d(s_s), VectorPoint3d(s_e));
     auto m_p = PointVector3d(l.projection(VectorPoint3d(p)));
-	double d_m_s = CGAL_3D_Distance_Point_Point(m_p, s_s);
-	double d_m_e = CGAL_3D_Distance_Point_Point(m_p, s_e);
-	double d_s_e = CGAL_3D_Distance_Point_Point(s_s, s_e);
+	double d_m_s = HGP_3D_Distance_Point_Point(m_p, s_s);
+	double d_m_e = HGP_3D_Distance_Point_Point(m_p, s_e);
+	double d_s_e = HGP_3D_Distance_Point_Point(s_s, s_e);
 
     if (d_m_s >= d_s_e)
         return s_e;
@@ -222,7 +222,7 @@ extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(const Vector3
     return m_p;
 }
 /********************************************************
-* Function name: CGAL_3D_Distance_Point_Segment_Ref
+* Function name: HGP_3D_Distance_Point_Segment_Ref
 * Description: Calculate the 3D Euclidean distance between a point and a line segment.
 * Parameters:
 * @v: The 3D point for which the distance is calculated.
@@ -230,24 +230,24 @@ extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Projection_Point_Segment(const Vector3
 * @s_1: The end point of the line segment.
 * Return: The Euclidean distance between the point and the line segment.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Point_Segment_Ref(const Vector3d &v, const Vector3d &s_0,
+extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Point_Segment_Ref(const Vector3d &v, const Vector3d &s_0,
                                                                            const Vector3d &s_1) {
     return sqrt((double) CGAL::squared_distance(Point_3(v[0], v[1], v[2]),
                                                 Segment_3(Point_3(s_0[0], s_0[1], s_0[2]),
                                                           Point_3(s_1[0], s_1[1], s_1[2]))));
 }
 /********************************************************
-* Function name: CGAL_3D_Distance_Point_Polygon
+* Function name: HGP_3D_Distance_Point_Polygon
 * Description: Calculate the 3D Euclidean distance between a point and a 3D polygon.
 * Parameters:
 * @py: A vector of 3D points representing the vertices of the polygon.
 * @p: The 3D point for which the distance is calculated.
 * Return: The minimum Euclidean distance between the point and the polygon.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Point_Polygon(const Vector3d1 &py, const Vector3d &p) {
+extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Point_Polygon(const Vector3d1 &py, const Vector3d &p) {
     double distance = 1000000000000.0;
     for (int i = 0; i < py.size(); i++)
-        distance = std::min(distance, CGAL_3D_Distance_Point_Segment_Ref(p, py[i], py[(i + 1) % py.size()]));
+        distance = std::min(distance, HGP_3D_Distance_Point_Segment_Ref(p, py[i], py[(i + 1) % py.size()]));
     return distance;
 }
 
@@ -333,14 +333,14 @@ void mark_domains(CDT& cdt)
 	}
 }
 /********************************************************
-* Function name: CGAL_2D_Polygon_Triangulation_C1
+* Function name: HGP_2D_Polygon_Triangulation_C1
 * Description: Triangulate a collection of 2D polygons and return the vertex indices of the triangles.
 * Parameters:
 * @polys: A vector of vectors of 2D points representing the input polygons.
 * @faces: A vector of vectors to store the vertex indices of the resulting triangles.
 * Return: void
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_2D_Polygon_Triangulation_C1(const Vector2d2 &polys, Vector1i2 &faces)
+extern "C" LIBHGP_EXPORT void HGP_2D_Polygon_Triangulation_C1(const Vector2d2 &polys, Vector1i2 &faces)
 {
 	int nb = 0;
 	CDT cdt;
@@ -364,13 +364,13 @@ extern "C" LIBHGP_EXPORT void CGAL_2D_Polygon_Triangulation_C1(const Vector2d2 &
 		faces.emplace_back(Vector1i1{fit->vertex(2)->index, fit->vertex(1)->index, fit->vertex(0)->index});
 }
 /********************************************************
-* Function name: CGAL_2D_Polygon_Triangulation_C2
+* Function name: HGP_2D_Polygon_Triangulation_C2
 * Description: Triangulate a collection of 2D polygons and return the vertex indices of the triangles.
 * Parameters:
 * @polys: A vector of vectors of 2D points representing the input polygons.
 * Return: A vector of vectors containing the vertex indices of the resulting triangles.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector1i2 CGAL_2D_Polygon_Triangulation_C2(const Vector2d2 & polys)
+extern "C" LIBHGP_EXPORT Vector1i2 HGP_2D_Polygon_Triangulation_C2(const Vector2d2 & polys)
 {
 	int nb = 0;
 	CDT cdt;
@@ -397,23 +397,23 @@ extern "C" LIBHGP_EXPORT Vector1i2 CGAL_2D_Polygon_Triangulation_C2(const Vector
 }
 
 /********************************************************
-* Function name: CGAL_2D_Polygon_Triangulation_C3
+* Function name: HGP_2D_Polygon_Triangulation_C3
 * Description: Triangulate a single 2D polygon and return the vertex indices of the triangles.
 * Parameters:
 * @poly: A vector of 2D points representing the input polygon.
 * Return: A vector of vectors containing the vertex indices of the resulting triangles.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector1i2 CGAL_2D_Polygon_Triangulation_C3(const Vector2d1 & poly)
+extern "C" LIBHGP_EXPORT Vector1i2 HGP_2D_Polygon_Triangulation_C3(const Vector2d1 & poly)
 {
 	Vector2d2 polys(1, poly);
-	return CGAL_2D_Polygon_Triangulation_C2(polys);
+	return HGP_2D_Polygon_Triangulation_C2(polys);
 }
 
 
 //IO mesh
 /***************************************************************************************************/
 
-//void CGAL_Load_Obj(const char* path, Vector1d1 &coords,Vector1i1 &tris) {
+//void HGP_Load_Obj(const char* path, Vector1d1 &coords,Vector1i1 &tris) {
 //    double x, y, z;
 //    char line[1024], v0[1024], v1[1024], v2[1024];
 //
@@ -439,7 +439,7 @@ extern "C" LIBHGP_EXPORT Vector1i2 CGAL_2D_Polygon_Triangulation_C3(const Vector
 //    fclose(fp);
 //}
 /********************************************************
-* Function name: CGAL_3D_Distance_Point_Line
+* Function name: HGP_3D_Distance_Point_Line
 * Description: Calculate the Euclidean distance between a 3D point and a 3D line defined by two points.
 * Parameters:
 * @p: The 3D point for which the distance is to be calculated.
@@ -447,12 +447,12 @@ extern "C" LIBHGP_EXPORT Vector1i2 CGAL_2D_Polygon_Triangulation_C3(const Vector
 * @l_e: The end point of the 3D line.
 * Return: The Euclidean distance between the point 'p' and the line defined by 'l_s' and 'l_e'.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Point_Line(const Vector3d & p, const Vector3d & l_s, const Vector3d & l_e)
+extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Point_Line(const Vector3d & p, const Vector3d & l_s, const Vector3d & l_e)
 {
 	return sqrt((double)CGAL::squared_distance(VectorPoint3d(p), Line_3(VectorPoint3d(l_s), VectorPoint3d(l_e))));
 }
 /********************************************************
-* Function name: CGAL_3D_Projection_Point_Line
+* Function name: HGP_3D_Projection_Point_Line
 * Description: Project a 3D point onto a 3D line defined by two points and return the projected point.
 * Parameters:
 * @p: The 3D point to be projected onto the line.
@@ -460,14 +460,14 @@ extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Point_Line(const Vector3d & p, 
 * @l_e: The end point of the 3D line.
 * Return: The 3D point representing the projection of 'p' onto the line defined by 'l_s' and 'l_e'.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Projection_Point_Line(const Vector3d & p, const Vector3d & l_s, const Vector3d & l_e)
+extern "C" LIBHGP_EXPORT Vector3d HGP_3D_Projection_Point_Line(const Vector3d & p, const Vector3d & l_s, const Vector3d & l_e)
 {
 	Line_3 l(VectorPoint3d(l_s), VectorPoint3d(l_e));
 	Point_3 o_p = l.projection(VectorPoint3d(p));
 	return PointVector3d(o_p);
 }
 /********************************************************
-* Function name: CGAL_3D_Distance_Segment_Segment
+* Function name: HGP_3D_Distance_Segment_Segment
 * Description: Calculate the Euclidean distance between two 3D line segments defined by their start and end points.
 * Parameters:
 * @s_0_s: The start point of the first 3D line segment.
@@ -476,12 +476,12 @@ extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Projection_Point_Line(const Vector3d &
 * @s_1_e: The end point of the second 3D line segment.
 * Return: The Euclidean distance between the two 3D line segments.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Segment_Segment(const Vector3d & s_0_s, const Vector3d & s_0_e, const Vector3d & s_1_s, const Vector3d & s_1_e)
+extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Segment_Segment(const Vector3d & s_0_s, const Vector3d & s_0_e, const Vector3d & s_1_s, const Vector3d & s_1_e)
 {
 	return sqrt((double)CGAL::squared_distance(Segment_3(VectorPoint3d(s_0_s), VectorPoint3d(s_0_e)), Segment_3(VectorPoint3d(s_1_s), VectorPoint3d(s_1_e))));
 }
 /********************************************************
-* Function name: CGAL_3D_Distance_Point_Plane
+* Function name: HGP_3D_Distance_Point_Plane
 * Description: Calculate the Euclidean distance between a 3D point and a 3D plane defined by a point on the plane and its normal vector.
 * Parameters:
 * @v: The 3D point for which the distance to the plane is calculated.
@@ -489,14 +489,14 @@ extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Segment_Segment(const Vector3d 
 * @plane_n: The normal vector of the 3D plane.
 * Return: The Euclidean distance between the 3D point 'v' and the 3D plane defined by 'plane_p' and 'plane_n'.
 *********************************************************/
-extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Point_Plane(const Vector3d & v, const Vector3d & plane_p, const Vector3d & plane_n)
+extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Point_Plane(const Vector3d & v, const Vector3d & plane_p, const Vector3d & plane_n)
 {
 	return sqrt((double)CGAL::squared_distance(VectorPoint3d(v), Plane_3(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]))));
 }
 
 
 /********************************************************
-* Function name: CGAL_3D_Intersection_Segment_Line
+* Function name: HGP_3D_Intersection_Segment_Line
 * Description: Check if a 3D line segment intersects a 3D line, and if so, calculate the intersection point.
 * Parameters:
 * @s_s: The starting point of the 3D line segment.
@@ -506,9 +506,9 @@ extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Point_Plane(const Vector3d & v,
 * @inter: A vector to store the intersection point if the segment and line intersect.
 * Return: True if the segment and line intersect, false otherwise.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Segment_Line(const Vector3d & s_s, const Vector3d & s_e, const Vector3d & l_s, const Vector3d & l_e, Vector3d & inter)
+extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Segment_Line(const Vector3d & s_s, const Vector3d & s_e, const Vector3d & l_s, const Vector3d & l_e, Vector3d & inter)
 {
-	double d = CGAL_3D_Distance_Point_Point(s_s, s_e);
+	double d = HGP_3D_Distance_Point_Point(s_s, s_e);
 
 	if (!Functs::IsAlmostZero(d))
 	{
@@ -533,7 +533,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Segment_Line(const Vector3d &
 	}
 }
 /********************************************************
-* Function name: CGAL_3D_Intersection_Segment_Segment
+* Function name: HGP_3D_Intersection_Segment_Segment
 * Description: Check if two 3D line segments intersect, and if so, calculate the intersection point.
 * Parameters:
 * @s_0_s: The starting point of the first 3D line segment.
@@ -543,10 +543,10 @@ extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Segment_Line(const Vector3d &
 * @iter: A vector to store the intersection point if the segments intersect.
 * Return: True if the two segments intersect, false otherwise.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Segment_Segment(const Vector3d & s_0_s, const Vector3d & s_0_e, const Vector3d & s_1_s, const Vector3d & s_1_e, Vector3d & iter)
+extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Segment_Segment(const Vector3d & s_0_s, const Vector3d & s_0_e, const Vector3d & s_1_s, const Vector3d & s_1_e, Vector3d & iter)
 {
-	double d0 = CGAL_3D_Distance_Point_Point(s_0_s, s_0_e);
-	double d1 = CGAL_3D_Distance_Point_Point(s_1_s, s_1_e);
+	double d0 = HGP_3D_Distance_Point_Point(s_0_s, s_0_e);
+	double d1 = HGP_3D_Distance_Point_Point(s_1_s, s_1_e);
 
 	if (!Functs::IsAlmostZero(d0) && !Functs::IsAlmostZero(d1))
 	{
@@ -569,7 +569,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Segment_Segment(const Vector3
 	}
 }
 /********************************************************
-* Function name: CGAL_3D_Intersection_Segment_Plane
+* Function name: HGP_3D_Intersection_Segment_Plane
 * Description: Check if a 3D line segment intersects with a 3D plane and, if so, calculate the intersection point.
 * Parameters:
 * @s_s: The starting point of the 3D line segment.
@@ -579,7 +579,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Segment_Segment(const Vector3
 * @inter: A vector to store the intersection point if the segment and plane intersect.
 * Return: True if the segment and plane intersect, false otherwise.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Segment_Plane(const Vector3d & s_s, const Vector3d & s_e, const Vector3d & plane_p, const Vector3d & plane_n, Vector3d & inter)
+extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Segment_Plane(const Vector3d & s_s, const Vector3d & s_e, const Vector3d & plane_p, const Vector3d & plane_n, Vector3d & inter)
 {
 	Segment_3 s(VectorPoint3d(s_s), VectorPoint3d(s_e));
 	Plane_3 p(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
@@ -597,7 +597,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Segment_Plane(const Vector3d 
 	}
 }
 /********************************************************
-* Function name: CGAL_3D_Intersection_Line_Plane
+* Function name: HGP_3D_Intersection_Line_Plane
 * Description: Check if a 3D line intersects with a 3D plane and, if so, calculate the intersection point.
 * Parameters:
 * @l_s: The starting point of the 3D line.
@@ -607,7 +607,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Segment_Plane(const Vector3d 
 * @inter: A vector to store the intersection point if the line and plane intersect.
 * Return: True if the line and plane intersect, false otherwise.
 *********************************************************/
-extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Line_Plane(const Vector3d & l_s, const Vector3d & l_e, const Vector3d & plane_p, const Vector3d & plane_n, Vector3d & inter)
+extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Line_Plane(const Vector3d & l_s, const Vector3d & l_e, const Vector3d & plane_p, const Vector3d & plane_n, Vector3d & inter)
 {
 	Line_3 s(VectorPoint3d(l_s), VectorPoint3d(l_e));
 	Plane_3 p(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
@@ -628,7 +628,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Line_Plane(const Vector3d & l
 }
 
 /********************************************************
-* Function name: CGAL_3D_Projection_Point_Plane_C1
+* Function name: HGP_3D_Projection_Point_Plane_C1
 * Description: Project a 3D point onto a 3D plane and return the projection point.
 * Parameters:
 * @p: The 3D point to be projected.
@@ -636,7 +636,7 @@ extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Line_Plane(const Vector3d & l
 * @plane_n: The normal vector of the 3D plane.
 * Return: A 3D vector representing the projection of 'p' onto the plane.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Projection_Point_Plane_C1(const Vector3d & p, const Vector3d & plane_p, const Vector3d & plane_n)
+extern "C" LIBHGP_EXPORT Vector3d HGP_3D_Projection_Point_Plane_C1(const Vector3d & p, const Vector3d & plane_p, const Vector3d & plane_n)
 {
 	Plane_3 plane(Point_3(plane_p[0], plane_p[1], plane_p[2]), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
 	Point_3 project = plane.projection(Point_3(p[0], p[1], p[1]));
@@ -644,7 +644,7 @@ extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Projection_Point_Plane_C1(const Vector
 	return result;
 }
 /********************************************************
-* Function name: CGAL_3D_Projection_Point_Plane_C2
+* Function name: HGP_3D_Projection_Point_Plane_C2
 * Description: Project a 3D point onto a 3D plane defined by three points on the plane.
 * Parameters:
 * @p: The 3D point to be projected.
@@ -653,7 +653,7 @@ extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Projection_Point_Plane_C1(const Vector
 * @plane_p_2: The third point on the 3D plane.
 * Return: A 3D vector representing the projection of 'p' onto the plane.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Projection_Point_Plane_C2(const Vector3d & p, const Vector3d & plane_p_0, const Vector3d & plane_p_1, const Vector3d & plane_p_2)
+extern "C" LIBHGP_EXPORT Vector3d HGP_3D_Projection_Point_Plane_C2(const Vector3d & p, const Vector3d & plane_p_0, const Vector3d & plane_p_1, const Vector3d & plane_p_2)
 {
 	Point_3 p0 = VectorPoint3d(plane_p_0);
 	Point_3 p1 = VectorPoint3d(plane_p_1);
@@ -666,7 +666,7 @@ extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Projection_Point_Plane_C2(const Vector
 
 }
 /********************************************************
-* Function name: CGAL_3D_Projection_3D_Point_Plane_2D_C1
+* Function name: HGP_3D_Projection_3D_Point_Plane_2D_C1
 * Description: Project a 3D point onto a 3D plane and represent the result as a 2D point.
 * Parameters:
 * @p: The 3D point to be projected.
@@ -674,14 +674,14 @@ extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Projection_Point_Plane_C2(const Vector
 * @plane_n: The normal vector of the 3D plane.
 * Return: A 2D vector representing the projection of 'p' onto the plane.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector2d CGAL_3D_Projection_3D_Point_Plane_2D_C1(const Vector3d & p, const Vector3d & plane_p, const Vector3d & plane_n)
+extern "C" LIBHGP_EXPORT Vector2d HGP_3D_Projection_3D_Point_Plane_2D_C1(const Vector3d & p, const Vector3d & plane_p, const Vector3d & plane_n)
 {
 	Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
 	Point_2 r = point_to_2d(VectorPoint3d(p), plane);
 	return Vector2d(r[0], r[1]);
 }
 /********************************************************
-* Function name: CGAL_3D_Projection_3D_Point_Plane_2D_C2
+* Function name: HGP_3D_Projection_3D_Point_Plane_2D_C2
 * Description: Project a 3D point onto a 3D plane defined by three points and represent the result as a 2D point.
 * Parameters:
 * @p: The 3D point to be projected.
@@ -690,7 +690,7 @@ extern "C" LIBHGP_EXPORT Vector2d CGAL_3D_Projection_3D_Point_Plane_2D_C1(const 
 * @plane_p_2: A third 3D point on the plane.
 * Return: A 2D vector representing the projection of 'p' onto the plane.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector2d CGAL_3D_Projection_3D_Point_Plane_2D_C2(const Vector3d & p, const Vector3d & plane_p_0, const Vector3d & plane_p_1, const Vector3d & plane_p_2)
+extern "C" LIBHGP_EXPORT Vector2d HGP_3D_Projection_3D_Point_Plane_2D_C2(const Vector3d & p, const Vector3d & plane_p_0, const Vector3d & plane_p_1, const Vector3d & plane_p_2)
 {
 	Point_3 p0 = VectorPoint3d(plane_p_0);
 	Point_3 p1 = VectorPoint3d(plane_p_1);
@@ -701,7 +701,7 @@ extern "C" LIBHGP_EXPORT Vector2d CGAL_3D_Projection_3D_Point_Plane_2D_C2(const 
 	return Vector2d(r[0], r[1]);
 }
 /********************************************************
-* Function name: CGAL_3D_Plane_ABCD
+* Function name: HGP_3D_Plane_ABCD
 * Description: Compute the coefficients of a 3D plane in the form Ax + By + Cz + D = 0.
 * Parameters:
 * @plane_p: A 3D point on the plane.
@@ -712,7 +712,7 @@ extern "C" LIBHGP_EXPORT Vector2d CGAL_3D_Projection_3D_Point_Plane_2D_C2(const 
 * @d: Reference to a double variable to store the coefficient 'D'.
 * Return: void
 *********************************************************/
-extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_ABCD(const Vector3d & plane_p, const Vector3d & plane_n, double& a, double& b, double& c, double& d)
+extern "C" LIBHGP_EXPORT void HGP_3D_Plane_ABCD(const Vector3d & plane_p, const Vector3d & plane_n, double& a, double& b, double& c, double& d)
 {
 	Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
 	a = plane.a();
@@ -721,21 +721,21 @@ extern "C" LIBHGP_EXPORT void CGAL_3D_Plane_ABCD(const Vector3d & plane_p, const
 	d = plane.d();
 }
 /********************************************************
-* Function name: CGAL_3D_Plane_Base_1
+* Function name: HGP_3D_Plane_Base_1
 * Description: Compute the first base vector of a 3D plane defined by a point on the plane and its normal vector.
 * Parameters:
 * @plane_p: A 3D point on the plane.
 * @plane_n: The normal vector of the 3D plane.
 * Return: Vector3d representing the first base vector of the plane.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Plane_Base_1(const Vector3d & plane_p, const Vector3d & plane_n)
+extern "C" LIBHGP_EXPORT Vector3d HGP_3D_Plane_Base_1(const Vector3d & plane_p, const Vector3d & plane_n)
 {
 	Plane_3 plane(VectorPoint3d(plane_p), Vector_3(plane_n[0], plane_n[1], plane_n[2]));
 	Vector_3 v = plane.base1();
 	return Vector3d(v[0], v[1], v[2]);
 }
 /********************************************************
-* Function name: CGAL_Face_Normal
+* Function name: HGP_Face_Normal
 * Description: Compute the normal vector of a point within a triangle by interpolating the normals of its vertices.
 * Parameters:
 * @source: The 3D point for which to compute the interpolated normal.
@@ -747,7 +747,7 @@ extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Plane_Base_1(const Vector3d & plane_p,
 * @normal_2: The normal vector at the third vertex.
 * Return: Vector3d representing the interpolated normal at the 'source' point.
 *********************************************************/
-extern "C" LIBHGP_EXPORT Vector3d CGAL_Face_Normal(const Vector3d & source, const Vector3d & tri_0, const Vector3d & tri_1, const Vector3d & tri_2, Vector3d & normal_0, Vector3d & normal_1, Vector3d & normal_2)
+extern "C" LIBHGP_EXPORT Vector3d HGP_Face_Normal(const Vector3d & source, const Vector3d & tri_0, const Vector3d & tri_1, const Vector3d & tri_2, Vector3d & normal_0, Vector3d & normal_1, Vector3d & normal_2)
 {
 	double u, v, w;
 	Functs::Barycentric(source, tri_0, tri_1, tri_2, u, v, w);
