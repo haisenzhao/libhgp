@@ -20,15 +20,15 @@ void Generate_LIBHGP_H(const std::string& input_path, const std::string& output_
 		std::ifstream file(input_path);
 		for (std::string line; std::getline(file, line); )
 		{
-			if (Functs::StringContain(line, "CGAL") && Functs::StringContain(line, "extern \"C\" LIBHGP_EXPORT"))
+			if (Functs::StringContain(line, " HGP_") && Functs::StringContain(line, "extern \"C\" LIBHGP_EXPORT"))
 			{
 				if (!Functs::StringContain(line, "(") || !Functs::StringContain(line, ")"))
 				{
 					Functs::MAssert("Does not include both ( and )");
 				}
 
-				auto value = line.substr(line.find("LIBHGP_EXPORT") + 14, line.find("CGAL") - line.find("LIBHGP_EXPORT") - 15);
-				auto title = line.substr(line.find("CGAL"), line.find("(") - line.find("CGAL"));
+				auto value = line.substr(line.find("LIBHGP_EXPORT") + 14, line.find(" HGP_") - line.find("LIBHGP_EXPORT") - 14);
+				auto title = line.substr(line.find(" HGP_")+1, line.find("(") - line.find(" HGP_")-1);
 				auto para = line.substr(line.find("("));
 				funct_values.push_back(value);
 				funct_titles.push_back(title);
@@ -171,10 +171,10 @@ void Generate_LIBHGP_H(const std::string& input_path, const std::string& output_
 	//define class
 	libhgp_file << std::endl;
 	libhgp_file << std::endl;
-	libhgp_file << "class CGALPL" << std::endl;
+	libhgp_file << "class HGPPL" << std::endl;
 	libhgp_file << "{" << std::endl;
 	libhgp_file << "	public:" << std::endl;
-	libhgp_file << "	CGALPL()" << std::endl;
+	libhgp_file << "	HGPPL()" << std::endl;
 	libhgp_file << "	{" << std::endl;
 	libhgp_file << "		hModule = LoadHMODULE(\"libhgp.dll\");" << std::endl;
 
@@ -189,9 +189,9 @@ void Generate_LIBHGP_H(const std::string& input_path, const std::string& output_
 	}
 	libhgp_file << "	};" << std::endl << std::endl;
 
-	libhgp_file << "	static CGALPL& Inst()" << std::endl;
+	libhgp_file << "	static HGPPL& Inst()" << std::endl;
 	libhgp_file << "	{" << std::endl;
-	libhgp_file << "		static CGALPL instance;" << std::endl;
+	libhgp_file << "		static HGPPL instance;" << std::endl;
 	libhgp_file << "		return instance;" << std::endl;
 	libhgp_file << "	};" << std::endl << std::endl;
 
@@ -210,7 +210,7 @@ void Generate_LIBHGP_H(const std::string& input_path, const std::string& output_
 
 	libhgp_file << "};" << std::endl;
 
-	libhgp_file << "#define PL() CGALPL::Inst()" << std::endl;
+	libhgp_file << "#define PL() HGPPL::Inst()" << std::endl;
 
 	libhgp_file << "}" << std::endl;
 
