@@ -7,8 +7,8 @@
 
 void  Construct_Polyhedron(Polyhedron_3& polyhedron, const Vector3d1& vecs, const Vector1i1& face_id_0, const Vector1i1& face_id_1, const Vector1i1& face_id_2)
 {
-    Vector1d1 coords;
-    Vector1i1 tris;
+	Vector1d1 coords;
+	Vector1i1 tris;
 	for (int i = 0; i < vecs.size(); i++)
 	{
 		coords.push_back(vecs[i][0]);
@@ -109,27 +109,28 @@ void  Construct_Polyhedron(Polyhedron_3& polyhedron, const char* path_, Vector3d
 * @p				 3d point
 * Return  :true -- inside  ,  false -- outside
 **********************************************************/
-bool OutsidePointInsideTriangle(Poly_facet_iterator &face, Vector3d p) 
+bool OutsidePointInsideTriangle(Poly_facet_iterator& face, Vector3d p)
 {
 	Point_3 p0 = face->halfedge()->next()->next()->vertex()->point();
-    Point_3 p1 = face->halfedge()->vertex()->point();
-    Point_3 p2 = face->halfedge()->next()->vertex()->point();
-    Plane_3 plane(p1, CGAL::cross_product(p2 - p1, p0 - p1));
-    Point_3 project = plane.projection(VectorPoint3d(p));
+	Point_3 p1 = face->halfedge()->vertex()->point();
+	Point_3 p2 = face->halfedge()->next()->vertex()->point();
+	Plane_3 plane(p1, CGAL::cross_product(p2 - p1, p0 - p1));
+	Point_3 project = plane.projection(VectorPoint3d(p));
 
-    Vector3d v0 = PointVector3d(p0);
-    Vector3d v1 = PointVector3d(p1);
-    Vector3d v2 = PointVector3d(p2);
-    Vector3d vp = PointVector3d(project);
+	Vector3d v0 = PointVector3d(p0);
+	Vector3d v1 = PointVector3d(p1);
+	Vector3d v2 = PointVector3d(p2);
+	Vector3d vp = PointVector3d(project);
 
-    double u, v, w;
+	double u, v, w;
 	Functs::Barycentric(vp, v0, v1, v2, u, v, w);
 
-    if ((u >= 0.0 && u <= 1.0) && (v >= 0.0 && v <= 1.0) && (w >= 0.0 && w <= 1.0)) {
-        return true;
-    } else {
-        return false;
-    }
+	if ((u >= 0.0 && u <= 1.0) && (v >= 0.0 && v <= 1.0) && (w >= 0.0 && w <= 1.0)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 /********************************************************
@@ -138,38 +139,38 @@ bool OutsidePointInsideTriangle(Poly_facet_iterator &face, Vector3d p)
 * Parameter         :
 * @hh       half edge
 * @nb       integer
-* @inside		3d point 
-* @outside		3d point 
+* @inside		3d point
+* @outside		3d point
 * @handle		the handle to store intersecting halves
 * @intersection		3d point to store intersection
 * Return          :false -- no intersection  ,  true -- intersection exists
 **********************************************************/
-bool Intersection(Halfedge_handle &hh, int nb, Vector3d inside, Vector3d outside, Halfedge_handle &handle,
-                  Vector3d &intersection) {
-    Point_3 p0 = hh->next()->next()->vertex()->point();
-    Point_3 p1 = hh->vertex()->point();
-    Point_3 p2 = hh->next()->vertex()->point();
-    Plane_3 plane(p1, CGAL::cross_product(p2 - p1, p0 - p1));
+bool Intersection(Halfedge_handle& hh, int nb, Vector3d inside, Vector3d outside, Halfedge_handle& handle,
+	Vector3d& intersection) {
+	Point_3 p0 = hh->next()->next()->vertex()->point();
+	Point_3 p1 = hh->vertex()->point();
+	Point_3 p2 = hh->next()->vertex()->point();
+	Plane_3 plane(p1, CGAL::cross_product(p2 - p1, p0 - p1));
 
-    Vector2d inside_2d = PointVector2d(plane.to_2d(VectorPoint3d(inside)));
-    Vector2d outside_2d = PointVector2d(plane.to_2d(VectorPoint3d(outside)));
+	Vector2d inside_2d = PointVector2d(plane.to_2d(VectorPoint3d(inside)));
+	Vector2d outside_2d = PointVector2d(plane.to_2d(VectorPoint3d(outside)));
 
-    for (int i = 0; i < nb; i++) {
-        hh = hh->next();
-        Vector2d edge_0 = PointVector2d(plane.to_2d(hh->vertex()->point()));
-        Vector2d edge_1 = PointVector2d(plane.to_2d(hh->opposite()->vertex()->point()));
-        Vector3d edge_3d_0 = PointVector3d(hh->vertex()->point());
-        Vector3d edge_3d_1 = PointVector3d(hh->opposite()->vertex()->point());
+	for (int i = 0; i < nb; i++) {
+		hh = hh->next();
+		Vector2d edge_0 = PointVector2d(plane.to_2d(hh->vertex()->point()));
+		Vector2d edge_1 = PointVector2d(plane.to_2d(hh->opposite()->vertex()->point()));
+		Vector3d edge_3d_0 = PointVector3d(hh->vertex()->point());
+		Vector3d edge_3d_1 = PointVector3d(hh->opposite()->vertex()->point());
 
-        Vector2d iter;
-        if (HGP_2D_Intersection_Segment_Segment(inside_2d, outside_2d, edge_0, edge_1, iter)) {
-            intersection = PointVector3d(plane.to_3d(VectorPoint2d(iter)));
-            intersection = HGP_3D_Projection_Point_Segment(intersection, edge_3d_0, edge_3d_1);
-            handle = hh;
-            return true;
-        }
-    }
-    return false;
+		Vector2d iter;
+		if (CGAL_2D_Intersection_Segment_Segment(inside_2d, outside_2d, edge_0, edge_1, iter)) {
+			intersection = PointVector3d(plane.to_3d(VectorPoint2d(iter)));
+			intersection = CGAL_3D_Projection_Point_Segment(intersection, edge_3d_0, edge_3d_1);
+			handle = hh;
+			return true;
+		}
+	}
+	return false;
 }
 
 
@@ -202,131 +203,134 @@ Vector3d RelatedFaceNormal(Polyhedron_3& polyhedron, Tree& tree, Vector3d1& norm
 }
 
 /********************************************************
-* Function name :HGP_Remesh_Surface_by_Adding_Feature
+* Function name :CGAL_Remesh_Surface_by_Adding_Feature
 * Description        : Remesh a surface by adding feature points
 * Parameter         :
 * @feature       the coordinates of feature points
 * @face_ids       the indices of the triangular faces where features need to be added
 * @vecs			the coordinates of vertices of the original surface
 * @face_id_0, face_id_1, face_id_2:		the indices of the triangular faces used to construct the original surface
-* @igl_cutting_0_edges,igl_cutting_1_edges:		the indices of cutting edges 
+* @igl_cutting_0_edges,igl_cutting_1_edges:		the indices of cutting edges
 * @igl_cutting_points		3d double vectors of the coordinates of cutting points
 * @cutting_faces			2d integer vectors of the triangular faces after cutting
 * Return          :void
 **********************************************************/
 extern "C" LIBHGP_EXPORT  void
-HGP_Remesh_Surface_by_Adding_Feature(const Vector3d1 &feature, const Vector1i1 &face_ids,
-                                      const Vector3d1 &vecs,
-                                      const Vector1i1 &face_id_0, const Vector1i1 &face_id_1,
-                                      const Vector1i1 &face_id_2,
-                                     Vector1i1 &igl_cutting_0_edges,Vector1i1 &igl_cutting_1_edges,
-                                      Vector3d1 &igl_cutting_points,
-                                      Vector1i2 &cutting_faces) {
-    //polyhedron
-    Polyhedron_3 polyhedron;
-    Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
+CGAL_Remesh_Surface_by_Adding_Feature(const Vector3d1 & feature, const Vector1i1 & face_ids,
+	const Vector3d1 & vecs,
+	const Vector1i1 & face_id_0, const Vector1i1 & face_id_1,
+	const Vector1i1 & face_id_2,
+	Vector1i1 & igl_cutting_0_edges, Vector1i1 & igl_cutting_1_edges,
+	Vector3d1 & igl_cutting_points,
+	Vector1i2 & cutting_faces) {
+	//polyhedron
+	Polyhedron_3 polyhedron;
+	Construct_Polyhedron(polyhedron, vecs, face_id_0, face_id_1, face_id_2);
 
-    //iterations
-    std::vector<Poly_facet_iterator> all_faces_iters;//related faces of projecting points
-    std::vector<Poly_facet_iterator> project_faces;//related faces of projecting points
-    for (Polyhedron_3::Face_iterator iter = polyhedron.facets_begin(); iter != polyhedron.facets_end(); iter++) {
-        all_faces_iters.push_back(iter);
+	//iterations
+	std::vector<Poly_facet_iterator> all_faces_iters;//related faces of projecting points
+	std::vector<Poly_facet_iterator> project_faces;//related faces of projecting points
+	for (Polyhedron_3::Face_iterator iter = polyhedron.facets_begin(); iter != polyhedron.facets_end(); iter++) {
+		all_faces_iters.push_back(iter);
 
-    }
-    for (int i = 0; i < face_ids.size(); i++) {
-        project_faces.push_back(all_faces_iters[face_ids[i]]);
+	}
+	for (int i = 0; i < face_ids.size(); i++) {
+		project_faces.push_back(all_faces_iters[face_ids[i]]);
 
-    }
-    std::vector<Poly_facet_iterator>().swap(all_faces_iters);
+	}
+	std::vector<Poly_facet_iterator>().swap(all_faces_iters);
 
-    /*******************************************/
-    //searching for all of the cutting points on edges
-    Vector3d1 cutting_points;
-    /*******************************************/
-    int cur_face_id = (int)project_faces[0]->id();
-    Poly_facet_iterator cur_face = project_faces[0];
-    Halfedge_handle cur_handle = cur_face->halfedge();
-    Vector3d inside = feature[0];
+	/*******************************************/
+	//searching for all of the cutting points on edges
+	Vector3d1 cutting_points;
+	/*******************************************/
+	int cur_face_id = (int)project_faces[0]->id();
+	Poly_facet_iterator cur_face = project_faces[0];
+	Halfedge_handle cur_handle = cur_face->halfedge();
+	Vector3d inside = feature[0];
 
-    int next_index = 1;
-    std::vector<Halfedge_handle> handles;
-    int iteration = 0;
-    while (true) {
-        std::cout << iteration << " / " << feature.size() << std::endl;
-        //searching for the outside point of the current triangle
-        bool goon = false;
-        while (true) {
-            if (cur_face_id == project_faces[next_index]->id()) {
-                inside = feature[next_index];
+	int next_index = 1;
+	std::vector<Halfedge_handle> handles;
+	int iteration = 0;
+	while (true) {
+		std::cout << iteration << " / " << feature.size() << std::endl;
+		//searching for the outside point of the current triangle
+		bool goon = false;
+		while (true) {
+			if (cur_face_id == project_faces[next_index]->id()) {
+				inside = feature[next_index];
 				next_index = (next_index + 1);
-                next_index = next_index % feature.size();
-                if (next_index == 0) break;
-            } else {
-                if (OutsidePointInsideTriangle(cur_face, feature[next_index])) {
+				next_index = next_index % feature.size();
+				if (next_index == 0) break;
+			}
+			else {
+				if (OutsidePointInsideTriangle(cur_face, feature[next_index])) {
 					next_index = next_index + 1;
-                    next_index = next_index% feature.size();
-                    if (next_index == 0) break;
-                } else {
-                    goon = true;
-                    break;
-                }
-            }
-        }
+					next_index = next_index % feature.size();
+					if (next_index == 0) break;
+				}
+				else {
+					goon = true;
+					break;
+				}
+			}
+		}
 
-        if (!goon) break;
+		if (!goon) break;
 
-        Halfedge_handle handle;
-        Vector3d intersection;
-        bool b;
-        if (iteration == 0)
-            b = Intersection(cur_handle, 3, inside, feature[next_index], handle, intersection);
-        else
-            b = Intersection(cur_handle, 2, inside, feature[next_index], handle, intersection);
+		Halfedge_handle handle;
+		Vector3d intersection;
+		bool b;
+		if (iteration == 0)
+			b = Intersection(cur_handle, 3, inside, feature[next_index], handle, intersection);
+		else
+			b = Intersection(cur_handle, 2, inside, feature[next_index], handle, intersection);
 
-        if (b) {
-            cutting_points.push_back(intersection);
-            handles.push_back(cur_handle);
+		if (b) {
+			cutting_points.push_back(intersection);
+			handles.push_back(cur_handle);
 
-            //move next step
-            inside = intersection;
-            cur_handle = handle->opposite();
-            cur_face_id = (int)cur_handle->face()->id();
-            cur_face = cur_handle->face();
+			//move next step
+			inside = intersection;
+			cur_handle = handle->opposite();
+			cur_face_id = (int)cur_handle->face()->id();
+			cur_face = cur_handle->face();
 
-            if (cur_face_id == project_faces[0]->id()) {
-                break;
-            }
-        } else {
-            cutting_points.erase(cutting_points.begin() + cutting_points.size() - 1);
-            handles.erase(handles.begin() + handles.size() - 1);
+			if (cur_face_id == project_faces[0]->id()) {
+				break;
+			}
+		}
+		else {
+			cutting_points.erase(cutting_points.begin() + cutting_points.size() - 1);
+			handles.erase(handles.begin() + handles.size() - 1);
 			next_index = next_index + 1;
-            next_index = next_index % feature.size();
-            if (next_index == 0) break;
+			next_index = next_index % feature.size();
+			if (next_index == 0) break;
 
-            inside = cutting_points[cutting_points.size() - 1];
-            cur_handle = handles[handles.size() - 1]->opposite();
-            cur_face_id = (int)cur_handle->face()->id();
-            cur_face = cur_handle->face();
-        }
-        iteration++;
-    }
+			inside = cutting_points[cutting_points.size() - 1];
+			cur_handle = handles[handles.size() - 1]->opposite();
+			cur_face_id = (int)cur_handle->face()->id();
+			cur_face = cur_handle->face();
+		}
+		iteration++;
+	}
 
-    for (int i = 0; i < handles.size(); i++) {
-        cutting_faces[(int)handles[i]->face()->id()].push_back((int)igl_cutting_0_edges.size());
-        cutting_faces[(int)handles[i]->opposite()->face()->id()].push_back((int)igl_cutting_0_edges.size());
-        igl_cutting_0_edges.push_back((int)handles[i]->vertex()->id());
-        igl_cutting_1_edges.push_back((int)handles[i]->opposite()->vertex()->id());
-    }
-    igl_cutting_points = cutting_points;
+	for (int i = 0; i < handles.size(); i++) {
+		cutting_faces[(int)handles[i]->face()->id()].push_back((int)igl_cutting_0_edges.size());
+		cutting_faces[(int)handles[i]->opposite()->face()->id()].push_back((int)igl_cutting_0_edges.size());
+		igl_cutting_0_edges.push_back((int)handles[i]->vertex()->id());
+		igl_cutting_1_edges.push_back((int)handles[i]->opposite()->vertex()->id());
+	}
+	igl_cutting_points = cutting_points;
 }
 
 
-extern "C" LIBHGP_EXPORT void HGP_Mesh_Edges(const char* path) {
+extern "C" LIBHGP_EXPORT void CGAL_Mesh_Edges(const char* path) {
 }
 
 
 /********************************************************
-* Function name :HGP_3D_Intersection_Sphere_Ray
+* Function name :CGAL_3D_Intersection_Sphere_Ray
 * Description        : Check if the 3D sphere intersects with the ray
 * Parameter         :
 * @center_x, center_y, center_z:		The central coordinate of the sphere.
@@ -336,7 +340,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Edges(const char* path) {
 * @i_x, i_y, i_z:		The vector of double to store the coordinates of the intersection.
 * Return          :false -- no intersection  ,  true -- intersection exists
 **********************************************************/
-extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Sphere_Ray(const double& center_x, const double& center_y, const double& center_z, const double& radius,
+extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Sphere_Ray(const double& center_x, const double& center_y, const double& center_z, const double& radius,
 	const double& ray_origin_x, const double& ray_origin_y, const double& ray_origin_z, const double& ray_direction_x, const double& ray_direction_y, const double& ray_direction_z,
 	std::vector<double>&i_x, std::vector<double>&i_y, std::vector<double>&i_z)
 {
@@ -364,7 +368,7 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Sphere_Ray(const double& cente
 }
 
 /********************************************************
-* Function name :HGP_3D_Intersection_Ray_Triangle
+* Function name :CGAL_3D_Intersection_Ray_Triangle
 * Description        :	Check if a 3D ray intersects a triangle.
 * Parameter         :
 * @p		3d point of the coordinates of the starting point of the ray.
@@ -372,7 +376,7 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Sphere_Ray(const double& cente
 * @p0,p1,p2:  3d points of the coordinates of the three vertex of the triangle.
 * Return          :false -- no intersection  ,  true -- intersection exists
 **********************************************************/
-extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Ray_Triangle(const Vector3d& p, const Vector3d & n, const Vector3d & p0, const Vector3d & p1, const Vector3d & p2)
+extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Ray_Triangle(const Vector3d & p, const Vector3d & n, const Vector3d & p0, const Vector3d & p1, const Vector3d & p2)
 {
 	Ray_3 ray(VectorPoint3d(p), Vector_3(n[0], n[1], n[2]));
 
@@ -389,7 +393,7 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Ray_Triangle(const Vector3d& p
 }
 
 /********************************************************
-* Function name :HGP_3D_Intersection_Segment_Mesh
+* Function name :CGAL_3D_Intersection_Segment_Mesh
 * Description        :	Checks if a 3D line segment intersects a 3D mesh (or polygon mesh).
 * Parameter         :
 * @s		3d point of the coordinates of the starting point of the line segment.
@@ -397,16 +401,16 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Ray_Triangle(const Vector3d& p
 * @path		Path or filename of the mesh.
 * Return          :false -- no intersection  ,  true -- intersection exists
 **********************************************************/
-extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Segment_Mesh(const Vector3d& s, const Vector3d& e, const char* path)
+extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Segment_Mesh(const Vector3d & s, const Vector3d & e, const char* path)
 {
-	std::cerr << "HGP_3D_Intersection_Segment_Mesh..." << std::endl;
+	std::cerr << "CGAL_3D_Intersection_Segment_Mesh..." << std::endl;
 
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
 	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
 	tree.accelerate_distance_queries();
 
-	Segment_3 seg(VectorPoint3d(s),VectorPoint3d(e));
+	Segment_3 seg(VectorPoint3d(s), VectorPoint3d(e));
 
 	if (tree.do_intersect(seg))
 		return true;
@@ -415,7 +419,7 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Segment_Mesh(const Vector3d& s
 }
 
 /********************************************************
-* Function name :HGP_3D_Intersection_Segment_Mesh
+* Function name :CGAL_3D_Intersection_Segment_Mesh
 * Description        :	Checks if a 3D line segment intersects a 3D mesh (or polygon mesh).
 * Parameter         :
 * @ss		A container containing the coordinates of the starting points of multiple line segments.
@@ -424,11 +428,11 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Segment_Mesh(const Vector3d& s
 * @inters	Boolean array to stores the result of whether each line segment intersects the grid or not.
 * Return          :false -- no intersection  ,  true -- intersection exists
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Segments_Mesh(const Vector3d1& ss, const Vector3d1& ee, const char* path, Vector1b1& inters)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Intersection_Segments_Mesh(const Vector3d1 & ss, const Vector3d1 & ee, const char* path, Vector1b1 & inters)
 {
-	Functs::MAssert(ss.size()==ee.size(),"ss.size()!=ee.size()");
+	Functs::MAssert(ss.size() == ee.size(), "ss.size()!=ee.size()");
 
-	std::cerr << "HGP_3D_Intersection_Segment_Mesh..." << std::endl;
+	std::cerr << "CGAL_3D_Intersection_Segment_Mesh..." << std::endl;
 
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -444,7 +448,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Segments_Mesh(const Vector3d1&
 }
 
 /********************************************************
-* Function name :HGP_3D_Intersection_Polygons_Mesh
+* Function name :CGAL_3D_Intersection_Polygons_Mesh
 * Description:check whether multiple three-dimensional polygons intersect with a three-dimensional mesh (or polyhedral mesh)
 * Parameter :
 * @polygons:A container containing multiple polygons.
@@ -452,19 +456,19 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Segments_Mesh(const Vector3d1&
 * @inters:An output parameter used to store boolean results indicating whether each polygon intersects with the mesh.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Polygons_Mesh(const Vector3d2& polygons, const char* path, Vector1b1& inters)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Intersection_Polygons_Mesh(const Vector3d2 & polygons, const char* path, Vector1b1 & inters)
 {
 	for (auto& polygon : polygons)
-		Functs::MAssert(polygon.size()==4,"Input polygons are not valid: polygon.size()!=4");
+		Functs::MAssert(polygon.size() == 4, "Input polygons are not valid: polygon.size()!=4");
 
-	std::cerr << "HGP_3D_Intersection_Polygons_Mesh..." << std::endl;
+	std::cerr << "CGAL_3D_Intersection_Polygons_Mesh..." << std::endl;
 
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
 	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
 	tree.accelerate_distance_queries();
 
-	for(int i=0;i<polygons.size();i++)
+	for (int i = 0; i < polygons.size(); i++)
 	{
 		Functs::OutputIterInfo("Polygons:", polygons.size(), i, 10);
 		auto& polygon = polygons[i];
@@ -473,7 +477,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Polygons_Mesh(const Vector3d2&
 		for (int j = 0; j < polygon.size(); j++)
 		{
 			auto s = polygon[j];
-			auto e = polygon[(j+1)%polygon.size()];
+			auto e = polygon[(j + 1) % polygon.size()];
 			Segment_3 seg(VectorPoint3d(s), VectorPoint3d(e));
 			if (tree.do_intersect(seg))
 			{
@@ -494,19 +498,19 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Polygons_Mesh(const Vector3d2&
 }
 
 /********************************************************
-* Function name: HGP_3D_Intersection_Polygons_Mesh_Bool
+* Function name: CGAL_3D_Intersection_Polygons_Mesh_Bool
 * Description: This function checks if multiple three-dimensional polygons intersect with a three-dimensional mesh (or polyhedral mesh) and returns a boolean result.
 * Parameters:
 * @polygons: A container of multiple polygons, where each polygon is represented as a Vector3d2, containing a series of vertices.
 * @path: A string representing the path or filename of the mesh to be checked for intersections.
 * Return		:false -- no intersection, true -- intersection exists
 **********************************************************/
-extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Polygons_Mesh_Bool(const Vector3d2& polygons, const char* path)
+extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Polygons_Mesh_Bool(const Vector3d2 & polygons, const char* path)
 {
 	for (auto& polygon : polygons)
 		Functs::MAssert(polygon.size() == 4, "Input polygons are not valid: polygon.size()!=4");
 
-	std::cerr << "HGP_3D_Intersection_Polygons_Mesh..." << std::endl;
+	std::cerr << "CGAL_3D_Intersection_Polygons_Mesh..." << std::endl;
 
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -538,7 +542,7 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Polygons_Mesh_Bool(const Vecto
 }
 
 /********************************************************
-* Function name: HGP_3D_Intersection_Ray_Mesh
+* Function name: CGAL_3D_Intersection_Ray_Mesh
 * Description: This function checks for intersections between a three-dimensional ray and a three-dimensional mesh.
 * Parameters:
 * @p: A vector representing the origin point of the ray.
@@ -548,9 +552,9 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Polygons_Mesh_Bool(const Vecto
 * - false: no intersections
 * - true: intersection exists
 **********************************************************/
-extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Ray_Mesh(const Vector3d& p, const Vector3d & n, const char* path)
+extern "C" LIBHGP_EXPORT bool CGAL_3D_Intersection_Ray_Mesh(const Vector3d & p, const Vector3d & n, const char* path)
 {
-	std::cerr << "HGP_3D_Intersection_Ray_Mesh..." << std::endl;
+	std::cerr << "CGAL_3D_Intersection_Ray_Mesh..." << std::endl;
 
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -566,7 +570,7 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Ray_Mesh(const Vector3d& p, co
 }
 
 /********************************************************
-* Function name: HGP_3D_Intersection_Rays_Mesh_C1_Bool
+* Function name: CGAL_3D_Intersection_Rays_Mesh_C1_Bool
 * Description: Check for intersections between multiple three-dimensional rays and a three-dimensional mesh and stores the results in a boolean matrix.
 * Parameters:
 * @ps: A vector of three-dimensional points representing the origins of the rays.
@@ -575,10 +579,10 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Intersection_Ray_Mesh(const Vector3d& p, co
 * @inters: An output parameter, a matrix of booleans, to store the intersection results.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void  HGP_3D_Intersection_Rays_Mesh_C1_Bool(const Vector3d1& ps, const Vector3d2& nes, const char* path, Vector1b2& inters)
+extern "C" LIBHGP_EXPORT void  CGAL_3D_Intersection_Rays_Mesh_C1_Bool(const Vector3d1 & ps, const Vector3d2 & nes, const char* path, Vector1b2 & inters)
 {
 	//input validation
-	if (ps.size() != nes.size()  || !Functs::DetectExisting(path))
+	if (ps.size() != nes.size() || !Functs::DetectExisting(path))
 	{
 		Functs::MAssert("ps.size() != nes.size() || inters.size() != 0 || !Functs::DetectExisting(path)");
 	}
@@ -593,8 +597,8 @@ extern "C" LIBHGP_EXPORT void  HGP_3D_Intersection_Rays_Mesh_C1_Bool(const Vecto
 	inters = Vector1b2(ps.size(), Vector1b1());
 	for (int i = 0; i < ps.size(); i++)
 	{
-		Functs::OutputIterInfo("HGP_3D_Intersection_Rays_Mesh_Bool", (int)ps.size(), (int)i,(int)100);
-		Point_3 p3=VectorPoint3d(ps[i]);
+		Functs::OutputIterInfo("CGAL_3D_Intersection_Rays_Mesh_Bool", (int)ps.size(), (int)i, (int)100);
+		Point_3 p3 = VectorPoint3d(ps[i]);
 		for (int j = 0; j < nes[i].size(); j++)
 		{
 			Ray_3 ray(p3, Vector_3(nes[i][j][0], nes[i][j][1], nes[i][j][2]));
@@ -604,7 +608,7 @@ extern "C" LIBHGP_EXPORT void  HGP_3D_Intersection_Rays_Mesh_C1_Bool(const Vecto
 }
 
 /********************************************************
-* Function name: HGP_3D_Intersection_Rays_Mesh_C2_Bool
+* Function name: CGAL_3D_Intersection_Rays_Mesh_C2_Bool
 * Description: Check for intersections between multiple three-dimensional rays and a three-dimensional mesh using custom-defined origins and directions, and stores the results in a boolean matrix.
 * Parameters:
 * @ps: A vector of three-dimensional points representing the origins of the rays.
@@ -613,7 +617,7 @@ extern "C" LIBHGP_EXPORT void  HGP_3D_Intersection_Rays_Mesh_C1_Bool(const Vecto
 * @inters: An output parameter, a matrix of booleans, to store the intersection results.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_C2_Bool(const Vector3d1& ps, const Vector3d1& ns, const char* path, Vector1b2& inters)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Bool(const Vector3d1 & ps, const Vector3d1 & ns, const char* path, Vector1b2 & inters)
 {
 	//input validation
 	if (!Functs::DetectExisting(path))
@@ -629,7 +633,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_C2_Bool(const Vector
 	inters = Vector1b2(ps.size(), Vector1b1());
 	for (int i = 0; i < ps.size(); i++)
 	{
-		Functs::OutputIterInfo("HGP_3D_Intersection_Rays_Mesh_Bool", (int)ps.size(), (int)i, (int)10);
+		Functs::OutputIterInfo("CGAL_3D_Intersection_Rays_Mesh_Bool", (int)ps.size(), (int)i, (int)10);
 		Point_3 p3 = VectorPoint3d(ps[i]);
 
 		for (int j = 0; j < ns.size(); j++)
@@ -645,7 +649,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_C2_Bool(const Vector
 }
 
 /********************************************************
-* Function name: HGP_3D_Intersection_Rays_Mesh_C2_Vector3d
+* Function name: CGAL_3D_Intersection_Rays_Mesh_C2_Vector3d
 * Description: Check for intersections between multiple three-dimensional rays and a three-dimensional mesh using custom-defined origins and directions.
 * Parameters:
 * @ps: A vector of three-dimensional points representing the origins of the rays.
@@ -654,8 +658,8 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_C2_Bool(const Vector
 * @inters: An output parameter, a matrix of distances, where each value represents the distance from the ray origin to the nearest intersection point. A negative value (-1.0) indicates no intersection.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_C2_Vector3d(
-	const Vector3d1& ps, const Vector3d1& ns, const char* path, Vector1d2& inters)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Intersection_Rays_Mesh_C2_Vector3d(
+	const Vector3d1 & ps, const Vector3d1 & ns, const char* path, Vector1d2 & inters)
 {
 	auto IntersectionVector3d = [](const Vector3d& origin, std::list<Ray_intersection>& intersections)
 	{
@@ -671,7 +675,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_C2_Vector3d(
 			if (p)
 			{
 				Vector3d v(p->x(), p->y(), p->z());
-				double d = HGP_3D_Distance_Point_Point(v, origin);
+				double d = CGAL_3D_Distance_Point_Point(v, origin);
 
 				if (min_d > d)
 				{
@@ -705,7 +709,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_C2_Vector3d(
 	inters = Vector1d2(ps.size(), Vector1d1());
 	for (int i = 0; i < ps.size(); i++)
 	{
-		Functs::OutputIterInfo("HGP_3D_Intersection_Rays_Mesh_C2_Vector3d", (int)ps.size(), (int)i, (int)10);
+		Functs::OutputIterInfo("CGAL_3D_Intersection_Rays_Mesh_C2_Vector3d", (int)ps.size(), (int)i, (int)10);
 		Point_3 p3 = VectorPoint3d(ps[i]);
 
 
@@ -738,7 +742,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_C2_Vector3d(
 			{
 				if (inters[i].back() < 0.0)
 				{
-					Functs::MAssert("inters[i].back() < 0.0: "+std::to_string(i)+":"+std::to_string(j));
+					Functs::MAssert("inters[i].back() < 0.0: " + std::to_string(i) + ":" + std::to_string(j));
 				}
 			}
 
@@ -750,7 +754,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_C2_Vector3d(
 }
 
 /********************************************************
-* Function name: HGP_3D_Points_Inside_Triangles_C1_Bool
+* Function name: CGAL_3D_Points_Inside_Triangles_C1_Bool
 * Description: Determine if a set of three-dimensional points are inside or outside a polyhedral mesh represented by its triangles.
 * Parameters:
 * @vecs: A vector containing the vertices of the polyhedral mesh.
@@ -759,7 +763,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_C2_Vector3d(
 * @insides: An output parameter, a boolean vector indicating whether each point is inside (true) or outside (false) of the mesh.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void  HGP_3D_Points_Inside_Triangles_C1_Bool(const Vector3d1& vecs, const Vector1i1& face_id_0, const Vector1i1& face_id_1, const Vector1i1& face_id_2, const Vector3d1& points, Vector1b1& insides)
+extern "C" LIBHGP_EXPORT void  CGAL_3D_Points_Inside_Triangles_C1_Bool(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, const Vector3d1 & points, Vector1b1 & insides)
 {
 	//build polyhedron
 	Polyhedron_3 polyhedron;
@@ -778,7 +782,7 @@ extern "C" LIBHGP_EXPORT void  HGP_3D_Points_Inside_Triangles_C1_Bool(const Vect
 }
 
 /********************************************************
-* Function name: HGP_3D_Points_Inside_Triangles_C2_Bool
+* Function name: CGAL_3D_Points_Inside_Triangles_C2_Bool
 * Description: Check if a set of three-dimensional points are located inside or outside a polyhedral mesh represented by its triangles.
 * Parameters:
 * @path: A string representing the path or filename of the mesh to be used for the check.
@@ -786,7 +790,7 @@ extern "C" LIBHGP_EXPORT void  HGP_3D_Points_Inside_Triangles_C1_Bool(const Vect
 * @insides: An output parameter, a boolean vector indicating whether each point is inside (true) or outside (false) of the mesh.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Points_Inside_Triangles_C2_Bool(const char* path, const Vector3d1& points, Vector1b1& insides)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Points_Inside_Triangles_C2_Bool(const char* path, const Vector3d1 & points, Vector1b1 & insides)
 {
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -803,8 +807,8 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Points_Inside_Triangles_C2_Bool(const char*
 }
 
 /********************************************************
-* Function name: HGP_3D_Mesh_Dart_Sampling_C1
-* Description: This function performs dart throwing sampling within a three-dimensional polyhedral mesh. 
+* Function name: CGAL_3D_Mesh_Dart_Sampling_C1
+* Description: This function performs dart throwing sampling within a three-dimensional polyhedral mesh.
 *				It generates a set of sampling points within the mesh.
 * Parameters:
 * @outside_path: A string representing the path or filename of the mesh used for sampling.
@@ -813,10 +817,10 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Points_Inside_Triangles_C2_Bool(const char*
 * @total_iter: An integer specifying the total number of iterations for dart throwing.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Dart_Sampling_C1(const char* outside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C1(const char* outside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter)
 {
 	if (!(d > 0 && d < 1.0))
-		Functs::MAssert("HGP_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
+		Functs::MAssert("CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
 
 	Polyhedron_3 out_polyhedron;
 	Vector3d1 out_vecs;
@@ -826,7 +830,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Dart_Sampling_C1(const char* outside_p
 	Vector3d out_minC, out_maxC;
 	Functs::GetBoundingBox(out_vecs, out_minC, out_maxC);
 
-	double diagonal_length = HGP_3D_Distance_Point_Point(out_minC, out_maxC);
+	double diagonal_length = CGAL_3D_Distance_Point_Point(out_minC, out_maxC);
 	double minimal_d = d * diagonal_length;
 
 	int run = 0;
@@ -845,7 +849,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Dart_Sampling_C1(const char* outside_p
 		{
 			double distance = CGAL_IA_MAX_DOUBLE;
 			for (int i = 0; i < sampling_points.size(); i++)
-				distance = std::min(distance, HGP_3D_Distance_Point_Point(sampling_points[i], Vector3d(x, y, z)));
+				distance = std::min(distance, CGAL_3D_Distance_Point_Point(sampling_points[i], Vector3d(x, y, z)));
 
 			if (distance > minimal_d)
 			{
@@ -859,8 +863,8 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Dart_Sampling_C1(const char* outside_p
 }
 
 /********************************************************
-* Function name: HGP_3D_Mesh_Dart_Sampling_C2
-* Description: This function performs dart throwing sampling within a three-dimensional polyhedral mesh while avoiding an internal region. 
+* Function name: CGAL_3D_Mesh_Dart_Sampling_C2
+* Description: This function performs dart throwing sampling within a three-dimensional polyhedral mesh while avoiding an internal region.
 *				It generates a set of sampling points within the specified region.
 * Parameters:
 * @outside_path: A string representing the path or filename of the mesh used as the outer boundary.
@@ -870,10 +874,10 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Dart_Sampling_C1(const char* outside_p
 * @total_iter: An integer specifying the total number of iterations for dart throwing.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Dart_Sampling_C2(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Dart_Sampling_C2(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points, const int& total_iter)
 {
 	if (!(d > 0 && d < 1.0))
-		Functs::MAssert("HGP_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
+		Functs::MAssert("CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
 
 	//outside
 	Polyhedron_3 out_polyhedron;
@@ -889,7 +893,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Dart_Sampling_C2(const char* outside_p
 	Construct_Polyhedron(in_polyhedron, inside_path);
 	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> in_checker(in_polyhedron);
 
-	double diagonal_length = HGP_3D_Distance_Point_Point(out_minC, out_maxC);
+	double diagonal_length = CGAL_3D_Distance_Point_Point(out_minC, out_maxC);
 	double minimal_d = d * diagonal_length;
 
 	int run = 0;
@@ -909,13 +913,13 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Dart_Sampling_C2(const char* outside_p
 		{
 			double distance = CGAL_IA_MAX_DOUBLE;
 			for (int i = 0; i < sampling_points.size(); i++)
-				distance = std::min(distance, HGP_3D_Distance_Point_Point(sampling_points[i], Vector3d(x, y, z)));
-			
+				distance = std::min(distance, CGAL_3D_Distance_Point_Point(sampling_points[i], Vector3d(x, y, z)));
+
 			if (distance > minimal_d)
 			{
 				sampling_points.push_back(Vector3d(x, y, z));
 
-				if (sampling_points.size() % 100 == 0) std::cerr<< sampling_points.size()<<" ";
+				if (sampling_points.size() % 100 == 0) std::cerr << sampling_points.size() << " ";
 
 				run = 0;
 			}
@@ -926,7 +930,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Dart_Sampling_C2(const char* outside_p
 
 
 /********************************************************
-* Function name: HGP_3D_Mesh_Regular_Sampling_C1
+* Function name: CGAL_3D_Mesh_Regular_Sampling_C1
 * Description: This function performs regular grid-based sampling within a three-dimensional polyhedral mesh.
 *				It generates a set of sampling points at regular intervals within the specified region.
 * Parameters:
@@ -935,10 +939,10 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Dart_Sampling_C2(const char* outside_p
 * @sampling_points: An output parameter, a vector of three-dimensional points representing the generated sampling points within the specified region.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C1(const char* outside_path, const double& d, Vector3d1 & sampling_points)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C1(const char* outside_path, const double& d, Vector3d1 & sampling_points)
 {
 	if (!(d > 0 && d < 1.0))
-		Functs::MAssert("HGP_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
+		Functs::MAssert("CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
 
 	Polyhedron_3 out_polyhedron;
 	Vector3d1 out_vecs;
@@ -948,7 +952,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C1(const char* outsid
 	Vector3d out_minC, out_maxC;
 	Functs::GetBoundingBox(out_vecs, out_minC, out_maxC);
 
-	double diagonal_length = HGP_3D_Distance_Point_Point(out_minC, out_maxC);
+	double diagonal_length = CGAL_3D_Distance_Point_Point(out_minC, out_maxC);
 	double minimal_d = d * diagonal_length;
 
 	double x(out_minC[0]);
@@ -979,7 +983,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C1(const char* outsid
 }
 
 /********************************************************
-* Function name: HGP_3D_Mesh_Regular_Sampling_C2
+* Function name: CGAL_3D_Mesh_Regular_Sampling_C2
 * Description: This function performs regular grid-based sampling within a three-dimensional polyhedral mesh.
 *				It generates a set of sampling points at regular intervals within the specified region.
 *				It takes into account two meshes: an "outside" mesh and an "inside" mesh, and samples points only within the "outside" mesh while avoiding the "inside" mesh.
@@ -990,10 +994,10 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C1(const char* outsid
 * @sampling_points: An output parameter, a vector of three-dimensional points representing the generated sampling points within the specified region.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C2(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C2(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points)
 {
 	if (!(d > 0 && d < 1.0))
-		Functs::MAssert("HGP_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
+		Functs::MAssert("CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
 
 	//outside
 	Polyhedron_3 out_polyhedron;
@@ -1009,7 +1013,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C2(const char* outsid
 	Construct_Polyhedron(in_polyhedron, inside_path);
 	CGAL::Side_of_triangle_mesh<Polyhedron_3, K> in_checker(in_polyhedron);
 
-	double diagonal_length = HGP_3D_Distance_Point_Point(out_minC, out_maxC);
+	double diagonal_length = CGAL_3D_Distance_Point_Point(out_minC, out_maxC);
 	double minimal_d = d * diagonal_length;
 
 	double x(out_minC[0]);
@@ -1028,7 +1032,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C2(const char* outsid
 					sampling_points.push_back(Vector3d(x, y, z));
 					if (sampling_points.size() % 100 == 0) std::cerr << sampling_points.size() << " ";
 				}
-			
+
 				z += minimal_d;
 			}
 			y += minimal_d;
@@ -1040,7 +1044,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C2(const char* outsid
 }
 
 /********************************************************
-* Function name: HGP_3D_Cube_Surface_Sampling_C1
+* Function name: CGAL_3D_Cube_Surface_Sampling_C1
 * Description: This function generates a set of sampling points on the surfaces of a 3D cube. The cube is defined by its size and the distance between sampling points. The function computes points on the X, Y, and Z faces of the cube, and optionally computes neighboring relationships between these points.
 * Parameters:
 * @cube_size: A double value representing the size of the cube.
@@ -1050,13 +1054,13 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C2(const char* outsid
 * @compute_neighbors: A boolean indicating whether to compute neighboring relationships between sampling points.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Cube_Surface_Sampling_C1(const double& cube_size, const double& d, Vector3d2& sampling_points, VectorPI2& neighbors, const bool& compute_neighbors)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Cube_Surface_Sampling_C1(const double& cube_size, const double& d, Vector3d2 & sampling_points, VectorPI2 & neighbors, const bool& compute_neighbors)
 {
 	auto half_cube = cube_size / 2.0;
 
 
 	VectorPI1 sneighbors;
-	Vector3d1 z3d = Functs::Vector2dto3d(HGP_2D_Square_Regular_Sampling_C3(d, sneighbors, compute_neighbors));
+	Vector3d1 z3d = Functs::Vector2dto3d(CGAL_2D_Square_Regular_Sampling_C3(d, sneighbors, compute_neighbors));
 	z3d = Functs::PosApplyMatrix(z3d, Functs::ScaleMatrix(Vector3d(cube_size, cube_size, 0.0)));//-z +z
 	auto y3d = Functs::PosApplyMatrix(z3d, Functs::RotationMatrix(Vector3d(1.0, 0.0, 0.0), Math_PI / 2.0));//-y +y
 	auto x3d = Functs::PosApplyMatrix(z3d, Functs::RotationMatrix(Vector3d(0.0, 1.0, 0.0), Math_PI / 2.0));//-x +x
@@ -1083,24 +1087,24 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Cube_Surface_Sampling_C1(const double& cube
 }
 
 
-extern "C" LIBHGP_EXPORT void HGP_3D_Cube_Surface_Sampling_C2(const double& cube_size, const double& d, Vector3d2& sampling_points)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Cube_Surface_Sampling_C2(const double& cube_size, const double& d, Vector3d2 & sampling_points)
 {
 	VectorPI2 neighbors;
-	HGP_3D_Cube_Surface_Sampling_C1(cube_size, d, sampling_points, neighbors, false);
+	CGAL_3D_Cube_Surface_Sampling_C1(cube_size, d, sampling_points, neighbors, false);
 }
 
 
-extern "C" LIBHGP_EXPORT void HGP_3D_Cube_Surface_Sampling_C3(const double& cube_size, const double& d, Vector3d2& sampling_points, VectorPI2& neighbors)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Cube_Surface_Sampling_C3(const double& cube_size, const double& d, Vector3d2 & sampling_points, VectorPI2 & neighbors)
 {
-	HGP_3D_Cube_Surface_Sampling_C1(cube_size, d, sampling_points, neighbors, true);
+	CGAL_3D_Cube_Surface_Sampling_C1(cube_size, d, sampling_points, neighbors, true);
 
 }
 
-//extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Segments_Mesh(const Vector3d1& ss, const Vector3d1& ee, const char* path, Vector1b1& inters)
+//extern "C" LIBHGP_EXPORT void CGAL_3D_Intersection_Segments_Mesh(const Vector3d1& ss, const Vector3d1& ee, const char* path, Vector1b1& inters)
 //{
 //	Functs::MAssert(ss.size() != ee.size(), "ss.size()!=ee.size()");
 //
-//	std::cerr << "HGP_3D_Intersection_Segment_Mesh..." << std::endl;
+//	std::cerr << "CGAL_3D_Intersection_Segment_Mesh..." << std::endl;
 //
 //	Polyhedron_3 polyhedron;
 //	Construct_Polyhedron(polyhedron, path);
@@ -1115,7 +1119,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Cube_Surface_Sampling_C3(const double& cube
 //}
 
 /********************************************************
-* Function name : HGP_3D_Mesh_Regular_Sampling_C3
+* Function name : CGAL_3D_Mesh_Regular_Sampling_C3
 * Description  : Regularly samples points on the surface of an outer 3D mesh while avoiding intersections
 *                with an inner 3D mesh. It computes neighbor relationships between the sampled points.
 * Parameters   :
@@ -1126,9 +1130,9 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Cube_Surface_Sampling_C3(const double& cube
 * @param neighbors : Reference to a vector of pairs of integers storing neighbor relationships.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C3(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points,VectorPI1& neighbors)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Regular_Sampling_C3(const char* outside_path, const char* inside_path, const double& d, Vector3d1 & sampling_points, VectorPI1 & neighbors)
 {
-	Functs::MAssert((d > 0 && d < 1.0), "HGP_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
+	Functs::MAssert((d > 0 && d < 1.0), "CGAL_3D_Mesh_Dart_Sampling_C1 if (!(d > 0 && d < 1.0))");
 
 	//outside
 	Polyhedron_3 out_polyhedron;
@@ -1148,7 +1152,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C3(const char* outsid
 	Tree in_tree(faces(in_polyhedron).first, faces(in_polyhedron).second, in_polyhedron);
 	in_tree.accelerate_distance_queries();
 
-	double diagonal_length = HGP_3D_Distance_Point_Point(out_minC, out_maxC);
+	double diagonal_length = CGAL_3D_Distance_Point_Point(out_minC, out_maxC);
 	double minimal_d = d * diagonal_length;
 
 	double x(out_minC[0]);
@@ -1231,12 +1235,12 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C3(const char* outsid
 
 					PushEdge(Vector3i(xi + 1, yi, zi), Vector3i(xi, yi + 1, zi));//xy
 					PushEdge(Vector3i(xi, yi + 1, zi), Vector3i(xi, yi, zi + 1));//yz
-					PushEdge(Vector3i(xi+1, yi, zi), Vector3i(xi, yi, zi + 1));//xz
+					PushEdge(Vector3i(xi + 1, yi, zi), Vector3i(xi, yi, zi + 1));//xz
 
 					PushEdge(Vector3i(xi, yi, zi), Vector3i(xi + 1, yi + 1, zi + 1));
 					PushEdge(Vector3i(xi + 1, yi, zi), Vector3i(xi, yi + 1, zi + 1));
 					PushEdge(Vector3i(xi, yi, zi + 1), Vector3i(xi + 1, yi + 1, zi));
-					PushEdge(Vector3i(xi+1, yi, zi + 1), Vector3i(xi, yi+1, zi));
+					PushEdge(Vector3i(xi + 1, yi, zi + 1), Vector3i(xi, yi + 1, zi));
 				}
 			}
 		}
@@ -1246,7 +1250,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C3(const char* outsid
 }
 
 /********************************************************
-* Function name : HGP_3D_Intersection_Rays_Mesh_Vector3d
+* Function name : CGAL_3D_Intersection_Rays_Mesh_Vector3d
 * Description  : Computes the intersection points between a list of rays and a 3D mesh.
 * Parameters   :
 * @ps : A vector containing 3D points representing ray starting positions.
@@ -1255,7 +1259,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Regular_Sampling_C3(const char* outsid
 * @inters : Reference to a vector to store the intersection points.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_Vector3d(const Vector3d1 & ps, const Vector3d1 & ns, const char* path, Vector3d1 & inters)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Intersection_Rays_Mesh_Vector3d(const Vector3d1 & ps, const Vector3d1 & ns, const char* path, Vector3d1 & inters)
 {
 	// Open and read the 3D mesh from the specified file.
 	std::ifstream input(path);
@@ -1286,7 +1290,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_Vector3d(const Vecto
 			if (p)
 			{
 				Vector3d v(p->x(), p->y(), p->z());
-				double d = HGP_3D_Distance_Point_Point(v, ps[i]);
+				double d = CGAL_3D_Distance_Point_Point(v, ps[i]);
 
 				if (min_d > d)
 				{
@@ -1308,7 +1312,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_Vector3d(const Vecto
 }
 
 /********************************************************
-* Function name : HGP_3D_Distance_Point_Triangle
+* Function name : CGAL_3D_Distance_Point_Triangle
 * Description  : Computes the minimum distance between a 3D point and a triangle.
 * Parameters   :
 * @p : A 3D vector representing the point.
@@ -1317,7 +1321,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Intersection_Rays_Mesh_Vector3d(const Vecto
 * @t_2 : A 3D vector representing the third vertex of the triangle.
 * Return       : The minimum distance between the point and the triangle.
 **********************************************************/
-extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Point_Triangle(const Vector3d & p, const Vector3d & t_0, const Vector3d & t_1, const Vector3d & t_2)
+extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Point_Triangle(const Vector3d & p, const Vector3d & t_0, const Vector3d & t_1, const Vector3d & t_2)
 {
 	KC::Point_3 a(t_0[0], t_0[1], t_0[2]);
 	KC::Point_3 b(t_1[0], t_1[1], t_1[2]);
@@ -1333,7 +1337,7 @@ extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Point_Triangle(const Vector3d & 
 }
 
 /********************************************************
-* Function name : HGP_3D_Distance_Point_Triangles
+* Function name : CGAL_3D_Distance_Point_Triangles
 * Description  : Computes the minimum distance between a 3D point and a set of triangles forming a polyhedron.
 * Parameters   :
 * @p : A 3D vector representing the point.
@@ -1343,7 +1347,7 @@ extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Point_Triangle(const Vector3d & 
 * @face_id_2 : A vector of integers representing the third vertex of each triangle.
 * Return       : The minimum distance between the point and the polyhedron composed of the specified triangles.
 **********************************************************/
-extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Point_Triangles(const Vector3d & p, const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2)
+extern "C" LIBHGP_EXPORT double CGAL_3D_Distance_Point_Triangles(const Vector3d & p, const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2)
 {
 	//build polyhedron
 	Polyhedron_3 polyhedron;
@@ -1357,7 +1361,7 @@ extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Point_Triangles(const Vector3d &
 }
 
 /********************************************************
-* Function name : HGP_3D_Nearest_Point_Triangles
+* Function name : CGAL_3D_Nearest_Point_Triangles
 * Description  : Finds the nearest point on a polyhedron, formed by a set of triangles, to a given 3D point.
 * Parameters   :
 * @p : A 3D vector representing the point.
@@ -1367,7 +1371,7 @@ extern "C" LIBHGP_EXPORT double HGP_3D_Distance_Point_Triangles(const Vector3d &
 * @face_id_2 : A vector of integers representing the third vertex of each triangle.
 * Return       : A 3D vector representing the nearest point on the polyhedron to the input point.
 **********************************************************/
-extern "C" LIBHGP_EXPORT Vector3d HGP_3D_Nearest_Point_Triangles(const Vector3d & p, const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2)
+extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Nearest_Point_Triangles(const Vector3d & p, const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2)
 {
 	//build polyhedron
 	Polyhedron_3 polyhedron;
@@ -1382,7 +1386,7 @@ extern "C" LIBHGP_EXPORT Vector3d HGP_3D_Nearest_Point_Triangles(const Vector3d 
 }
 
 /********************************************************
-* Function name : HGP_3D_Distance_Point_Mesh
+* Function name : CGAL_3D_Distance_Point_Mesh
 * Description  : Computes the minimum distances between a set of 3D query points and a 3D mesh.
 * Parameters   :
 * @path : Path to the 3D mesh for distance computation.
@@ -1390,9 +1394,9 @@ extern "C" LIBHGP_EXPORT Vector3d HGP_3D_Nearest_Point_Triangles(const Vector3d 
 * @distances : A vector to store the minimum distances for each query point.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Distance_Point_Mesh(const char* path, const Vector3d1 & query_points, Vector1d1 & distances)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Distance_Point_Mesh(const char* path, const Vector3d1 & query_points, Vector1d1 & distances)
 {
-	std::cout << "HGP_3D_Distance_Point_Mesh" << std::endl;
+	std::cout << "CGAL_3D_Distance_Point_Mesh" << std::endl;
 
 	// Build a polyhedron from the provided mesh file
 	Polyhedron_3 polyhedron;
@@ -1416,7 +1420,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Distance_Point_Mesh(const char* path, const
 
 
 /********************************************************
-* Function name : HGP_3D_Nearest_Point_Mesh
+* Function name : CGAL_3D_Nearest_Point_Mesh
 * Description  : Finds the nearest points on a 3D mesh for a set of input 3D vectors.
 * Parameters   :
 * @path : Path to the 3D mesh for nearest point computation.
@@ -1424,9 +1428,9 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Distance_Point_Mesh(const char* path, const
 * @ners : A vector to store the nearest points on the mesh for each input point.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Nearest_Point_Mesh(const char* path, const Vector3d1 & ves, Vector3d1 & ners)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Nearest_Point_Mesh(const char* path, const Vector3d1 & ves, Vector3d1 & ners)
 {
-	std::cout << "HGP_3D_Nearest_Point_Mesh" << std::endl;
+	std::cout << "CGAL_3D_Nearest_Point_Mesh" << std::endl;
 
 	// Build a polyhedron from the provided mesh file
 	Polyhedron_3 polyhedron;
@@ -1452,7 +1456,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Nearest_Point_Mesh(const char* path, const 
 }
 
 /********************************************************
-* Function name : HGP_3D_Mesh_Near_Triangles
+* Function name : CGAL_3D_Mesh_Near_Triangles
 * Description  : Finds triangles on a 3D mesh that are within a specified distance of a set of 3D points.
 * Parameters   :
 * @vecs : A vector of 3D vectors representing the vertices of the triangles in the mesh.
@@ -1464,7 +1468,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Nearest_Point_Mesh(const char* path, const 
 * @triangles : A vector of vectors of integers to store the indices of the triangles within the specified distance for each query point.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void  HGP_3D_Mesh_Near_Triangles(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, const Vector3d1 & points, const double& d, Vector1i2&triangles)
+extern "C" LIBHGP_EXPORT void  CGAL_3D_Mesh_Near_Triangles(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, const Vector3d1 & points, const double& d, Vector1i2 & triangles)
 {
 	//build polyhedron
 	Polyhedron_3 polyhedron;
@@ -1532,7 +1536,7 @@ extern "C" LIBHGP_EXPORT void  HGP_3D_Mesh_Near_Triangles(const Vector3d1 & vecs
 }
 
 /********************************************************
-* Function name : HGP_3D_Points_inside_Triangles_C1
+* Function name : CGAL_3D_Points_inside_Triangles_C1
 * Description  : Determines whether a set of 3D points are inside or outside a mesh composed of triangles.
 * Parameters   :
 * @vecs : A vector of 3D vectors representing the vertices of the triangles in the mesh.
@@ -1543,7 +1547,7 @@ extern "C" LIBHGP_EXPORT void  HGP_3D_Mesh_Near_Triangles(const Vector3d1 & vecs
 * @insides : A vector of boolean values indicating whether each point is inside (true) or outside (false) the mesh.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Points_inside_Triangles_C1(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, const Vector3d1 & points, Vector1b1&insides)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Points_inside_Triangles_C1(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, const Vector3d1 & points, Vector1b1 & insides)
 {
 	//build polyhedron
 	Polyhedron_3 polyhedron;
@@ -1562,7 +1566,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Points_inside_Triangles_C1(const Vector3d1 
 }
 
 /********************************************************
-* Function name : HGP_3D_Points_inside_Triangles_C2
+* Function name : CGAL_3D_Points_inside_Triangles_C2
 * Description  : Determines whether a set of 3D points are inside or outside a mesh composed of triangles.
 * Parameters   :
 * @path : Path to the 3D mesh for inside/outside determination.
@@ -1570,7 +1574,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Points_inside_Triangles_C1(const Vector3d1 
 * @insides : A vector of boolean values indicating whether each point is inside (true) or outside (false) the mesh.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Points_inside_Triangles_C2(const char* path, const Vector3d1 & points, Vector1b1&insides)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Points_inside_Triangles_C2(const char* path, const Vector3d1 & points, Vector1b1 & insides)
 {
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -1589,7 +1593,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Points_inside_Triangles_C2(const char* path
 
 
 /********************************************************
-* Function name : HGP_Mesh_Loop_Subdivision_One_Step
+* Function name : CGAL_Mesh_Loop_Subdivision_One_Step
 * Description  : Performs one step of Loop subdivision on a 3D mesh represented by vertices and face indices.
 * Parameters   :
 * @vecs : A vector of 3D vectors representing the vertices of the mesh.
@@ -1598,7 +1602,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Points_inside_Triangles_C2(const char* path
 * @face_id_2 : A vector of integers representing the third vertex of each triangle.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2)
+extern "C" LIBHGP_EXPORT void CGAL_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vecs, Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2)
 {
 	Vector3d1 loop_vecs = vecs;
 	Vector1i1 loop_face_id_0;
@@ -1655,7 +1659,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vec
 			if (vecs_neighbors_labels[i][j] < 0)
 			{
 				edges.push_back(Edge(source, end));
-				vecs_neighbors_labels[i][j] =(int)edges.size() - 1;
+				vecs_neighbors_labels[i][j] = (int)edges.size() - 1;
 
 				for (int k = 0; k < vecs_neighbors[end].size(); k++)
 				{
@@ -1754,7 +1758,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vec
 }
 
 /********************************************************
-* Function name : HGP_Mesh_Subdivision
+* Function name : CGAL_Mesh_Subdivision
 * Description  : Subdivides a 3D mesh using the specified subdivision method for a given number of steps.
 * Parameters   :
 * @in_path : Path to the input 3D mesh in OBJ format.
@@ -1763,7 +1767,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Loop_Subdivision_One_Step(Vector3d1 & vec
 * @out_path : Path to the output 3D mesh in OBJ format.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Mesh_Subdivision(const char* in_path, const char* sub, const int& step, const char* out_path)
+extern "C" LIBHGP_EXPORT void CGAL_Mesh_Subdivision(const char* in_path, const char* sub, const int& step, const char* out_path)
 {
 	//load the input obj
 	Polyhedron_3 polyhedron;
@@ -1800,7 +1804,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Subdivision(const char* in_path, const ch
 
 
 /********************************************************
-* Function name : HGP_3D_Mesh_Curvature_C1
+* Function name : CGAL_3D_Mesh_Curvature_C1
 * Description  : Computes the maximum and minimum curvatures of a 3D mesh represented by vertices and face indices.
 * Parameters   :
 * @vecs : The vertices of the mesh.
@@ -1811,7 +1815,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Subdivision(const char* in_path, const ch
 * @min_curs : A vector of double values to store the minimum curvatures for each vertex.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector1d1&max_curs, Vector1d1&min_curs)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, Vector1d1 & max_curs, Vector1d1 & min_curs)
 {
 	int verticeSize = vecs.size();
 	int faceindiceSize = face_id_0.size() * 3;
@@ -1843,7 +1847,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, c
 	}
 }
 /********************************************************
-* Function name : HGP_3D_Mesh_Curvature_C2
+* Function name : CGAL_3D_Mesh_Curvature_C2
 * Description  : Computes the maximum and minimum curvatures of a 3D mesh represented by vertices and face indices.
 * Parameters   :
 * @vecs : The vertices of the mesh.
@@ -1852,7 +1856,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C1(const Vector3d1 & vecs, c
 * @min_curs : A vector of double values to store the minimum curvatures for each vertex.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, const Vector1i2&face_ids, Vector1d1&max_curs, Vector1d1&min_curs)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, const Vector1i2 & face_ids, Vector1d1 & max_curs, Vector1d1 & min_curs)
 {
 	Vector1i1 face_id_0, face_id_1, face_id_2;
 
@@ -1863,7 +1867,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, c
 		face_id_2.push_back(face_ids[i][2]);
 	}
 
-	HGP_3D_Mesh_Curvature_C1(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs);
+	CGAL_3D_Mesh_Curvature_C1(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs);
 
 	Vector1i1().swap(face_id_0);
 	Vector1i1().swap(face_id_1);
@@ -1871,7 +1875,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, c
 
 }
 /********************************************************
-* Function name : HGP_3D_Mesh_Curvature_C3
+* Function name : CGAL_3D_Mesh_Curvature_C3
 * Description  : Computes the curvature information of a 3D mesh, including both maximum and minimum curvatures and their corresponding directions.
 * Parameters   :
 * @vecs : Vertices of the 3D mesh.
@@ -1884,7 +1888,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C2(const Vector3d1 & vecs, c
 * @min_curs_directions : Directions of minimum curvatures as 3D vectors for each vertex.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector1d1&max_curs, Vector1d1&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, Vector1d1 & max_curs, Vector1d1 & min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
 {
 	int verticeSize = vecs.size();
 	int faceindiceSize = face_id_0.size() * 3;
@@ -1922,7 +1926,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, c
 	}
 }
 /********************************************************
-* Function name : HGP_3D_Mesh_Curvature_C4
+* Function name : CGAL_3D_Mesh_Curvature_C4
 * Description  : Computes the curvature information of a 3D mesh, including maximum and minimum curvatures, and their corresponding directions.
 * Parameters   :
 * @vecs : Vertices of the 3D mesh.
@@ -1933,7 +1937,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C3(const Vector3d1 & vecs, c
 * @min_curs_directions : Directions of minimum curvatures as 3D vectors for each vertex.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, const Vector1i2&face_ids, Vector1d1&max_curs, Vector1d1&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, const Vector1i2 & face_ids, Vector1d1 & max_curs, Vector1d1 & min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
 {
 	Vector1i1 face_id_0, face_id_1, face_id_2;
 
@@ -1944,14 +1948,14 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, c
 		face_id_2.push_back(face_ids[i][2]);
 	}
 
-	HGP_3D_Mesh_Curvature_C3(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions);
+	CGAL_3D_Mesh_Curvature_C3(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions);
 
 	Vector1i1().swap(face_id_0);
 	Vector1i1().swap(face_id_1);
 	Vector1i1().swap(face_id_2);
 }
 /********************************************************
-* Function name : HGP_3D_Mesh_Curvature_C5
+* Function name : CGAL_3D_Mesh_Curvature_C5
 * Description  : Computes the curvature information of a 3D mesh, including maximum and minimum curvatures, their directions, and vertex normals.
 * Parameters   :
 * @vecs : Vertices of the 3D mesh.
@@ -1965,7 +1969,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C4(const Vector3d1 & vecs, c
 * @normals : Vertex normals for each vertex.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector1d1&max_curs, Vector1d1&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, Vector1d1 & max_curs, Vector1d1 & min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals)
 {
 	int verticeSize = vecs.size();
 	int faceindiceSize = face_id_0.size() * 3;
@@ -2005,7 +2009,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, c
 	}
 }
 /********************************************************
-* Function name : HGP_3D_Mesh_Curvature_C6
+* Function name : CGAL_3D_Mesh_Curvature_C6
 * Description  : Computes the curvature information of a 3D mesh, including maximum and minimum curvatures, their directions, and vertex normals.
 * Parameters   :
 * @vecs : Vertices of the 3D mesh.
@@ -2017,7 +2021,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C5(const Vector3d1 & vecs, c
 * @normals : Vertex normals for each vertex.
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, const Vector1i2&face_ids, Vector1d1&max_curs, Vector1d1&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, const Vector1i2 & face_ids, Vector1d1 & max_curs, Vector1d1 & min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions, Vector3d1 & normals)
 {
 	Vector1i1 face_id_0, face_id_1, face_id_2;
 
@@ -2028,14 +2032,14 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, c
 		face_id_2.push_back(face_ids[i][2]);
 	}
 
-	HGP_3D_Mesh_Curvature_C5(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions, normals);
+	CGAL_3D_Mesh_Curvature_C5(vecs, face_id_0, face_id_1, face_id_2, max_curs, min_curs, max_curs_directions, min_curs_directions, normals);
 
 	Vector1i1().swap(face_id_0);
 	Vector1i1().swap(face_id_1);
 	Vector1i1().swap(face_id_2);
 }
 /********************************************************
-* Function name : HGP_3D_Triangle_Mesh_Boundary_C1
+* Function name : CGAL_3D_Triangle_Mesh_Boundary_C1
 * Description  : Checks whether each vertex in a 3D triangle mesh is on the boundary.
 * Parameters   :
 * @vecs : Vertices of the 3D mesh.
@@ -2045,7 +2049,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Curvature_C6(const Vector3d1 & vecs, c
 * @bools : A boolean vector indicating whether each vertex is on the boundary (true) or not (false).
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Boundary_C1(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector1b1&bools)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C1(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, Vector1b1 & bools)
 {
 	Vector1b1().swap(bools);
 
@@ -2104,31 +2108,31 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Boundary_C1(const Vector3d1 &
 	Vector1i1().swap(edges);
 }
 /********************************************************
-* Function name : HGP_3D_Triangle_Mesh_Boundary_C2
+* Function name : CGAL_3D_Triangle_Mesh_Boundary_C2
 * Description  : Checks whether each vertex in a 3D triangle mesh is on the boundary.
 * Parameters   :
 * @path: A C-style string representing the file path to the 3D mesh.
 * @bools: A reference to a boolean vector indicating whether each vertex is on the boundary (true) or not (false).
 * Return       : void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Boundary_C2(const char* path, Vector1b1&bools)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C2(const char* path, Vector1b1 & bools)
 {
 	Vector3d1 vecs;
 	Vector1i1 face_id_0;
 	Vector1i1 face_id_1;
 	Vector1i1 face_id_2;
 	Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
-	HGP_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, bools);
+	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, bools);
 }
 /********************************************************
-* Function name: HGP_3D_Connecting_Segments_C1
+* Function name: CGAL_3D_Connecting_Segments_C1
 * Description: Connects line segments to form lines based on their endpoint proximity.
 * Parameters:
 * @segments: A list of line segments represented by pairs of 2D points.
 * @lines: A list of connected lines, where each line is represented by a sequence of 2D points.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Connecting_Segments_C1(Vector2d2 & segments, Vector2d2 & lines)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Connecting_Segments_C1(Vector2d2 & segments, Vector2d2 & lines)
 {
 	//save connecting relations
 	Vector1b1 used(segments.size(), false);
@@ -2141,10 +2145,10 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Connecting_Segments_C1(Vector2d2 & segments
 		{
 			if (i != j && !used[i] && !used[j])
 			{
-				bool b_0_0 = Functs::IsAlmostZero_Double(HGP_2D_Distance_Point_Point(segments[i][0], segments[j][0]), 1.0E-09);
-				bool b_0_1 = Functs::IsAlmostZero_Double(HGP_2D_Distance_Point_Point(segments[i][0], segments[j][1]), 1.0E-09);
-				bool b_1_0 = Functs::IsAlmostZero_Double(HGP_2D_Distance_Point_Point(segments[i][1], segments[j][0]), 1.0E-09);
-				bool b_1_1 = Functs::IsAlmostZero_Double(HGP_2D_Distance_Point_Point(segments[i][1], segments[j][1]), 1.0E-09);
+				bool b_0_0 = Functs::IsAlmostZero_Double(CGAL_2D_Distance_Point_Point(segments[i][0], segments[j][0]), 1.0E-09);
+				bool b_0_1 = Functs::IsAlmostZero_Double(CGAL_2D_Distance_Point_Point(segments[i][0], segments[j][1]), 1.0E-09);
+				bool b_1_0 = Functs::IsAlmostZero_Double(CGAL_2D_Distance_Point_Point(segments[i][1], segments[j][0]), 1.0E-09);
+				bool b_1_1 = Functs::IsAlmostZero_Double(CGAL_2D_Distance_Point_Point(segments[i][1], segments[j][1]), 1.0E-09);
 
 				if ((b_0_0 && b_1_1) || (b_0_1 && b_1_0))
 				{
@@ -2248,14 +2252,14 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Connecting_Segments_C1(Vector2d2 & segments
 	}
 }
 /********************************************************
-* Function name: HGP_3D_Connecting_Segments_C2
+* Function name: CGAL_3D_Connecting_Segments_C2
 * Description: Connects line segments in 3D space to form lines based on the proximity of their endpoints.
 * Parameters:
 * @segments: A list of line segments represented by pairs of 3D points.
 * @lines: A list of connected lines, where each line is represented by a sequence of 3D points.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Connecting_Segments_C2(Vector3d2 & segments, Vector3d2 & lines)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Connecting_Segments_C2(Vector3d2 & segments, Vector3d2 & lines)
 {
 	//save connecting relations
 	Vector1b1 used(segments.size(), false);
@@ -2268,10 +2272,10 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Connecting_Segments_C2(Vector3d2 & segments
 		{
 			if (i != j && !used[i] && !used[j])
 			{
-				bool b_0_0 = Functs::IsAlmostZero_Double(HGP_3D_Distance_Point_Point(segments[i][0], segments[j][0]), 1.0E-09);
-				bool b_0_1 = Functs::IsAlmostZero_Double(HGP_3D_Distance_Point_Point(segments[i][0], segments[j][1]), 1.0E-09);
-				bool b_1_0 = Functs::IsAlmostZero_Double(HGP_3D_Distance_Point_Point(segments[i][1], segments[j][0]), 1.0E-09);
-				bool b_1_1 = Functs::IsAlmostZero_Double(HGP_3D_Distance_Point_Point(segments[i][1], segments[j][1]), 1.0E-09);
+				bool b_0_0 = Functs::IsAlmostZero_Double(CGAL_3D_Distance_Point_Point(segments[i][0], segments[j][0]), 1.0E-09);
+				bool b_0_1 = Functs::IsAlmostZero_Double(CGAL_3D_Distance_Point_Point(segments[i][0], segments[j][1]), 1.0E-09);
+				bool b_1_0 = Functs::IsAlmostZero_Double(CGAL_3D_Distance_Point_Point(segments[i][1], segments[j][0]), 1.0E-09);
+				bool b_1_1 = Functs::IsAlmostZero_Double(CGAL_3D_Distance_Point_Point(segments[i][1], segments[j][1]), 1.0E-09);
 
 				if ((b_0_0 && b_1_1) || (b_0_1 && b_1_0))
 				{
@@ -2375,7 +2379,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Connecting_Segments_C2(Vector3d2 & segments
 	}
 }
 /********************************************************
-* Function name: HGP_3D_Triangle_Mesh_Boundary_C3
+* Function name: CGAL_3D_Triangle_Mesh_Boundary_C3
 * Description: Extracts the boundary edges of a 3D triangle mesh.
 * Parameters:
 * @vecs: A list of 3D points representing vertices.
@@ -2385,7 +2389,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Connecting_Segments_C2(Vector3d2 & segments
 * @boundaries: A list of 3D segments representing the extracted boundary edges.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs, Vector1i1 &face_id_0, Vector1i1 &face_id_1, Vector1i1 &face_id_2, Vector3d2 & boundaries)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs, Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2, Vector3d2 & boundaries)
 {
 	Vector3d2 segments;
 
@@ -2458,7 +2462,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs,
 		}
 	}
 
-	HGP_3D_Connecting_Segments_C2(segments, boundaries);
+	CGAL_3D_Connecting_Segments_C2(segments, boundaries);
 
 	for (int i = 0; i < segments.size(); i++)
 		Vector3d1().swap(segments[i]);
@@ -2468,7 +2472,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs,
 	Vector1i1().swap(edges);
 }
 /********************************************************
-* Function name: HGP_3D_Triangle_Mesh_Boundary_C4
+* Function name: CGAL_3D_Triangle_Mesh_Boundary_C4
 * Description: Extracts the boundary edges of a 3D triangle mesh using face indices.
 * Parameters:
 * @vecs: A list of 3D points representing vertices.
@@ -2476,7 +2480,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Boundary_C3(Vector3d1 & vecs,
 * @boundaries: A list of 3D segments representing the extracted boundary edges.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Boundary_C4(Vector3d1 & vecs, Vector1i2&face_ids, Vector3d2 & boundaries)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C4(Vector3d1 & vecs, Vector1i2 & face_ids, Vector3d2 & boundaries)
 {
 	Vector1i1 face_id_0;
 	Vector1i1 face_id_1;
@@ -2489,28 +2493,28 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Boundary_C4(Vector3d1 & vecs,
 		face_id_2.emplace_back(face[2]);
 	}
 
-	HGP_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries);
+	CGAL_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries);
 }
 /********************************************************
-* Function name: HGP_3D_Triangle_Mesh_Boundary_C5
+* Function name: CGAL_3D_Triangle_Mesh_Boundary_C5
 * Description: Extracts the boundary edges of a 3D triangle mesh from an OBJ file.
 * Parameters:
 * @path: The path to the input OBJ file.
 * @boundaries: A list of 3D segments representing the extracted boundary edges.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Boundary_C5(const char* path, Vector3d2 & boundaries)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Triangle_Mesh_Boundary_C5(const char* path, Vector3d2 & boundaries)
 {
 	Vector3d1 vecs;
 	Vector1i1 face_id_0;
 	Vector1i1 face_id_1;
 	Vector1i1 face_id_2;
 	Functs::LoadObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
-	HGP_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries);
+	CGAL_3D_Triangle_Mesh_Boundary_C3(vecs, face_id_0, face_id_1, face_id_2, boundaries);
 }
 
 /********************************************************
-* Function name: HGP_Mesh_Laplace_Smooth_C1
+* Function name: CGAL_Mesh_Laplace_Smooth_C1
 * Description: Smooths a 3D mesh using Laplace smoothing and saves the result to an OBJ file.
 * Parameters:
 * @in_path: The path to the input OBJ file.
@@ -2518,18 +2522,18 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Boundary_C5(const char* path,
 * @laplace_nb: The number of Laplacian smoothing iterations to perform.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_C1(const char* in_path, const char* out_path, const int laplace_nb)
+extern "C" LIBHGP_EXPORT void CGAL_Mesh_Laplace_Smooth_C1(const char* in_path, const char* out_path, const int laplace_nb)
 {
 	Vector3d1 vecs;
 	Vector1i1 face_id_0;
 	Vector1i1 face_id_1;
 	Vector1i1 face_id_2;
 	Functs::LoadObj3d(in_path, vecs, face_id_0, face_id_1, face_id_2);
-	HGP_Mesh_Laplace_Smooth_C2(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
+	CGAL_Mesh_Laplace_Smooth_C2(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
 	Functs::OutputObj3d(out_path, vecs, face_id_0, face_id_1, face_id_2);
 }
 /********************************************************
-* Function name: HGP_3D_Triangle_Mesh_Vecs_Neighbors
+* Function name: CGAL_3D_Triangle_Mesh_Vecs_Neighbors
 * Description: Computes neighboring vertices for each vertex in a 3D triangle mesh.
 * Parameters:
 * @vecs: A vector containing the 3D vertex coordinates of the mesh.
@@ -2539,7 +2543,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_C1(const char* in_path, co
 * @neighs: A 2D vector where each inner vector represents the neighboring vertices for a vertex.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Vecs_Neighbors(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2, Vector1i2&neighs)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbors(Vector3d1 & vecs, Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2, Vector1i2 & neighs)
 {
 	for (int i = 0; i < vecs.size(); i++)
 		neighs.push_back(Vector1i1());
@@ -2567,7 +2571,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Vecs_Neighbors(Vector3d1 & ve
 	}
 }
 /********************************************************
-* Function name: HGP_Mesh_Laplace_Smooth_C2
+* Function name: CGAL_Mesh_Laplace_Smooth_C2
 * Description: Applies Laplace smoothing to a 3D mesh.
 * Parameters:
 * @vecs: A vector containing the 3D vertex coordinates of the mesh.
@@ -2577,12 +2581,12 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Vecs_Neighbors(Vector3d1 & ve
 * @laplace_nb: The number of iterations for Laplace smoothing.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_C2(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2, const int laplace_nb)
+extern "C" LIBHGP_EXPORT void CGAL_Mesh_Laplace_Smooth_C2(Vector3d1 & vecs, Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2, const int laplace_nb)
 {
 	Vector1b1 vertices_boundary;
-	HGP_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, vertices_boundary);
+	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, vertices_boundary);
 	Vector1i2 neighs;
-	HGP_3D_Triangle_Mesh_Vecs_Neighbors(vecs, face_id_0, face_id_1, face_id_2, neighs);
+	CGAL_3D_Triangle_Mesh_Vecs_Neighbors(vecs, face_id_0, face_id_1, face_id_2, neighs);
 
 	for (int iter = 0; iter < laplace_nb; iter++)
 	{
@@ -2595,7 +2599,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_C2(Vector3d1 & vecs, Vecto
 				double w = 0.0;
 				for (int j = 0; j < neighs[i].size(); j++)
 				{
-					double d = HGP_3D_Distance_Point_Point(vecs[neighs[i][j]], vecs[i]);
+					double d = CGAL_3D_Distance_Point_Point(vecs[neighs[i][j]], vecs[i]);
 					v += vecs[neighs[i][j]] * (double)(1.0 / d);
 					w += (1.0 / d);
 				}
@@ -2614,7 +2618,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_C2(Vector3d1 & vecs, Vecto
 }
 
 /********************************************************
-* Function name: HGP_3D_Triangle_Mesh_Vecs_Faces
+* Function name: CGAL_3D_Triangle_Mesh_Vecs_Faces
 * Description: Computes the faces adjacent to each vertex in a 3D triangle mesh.
 * Parameters:
 * @vecs: A vector containing the 3D vertex coordinates of the mesh.
@@ -2624,8 +2628,8 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_C2(Vector3d1 & vecs, Vecto
 * @surface_vectices_to_face: Output vector containing the indices of faces adjacent to each vertex.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Vecs_Faces(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2,
-	Vector1i2&surface_vectices_to_face)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Faces(Vector3d1 & vecs, Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2,
+	Vector1i2 & surface_vectices_to_face)
 {
 	surface_vectices_to_face = Vector1i2(vecs.size(), Vector1i1());
 
@@ -2648,7 +2652,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Vecs_Faces(Vector3d1 & vecs, 
 
 }
 /********************************************************
-* Function name: HGP_3D_Triangle_Mesh_Vecs_Neighbor_Edges
+* Function name: CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges
 * Description: Computes the edges neighboring each vertex in a 3D triangle mesh.
 * Parameters:
 * @vecs: A vector containing the 3D vertex coordinates of the mesh.
@@ -2658,11 +2662,11 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Vecs_Faces(Vector3d1 & vecs, 
 * @surface_vectices_to_neighbor_edges: Output vector containing the indices of edges neighboring each vertex.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Vecs_Neighbor_Edges(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2,
-	Vector1i3& surface_vectices_to_neighbor_edges)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges(Vector3d1 & vecs, Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2,
+	Vector1i3 & surface_vectices_to_neighbor_edges)
 {
 	Vector1i2 surface_vectices_to_face;
-	HGP_3D_Triangle_Mesh_Vecs_Faces(vecs, face_id_0, face_id_1, face_id_2, surface_vectices_to_face);
+	CGAL_3D_Triangle_Mesh_Vecs_Faces(vecs, face_id_0, face_id_1, face_id_2, surface_vectices_to_face);
 
 	for (int i = 0; i < vecs.size(); i++)
 	{
@@ -2699,7 +2703,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Vecs_Neighbor_Edges(Vector3d1
 }
 
 /********************************************************
-* Function name: HGP_Mesh_Laplace_Smooth_by_Curvature
+* Function name: CGAL_Mesh_Laplace_Smooth_by_Curvature
 * Description: Performs Laplace smoothing on a 3D triangle mesh based on curvature constraints.
 * Parameters:
 * @vecs: A vector containing the 3D vertex coordinates of the mesh.
@@ -2709,7 +2713,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangle_Mesh_Vecs_Neighbor_Edges(Vector3d1
 * @low_curvature: A reference to the low curvature threshold used for constraints.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & vecs, Vector1i1&face_id_0, Vector1i1&face_id_1, Vector1i1&face_id_2, double& low_curvature)
+extern "C" LIBHGP_EXPORT void CGAL_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & vecs, Vector1i1 & face_id_0, Vector1i1 & face_id_1, Vector1i1 & face_id_2, double& low_curvature)
 {
 	Vector1d1 max_curvature;
 	Vector1d1 min_curvature;
@@ -2717,17 +2721,17 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & v
 	Vector3d1 min_curvature_direction;
 
 	Vector1b1 boundary;
-	HGP_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, boundary);
+	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs, face_id_0, face_id_1, face_id_2, boundary);
 
 	Vector3d1 vecs_normals;
 
 	int last_nb = 0;
 
 	Vector1i2 vecs_neighbors;
-	HGP_3D_Triangle_Mesh_Vecs_Neighbors(vecs, face_id_0, face_id_1, face_id_2, vecs_neighbors);
+	CGAL_3D_Triangle_Mesh_Vecs_Neighbors(vecs, face_id_0, face_id_1, face_id_2, vecs_neighbors);
 
 	Vector1i3 surface_vectices_to_neighbor_edges;
-	HGP_3D_Triangle_Mesh_Vecs_Neighbor_Edges(vecs, face_id_0, face_id_1, face_id_2, surface_vectices_to_neighbor_edges);
+	CGAL_3D_Triangle_Mesh_Vecs_Neighbor_Edges(vecs, face_id_0, face_id_1, face_id_2, surface_vectices_to_neighbor_edges);
 
 	int stop = 0;
 
@@ -2745,7 +2749,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & v
 		Vector3d1().swap(min_curvature_direction);
 		Vector3d1().swap(vecs_normals);
 
-		HGP_3D_Mesh_Curvature_C5(vecs, face_id_0, face_id_1, face_id_2, max_curvature, min_curvature, max_curvature_direction, min_curvature_direction, vecs_normals);
+		CGAL_3D_Mesh_Curvature_C5(vecs, face_id_0, face_id_1, face_id_2, max_curvature, min_curvature, max_curvature_direction, min_curvature_direction, vecs_normals);
 
 		int nb = 0;
 		double minimal_cur = 100000.0;
@@ -2837,7 +2841,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & v
 					double weight = 0.0;
 					for (int j = 0; j < vecs_neighbors[i].size(); j++)
 					{
-						double l = HGP_3D_Distance_Point_Point(vecs[vecs_neighbors[i][j]], vecs[i]);
+						double l = CGAL_3D_Distance_Point_Point(vecs[vecs_neighbors[i][j]], vecs[i]);
 						smooth_v += vecs[vecs_neighbors[i][j]] * (double)l;
 						weight += l;
 					}
@@ -2866,7 +2870,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & v
 	}
 }
 /********************************************************
-* Function name: HGP_Mesh_Loop_Subdivision_Own_Version
+* Function name: CGAL_Mesh_Loop_Subdivision_Own_Version
 * Description: Performs a custom version of Loop subdivision and Laplace smoothing on a 3D triangle mesh.
 * Parameters:
 * @in_path: Input file path for the original mesh in OBJ format.
@@ -2875,7 +2879,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Laplace_Smooth_by_Curvature(Vector3d1 & v
 * @laplace_nb: The number of Laplace smoothing iterations to apply.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Mesh_Loop_Subdivision_Own_Version(const char* in_path, const int& step, const char* out_path, const int& laplace_nb)
+extern "C" LIBHGP_EXPORT void CGAL_Mesh_Loop_Subdivision_Own_Version(const char* in_path, const int& step, const char* out_path, const int& laplace_nb)
 {
 	Vector3d1 vecs;
 	Vector1i1 face_id_0;
@@ -2886,8 +2890,8 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Loop_Subdivision_Own_Version(const char* 
 
 	for (int i = 0; i < step; i++)
 	{
-		HGP_Mesh_Loop_Subdivision_One_Step(vecs, face_id_0, face_id_1, face_id_2);
-		HGP_Mesh_Laplace_Smooth_C2(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
+		CGAL_Mesh_Loop_Subdivision_One_Step(vecs, face_id_0, face_id_1, face_id_2);
+		CGAL_Mesh_Laplace_Smooth_C2(vecs, face_id_0, face_id_1, face_id_2, laplace_nb);
 	}
 
 	Functs::OutputObj3d(out_path, vecs, face_id_0, face_id_1, face_id_2);
@@ -2898,7 +2902,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Loop_Subdivision_Own_Version(const char* 
 	Vector1i1().swap(face_id_2);
 }
 /********************************************************
-* Function name: HGP_Rotation_Obj
+* Function name: CGAL_Rotation_Obj
 * Description: Rotates a 3D triangle mesh loaded from an OBJ file.
 * Parameters:
 * @path: Input file path for the OBJ mesh.
@@ -2906,7 +2910,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Loop_Subdivision_Own_Version(const char* 
 * @axis: The rotation axis specified as a 3D vector.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Rotation_Obj(const char* path, const double& angle, const Vector3d & axis)
+extern "C" LIBHGP_EXPORT void CGAL_Rotation_Obj(const char* path, const double& angle, const Vector3d & axis)
 {
 	Vector3d1 vecs;
 	Vector1i1 face_id_0;
@@ -2922,7 +2926,7 @@ extern "C" LIBHGP_EXPORT void HGP_Rotation_Obj(const char* path, const double& a
 	Functs::OutputObj3d(path, vecs, face_id_0, face_id_1, face_id_2);
 }
 /********************************************************
-* Function name: HGP_Slicer_Mesh
+* Function name: CGAL_Slicer_Mesh
 * Description: Slices a 3D mesh using a set of planes and generates polylines.
 * Parameters:
 * @path: Input file path for the 3D mesh (assumed to be in OFF format).
@@ -2933,7 +2937,7 @@ extern "C" LIBHGP_EXPORT void HGP_Rotation_Obj(const char* path, const double& a
 * Return: void
 **********************************************************/
 
-extern "C" LIBHGP_EXPORT void HGP_Slicer_Mesh(const char* path, const Vector3d & plane_normal, const Vector1d1 & plane_d, Vector3d3 & offsetses, Vector3d2 & offsets)
+extern "C" LIBHGP_EXPORT void CGAL_Slicer_Mesh(const char* path, const Vector3d & plane_normal, const Vector1d1 & plane_d, Vector3d3 & offsetses, Vector3d2 & offsets)
 {
 	std::ifstream input(path);
 	Mesh mesh;
@@ -2983,14 +2987,14 @@ extern "C" LIBHGP_EXPORT void HGP_Slicer_Mesh(const char* path, const Vector3d &
 
 
 /********************************************************
-* Function name: HGP_Shortest_Geodesic_Path_C1
+* Function name: CGAL_Shortest_Geodesic_Path_C1
 * Description: Computes the shortest geodesic path on a 3D polyhedron mesh.
 * Parameters:
 * @path: Input file path for the 3D polyhedron mesh.
 * @xyzs: A vector of 3D points representing the computed geodesic path.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Shortest_Geodesic_Path_C1(const char* path, Vector3d1 & xyzs)
+extern "C" LIBHGP_EXPORT void CGAL_Shortest_Geodesic_Path_C1(const char* path, Vector3d1 & xyzs)
 {
 	// read input polyhedron
 	Polyhedron_3 polyhedron;
@@ -3040,11 +3044,11 @@ void RelatedFaceAndBarycentric(const Polyhedron_3& polyhedron, const Tree& tree,
 	Point_3 p1 = pp.second->halfedge()->vertex()->point();
 	Point_3 p2 = pp.second->halfedge()->next()->vertex()->point();
 
-	Functs::Barycentric(PointVector3d(pp.first), PointVector3d(p0), PointVector3d(p1), PointVector3d(p2), u,v , w);
+	Functs::Barycentric(PointVector3d(pp.first), PointVector3d(p0), PointVector3d(p1), PointVector3d(p2), u, v, w);
 }
 
 /********************************************************
-* Function name: HGP_Shortest_Geodesic_Path_C3
+* Function name: CGAL_Shortest_Geodesic_Path_C3
 * Description: Computes the shortest geodesic path on a polyhedron mesh between two 3D points.
 * Parameters:
 * @path: The path to the input polyhedron mesh.
@@ -3053,7 +3057,7 @@ void RelatedFaceAndBarycentric(const Polyhedron_3& polyhedron, const Tree& tree,
 * @output: Output parameter to store the computed geodesic path as a list of 3D points.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Shortest_Geodesic_Path_C3(const char* path, Vector3d source, Vector3d target, Vector3d1 & output)
+extern "C" LIBHGP_EXPORT void CGAL_Shortest_Geodesic_Path_C3(const char* path, Vector3d source, Vector3d target, Vector3d1 & output)
 {
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -3086,7 +3090,7 @@ extern "C" LIBHGP_EXPORT void HGP_Shortest_Geodesic_Path_C3(const char* path, Ve
 	}
 }
 /********************************************************
-* Function name: HGP_Shortest_Geodesic_Path_C4
+* Function name: CGAL_Shortest_Geodesic_Path_C4
 * Description: Computes the shortest geodesic paths on a polyhedron mesh between multiple pairs of 3D points.
 * Parameters:
 * @path_: The path to the input polyhedron mesh.
@@ -3095,10 +3099,10 @@ extern "C" LIBHGP_EXPORT void HGP_Shortest_Geodesic_Path_C3(const char* path, Ve
 * @xyzes: Output parameter to store computed geodesic paths for each pair as lists of 3D points.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Shortest_Geodesic_Path_C4(const char* path_, Vector3d1 sources,
+extern "C" LIBHGP_EXPORT void CGAL_Shortest_Geodesic_Path_C4(const char* path_, Vector3d1 sources,
 	Vector3d1 targets, Vector3d2 & xyzes)
 {
-	auto HGP_Shortest_Geodesic_Path_C2=[](Polyhedron_3 & polyhedron, const Tree & tree, Vector3d & source, Vector3d & target, Vector3d1 & xyzs)
+	auto CGAL_Shortest_Geodesic_Path_C2 = [](Polyhedron_3& polyhedron, const Tree& tree, Vector3d& source, Vector3d& target, Vector3d1& xyzs)
 	{
 		////////////////////////////////////////
 		face_iterator source_face, target_face;
@@ -3137,13 +3141,13 @@ extern "C" LIBHGP_EXPORT void HGP_Shortest_Geodesic_Path_C4(const char* path_, V
 	{
 		std::cout << "Path: " << i << std::endl;
 		Vector3d1 xyzs;
-		HGP_Shortest_Geodesic_Path_C2(polyhedron, tree, sources[i], targets[i], xyzs);
+		CGAL_Shortest_Geodesic_Path_C2(polyhedron, tree, sources[i], targets[i], xyzs);
 		xyzes.push_back(xyzs);
 	}
 }
 
 /********************************************************
-* Function name: HGP_Geodesic_Distance
+* Function name: CGAL_Geodesic_Distance
 * Description: Computes the geodesic distance between two 3D points on a polyhedron mesh.
 * Parameters:
 * @path: The path to the input polyhedron mesh.
@@ -3151,7 +3155,7 @@ extern "C" LIBHGP_EXPORT void HGP_Shortest_Geodesic_Path_C4(const char* path_, V
 * @target: The target 3D point.
 * Return: The geodesic distance between the source and target points.
 **********************************************************/
-extern "C" LIBHGP_EXPORT double HGP_Geodesic_Distance(const char* path, const Vector3d & source, const Vector3d & target)
+extern "C" LIBHGP_EXPORT double CGAL_Geodesic_Distance(const char* path, const Vector3d & source, const Vector3d & target)
 {
 	std::cout << "one time geodesic computing.." << std::endl;
 
@@ -3180,7 +3184,7 @@ extern "C" LIBHGP_EXPORT double HGP_Geodesic_Distance(const char* path, const Ve
 	return shortest_paths.shortest_distance_to_source_points(*target_face, target_face_location).first;
 }
 /********************************************************
-* Function name: HGP_Project_Points_Onto_Surface_C1
+* Function name: CGAL_Project_Points_Onto_Surface_C1
 * Description: Projects a set of 3D points onto the surface of a polyhedron mesh.
 * Parameters:
 * @vecs: The vertex coordinates of the polyhedron.
@@ -3190,9 +3194,9 @@ extern "C" LIBHGP_EXPORT double HGP_Geodesic_Distance(const char* path, const Ve
 * @points: The 3D points to be projected onto the surface.
 * Return: A list of projected points on the surface.
 **********************************************************/
-extern "C" LIBHGP_EXPORT Vector3d1 HGP_Project_Points_Onto_Surface_C1(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, const Vector3d1 & points)
+extern "C" LIBHGP_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface_C1(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, const Vector3d1 & points)
 {
-	auto NearestPoint=[](const Polyhedron_3 & polyhedron, const Tree & tree, const Vector3d & source)
+	auto NearestPoint = [](const Polyhedron_3& polyhedron, const Tree& tree, const Vector3d& source)
 	{
 		Point_3 query(source[0], source[1], source[2]);
 		Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
@@ -3214,14 +3218,14 @@ extern "C" LIBHGP_EXPORT Vector3d1 HGP_Project_Points_Onto_Surface_C1(const Vect
 	return temp;
 }
 /********************************************************
-* Function name: HGP_Project_Points_Onto_Surface_C2
+* Function name: CGAL_Project_Points_Onto_Surface_C2
 * Description: Projects a set of 3D points onto the surface of a polyhedron mesh loaded from a file.
 * Parameters:
 * @path: The path to the input polyhedron mesh file.
 * @points: The 3D points to be projected onto the surface.
 * Return: A list of projected points on the surface.
 **********************************************************/
-extern "C" LIBHGP_EXPORT Vector3d1 HGP_Project_Points_Onto_Surface_C2(const char* path, const Vector3d1 & points)
+extern "C" LIBHGP_EXPORT Vector3d1 CGAL_Project_Points_Onto_Surface_C2(const char* path, const Vector3d1 & points)
 {
 	auto NearestPoint = [](const Polyhedron_3& polyhedron, const Tree& tree, const Vector3d& source)
 	{
@@ -3246,7 +3250,7 @@ extern "C" LIBHGP_EXPORT Vector3d1 HGP_Project_Points_Onto_Surface_C2(const char
 
 
 /********************************************************
-* Function name: HGP_3D_Triangel_Mesh_Most_Inside_Point
+* Function name: CGAL_3D_Triangel_Mesh_Most_Inside_Point
 * Description: Computes the most "inside" point of a 3D triangle mesh.
 * Parameters:
 * @vecs_: The list of 3D vertices of the mesh.
@@ -3256,11 +3260,11 @@ extern "C" LIBHGP_EXPORT Vector3d1 HGP_Project_Points_Onto_Surface_C2(const char
 * @inside: The most "inside" point found within the mesh.
 * Return: None (void).
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Triangel_Mesh_Most_Inside_Point(const Vector3d1 & vecs_, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector3d & inside)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Triangel_Mesh_Most_Inside_Point(const Vector3d1 & vecs_, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, Vector3d & inside)
 {
 	//inside
 	Vector1b1 vec_boundary;
-	HGP_3D_Triangle_Mesh_Boundary_C1(vecs_, face_id_0, face_id_1, face_id_2, vec_boundary);
+	CGAL_3D_Triangle_Mesh_Boundary_C1(vecs_, face_id_0, face_id_1, face_id_2, vec_boundary);
 
 	kdtree* tree = kd_create(3);
 
@@ -3286,7 +3290,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangel_Mesh_Most_Inside_Point(const Vecto
 			struct kdres* r = kd_nearest(tree, pos);
 			double position[3];
 			*(int*)kd_res_item(r, position);
-			double d = HGP_3D_Distance_Point_Point(Vector3d(pos[0], pos[1], pos[2]),Vector3d(position[0], position[1], position[2]));
+			double d = CGAL_3D_Distance_Point_Point(Vector3d(pos[0], pos[1], pos[2]), Vector3d(position[0], position[1], position[2]));
 			if (d > max_d)
 			{
 				max_d = d;
@@ -3298,7 +3302,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangel_Mesh_Most_Inside_Point(const Vecto
 	Vector1b1().swap(vec_boundary);
 }
 /********************************************************
-* Function name: HGP_3D_One_Triangle_Area
+* Function name: CGAL_3D_One_Triangle_Area
 * Description: Calculates the area of a single triangle in 3D.
 * Parameters:
 * @v0: The first vertex of the triangle.
@@ -3306,13 +3310,13 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Triangel_Mesh_Most_Inside_Point(const Vecto
 * @v2: The third vertex of the triangle.
 * Return: The area of the triangle.
 **********************************************************/
-extern "C" LIBHGP_EXPORT double HGP_3D_One_Triangle_Area(const Vector3d & v0, const Vector3d & v1, const Vector3d & v2)
+extern "C" LIBHGP_EXPORT double CGAL_3D_One_Triangle_Area(const Vector3d & v0, const Vector3d & v1, const Vector3d & v2)
 {
 	return Functs::GetTriangleArea(v0, v1, v2);
 }
 
 /********************************************************
-* Function name: HGP_3D_Triangle_Mesh_Area
+* Function name: CGAL_3D_Triangle_Mesh_Area
 * Description: Calculates the area of a 3D triangle mesh.
 * Parameters:
 * @vecs: The list of 3D vertices of the mesh.
@@ -3321,7 +3325,7 @@ extern "C" LIBHGP_EXPORT double HGP_3D_One_Triangle_Area(const Vector3d & v0, co
 * @face_id_2: The list of indices for the third vertex of each triangle face.
 * Return: The area of the triangle mesh.
 * *********************************************************/
-extern "C" LIBHGP_EXPORT double HGP_3D_Triangle_Mesh_Area(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2)
+extern "C" LIBHGP_EXPORT double CGAL_3D_Triangle_Mesh_Area(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2)
 {
 	double area = 0.0;
 
@@ -3333,7 +3337,7 @@ extern "C" LIBHGP_EXPORT double HGP_3D_Triangle_Mesh_Area(const Vector3d1 & vecs
 		Vector3d v0 = vecs[index_0];
 		Vector3d v1 = vecs[index_1];
 		Vector3d v2 = vecs[index_2];
-		area += HGP_3D_One_Triangle_Area(v0, v1, v2);
+		area += CGAL_3D_One_Triangle_Area(v0, v1, v2);
 	}
 
 	return area;
@@ -3341,14 +3345,14 @@ extern "C" LIBHGP_EXPORT double HGP_3D_Triangle_Mesh_Area(const Vector3d1 & vecs
 
 
 /********************************************************
-* Function name:  HGP_3D_Convex_Hulls_C1
+* Function name:  CGAL_3D_Convex_Hulls_C1
 * Description: Computes the convex hull of a set of 3D points.
-* Parameters: 
+* Parameters:
 * @vec: The list of 3D points.
 * @hull_points: The list of 3D points representing the convex hull.
 * Return: void
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Convex_Hulls_C1(const Vector3d1 & vec, Vector3d1 & hull_points)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Convex_Hulls_C1(const Vector3d1 & vec, Vector3d1 & hull_points)
 {
 	std::vector<Point_3> points;
 	for (int i = 0; i < vec.size(); i++)
@@ -3371,9 +3375,9 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Convex_Hulls_C1(const Vector3d1 & vec, Vect
 	}
 }
 /********************************************************
-* Function name: HGP_3D_Convex_Hulls_C2
+* Function name: CGAL_3D_Convex_Hulls_C2
 * Description: Computes the convex hull of a set of 3D points and returns the indices of the vertices of the hull.
-* Parameters: 
+* Parameters:
 * @ vec: The list of 3D points.
 * @ hull_points: The list of 3D points representing the convex hull.
 * @ hulls_surface_0: The list of indices for the first vertex of each triangle face.
@@ -3381,7 +3385,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Convex_Hulls_C1(const Vector3d1 & vec, Vect
 * @ hulls_surface_2: The list of indices for the third vertex of each triangle face.
 * Return: void
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Convex_Hulls_C2(const Vector3d1 & vec, Vector3d1 & hull_points, Vector1i1&hulls_surface_0, Vector1i1&hulls_surface_1, Vector1i1&hulls_surface_2)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Convex_Hulls_C2(const Vector3d1 & vec, Vector3d1 & hull_points, Vector1i1 & hulls_surface_0, Vector1i1 & hulls_surface_1, Vector1i1 & hulls_surface_2)
 {
 	std::vector<R3> pts, pts2;
 	R3 pt;
@@ -3432,7 +3436,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Convex_Hulls_C2(const Vector3d1 & vec, Vect
 
 }
 /********************************************************
-* Function name: HGP_3D_Convex_Hulls_C3
+* Function name: CGAL_3D_Convex_Hulls_C3
 * Description: Computes the convex hull of a set of 3D points and returns the indices of the vertices of the hull and the plane parameters of each triangle face.
 * Parameters:
 * @ vec: The list of 3D points.
@@ -3441,7 +3445,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Convex_Hulls_C2(const Vector3d1 & vec, Vect
 * @ hulls_surface_1: The list of indices for the second vertex of each triangle face.
 * Return:   void
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Convex_Hulls_C3(const Vector3d1 & vec, Vector3d1 & hull_points, Vector3d1 & plane_p, Vector3d1 & plane_n)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Convex_Hulls_C3(const Vector3d1 & vec, Vector3d1 & hull_points, Vector3d1 & plane_p, Vector3d1 & plane_n)
 {
 	std::vector<R3> pts, pts2;
 	R3 pt;
@@ -3490,16 +3494,16 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Convex_Hulls_C3(const Vector3d1 & vec, Vect
 	nx = de_duplicateR3(pts, outx, pts2);
 }
 /********************************************************
-* Function name: HGP_3D_Convex_Hulls_C4
+* Function name: CGAL_3D_Convex_Hulls_C4
 * Description: Computes the convex hull of a set of 3D points and returns the indices of the vertices of the hull, the plane parameters of each triangle face, and the indices of the vertices of each triangle face.
-* Parameters:   
+* Parameters:
 * @ vec: The list of 3D points.
 * @ hull_points: The list of 3D points representing the convex hull.
 * @ hulls_surface_0: The list of indices for the first vertex of each triangle face.
 * @ hulls_surface_1: The list of indices for the second vertex of each triangle face.
 * Return: void
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Convex_Hulls_C4(const Vector3d1 & vec, Vector3d1 & hull_points, Vector1i1&hulls_surface_0, Vector1i1&hulls_surface_1, Vector1i1&hulls_surface_2, Vector3d1 & plane_p, Vector3d1 & plane_n)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Convex_Hulls_C4(const Vector3d1 & vec, Vector3d1 & hull_points, Vector1i1 & hulls_surface_0, Vector1i1 & hulls_surface_1, Vector1i1 & hulls_surface_2, Vector3d1 & plane_p, Vector3d1 & plane_n)
 {
 	std::vector<R3> pts, pts2;
 	R3 pt;
@@ -3565,16 +3569,16 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Convex_Hulls_C4(const Vector3d1 & vec, Vect
 
 
 /********************************************************
-* Function name: HGP_Mesh_Field_Query_C1
+* Function name: CGAL_Mesh_Field_Query_C1
 * Description: Computes the field value at a set of 3D points on a polyhedron mesh.
-* Parameters: 
+* Parameters:
 * @ path: The path to the input polyhedron mesh.
 * @ gradients: The list of gradient values at each vertex of the mesh.
 * @ input_points: The list of 3D points to query.
 * @ points_gradients: The list of field values at the query points.
 * Return: void
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Mesh_Field_Query_C1(const char* path, const Vector3d1 & gradients, const Vector3d1 & input_points, Vector3d1 & points_gradients)
+extern "C" LIBHGP_EXPORT void CGAL_Mesh_Field_Query_C1(const char* path, const Vector3d1 & gradients, const Vector3d1 & input_points, Vector3d1 & points_gradients)
 {
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -3601,16 +3605,16 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Field_Query_C1(const char* path, const Ve
 	}
 }
 /********************************************************
-* Function name: HGP_Mesh_Field_Query_C2
+* Function name: CGAL_Mesh_Field_Query_C2
 * Description: Computes the field value at a set of 3D points on a polyhedron mesh loaded from a file.
-* Parameters:   
+* Parameters:
 * @ path: The path to the input polyhedron mesh.
 * @ gradients: The list of gradient values at each vertex of the mesh.
 * @ input_points: The list of 3D points to query.
 * @ points_gradients: The list of field values at the query points.
 * Return: void
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Mesh_Field_Query_C2(const char* path, const Vector1d1&gradient_values, const Vector3d1 & input_points, Vector1d1&points_gradient_values)
+extern "C" LIBHGP_EXPORT void CGAL_Mesh_Field_Query_C2(const char* path, const Vector1d1 & gradient_values, const Vector3d1 & input_points, Vector1d1 & points_gradient_values)
 {
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -3636,16 +3640,16 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Field_Query_C2(const char* path, const Ve
 	}
 }
 /********************************************************
-* Function name: HGP_Mesh_Field_Query_C3
+* Function name: CGAL_Mesh_Field_Query_C3
 * Description: Computes the field value at a set of 3D points on a polyhedron mesh loaded from a file.
-* Parameters: 
+* Parameters:
 * @ path: The path to the input polyhedron mesh.
 * @ gradient_value: The list of gradient values at each vertex of the mesh.
 * @ input_point_es: The list of 3D points to query.
 * @ points_gradient_value_es: The list of field values at the query points.
 * Return: void
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Mesh_Field_Query_C3(const char* path, const Vector1d1&gradient_values, const Vector3d2 & input_point_es, Vector1d2&points_gradient_value_es)
+extern "C" LIBHGP_EXPORT void CGAL_Mesh_Field_Query_C3(const char* path, const Vector1d1 & gradient_values, const Vector3d2 & input_point_es, Vector1d2 & points_gradient_value_es)
 {
 	Polyhedron_3 polyhedron;
 	Construct_Polyhedron(polyhedron, path);
@@ -3677,7 +3681,7 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Field_Query_C3(const char* path, const Ve
 	}
 }
 /********************************************************
-* Function name: HGP_Curvature_Mesh
+* Function name: CGAL_Curvature_Mesh
 * Description: Computes the curvature of a polyhedron mesh loaded from a file.
 * Parameters:
 * @ path_: The path to the input polyhedron mesh.
@@ -3688,9 +3692,9 @@ extern "C" LIBHGP_EXPORT void HGP_Mesh_Field_Query_C3(const char* path, const Ve
 * @ min_curs_directions: The list of minimum curvature directions at the query points.
 * Return: void
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Curvature_Mesh(const char* path_, const Vector3d1 & input_points, Vector1d1&max_curs, Vector1d1&min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
+extern "C" LIBHGP_EXPORT void CGAL_Curvature_Mesh(const char* path_, const Vector3d1 & input_points, Vector1d1 & max_curs, Vector1d1 & min_curs, Vector3d1 & max_curs_directions, Vector3d1 & min_curs_directions)
 {
-	auto Curvature_Direction_Adjusting=[](Vector3d & cur_0, Vector3d & cur_1, Vector3d & cur_2)
+	auto Curvature_Direction_Adjusting = [](Vector3d& cur_0, Vector3d& cur_1, Vector3d& cur_2)
 	{
 		int f_i = 0;
 		int f_j = 0;
@@ -3723,7 +3727,7 @@ extern "C" LIBHGP_EXPORT void HGP_Curvature_Mesh(const char* path_, const Vector
 		cur_2 = cur_2 * (double)f_k;
 	};
 
-	std::cout << "HGP_Curvature_Mesh.." << std::endl;
+	std::cout << "CGAL_Curvature_Mesh.." << std::endl;
 
 	std::string path = path_;
 	if (path.substr(path.size() - 3, path.size()) == "off")
@@ -3835,7 +3839,7 @@ extern "C" LIBHGP_EXPORT void HGP_Curvature_Mesh(const char* path_, const Vector
 
 
 /********************************************************
-* Function name:   HGP_Normal_Mesh_C1
+* Function name:   CGAL_Normal_Mesh_C1
 * Description: Computes the normal of a polyhedron mesh loaded from a file.
 * Parameters:
 * @ path_: The path to the input polyhedron mesh.
@@ -3843,10 +3847,10 @@ extern "C" LIBHGP_EXPORT void HGP_Curvature_Mesh(const char* path_, const Vector
 * @ mesh_normals: The list of normal values at the query points.
 * Return: void
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Normal_Mesh_C1(const char* path_, const Vector3d1 & mesh_points, Vector3d1 & mesh_normals)
+extern "C" LIBHGP_EXPORT void CGAL_Normal_Mesh_C1(const char* path_, const Vector3d1 & mesh_points, Vector3d1 & mesh_normals)
 {
 	std::string path = path_;
-	std::cout << "HGP_Normal_Mesh.." << std::endl;
+	std::cout << "CGAL_Normal_Mesh.." << std::endl;
 	if (path.substr(path.size() - 3, path.size()) == "off")
 	{
 		Polyhedron_3 polyhedron;
@@ -3931,7 +3935,7 @@ extern "C" LIBHGP_EXPORT void HGP_Normal_Mesh_C1(const char* path_, const Vector
 		Vector1d1 areas(vecs.size(), 0.0);
 		for (int i = 0; i < face_id_0.size(); i++)
 		{
-			double area = HGP_3D_One_Triangle_Area(vecs[face_id_0[i]], vecs[face_id_1[i]], vecs[face_id_2[i]]);
+			double area = CGAL_3D_One_Triangle_Area(vecs[face_id_0[i]], vecs[face_id_1[i]], vecs[face_id_2[i]]);
 			Point_3 p0(vecs[face_id_0[i]][0], vecs[face_id_0[i]][1], vecs[face_id_0[i]][2]);
 			Point_3 p1(vecs[face_id_1[i]][0], vecs[face_id_1[i]][1], vecs[face_id_1[i]][2]);
 			Point_3 p2(vecs[face_id_2[i]][0], vecs[face_id_2[i]][1], vecs[face_id_2[i]][2]);
@@ -3961,7 +3965,7 @@ extern "C" LIBHGP_EXPORT void HGP_Normal_Mesh_C1(const char* path_, const Vector
 	}
 }
 /********************************************************
-* Function name:   HGP_Normal_Mesh_C2
+* Function name:   CGAL_Normal_Mesh_C2
 * Description: Computes the normal of a polyhedron mesh loaded from a file.
 * Parameters:
 * @ path_: The path to the input polyhedron mesh.
@@ -3969,10 +3973,10 @@ extern "C" LIBHGP_EXPORT void HGP_Normal_Mesh_C1(const char* path_, const Vector
 * @ mesh_normalses: The list of normal values at the query points.
 * Return: void
 * *********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Normal_Mesh_C2(const char* path_, const Vector3d2 & mesh_pointses, Vector3d2 & mesh_normalses)
+extern "C" LIBHGP_EXPORT void CGAL_Normal_Mesh_C2(const char* path_, const Vector3d2 & mesh_pointses, Vector3d2 & mesh_normalses)
 {
 	std::string path = path_;
-	std::cout << "HGP_Normal_Mesh.." << std::endl;
+	std::cout << "CGAL_Normal_Mesh.." << std::endl;
 	if (path.substr(path.size() - 3, path.size()) == "off")
 	{
 		Polyhedron_3 polyhedron;
@@ -4063,7 +4067,7 @@ extern "C" LIBHGP_EXPORT void HGP_Normal_Mesh_C2(const char* path_, const Vector
 		Vector1d1 areas(vecs.size(), 0.0);
 		for (int i = 0; i < face_id_0.size(); i++)
 		{
-			double area = HGP_3D_One_Triangle_Area(vecs[face_id_0[i]], vecs[face_id_1[i]], vecs[face_id_2[i]]);
+			double area = CGAL_3D_One_Triangle_Area(vecs[face_id_0[i]], vecs[face_id_1[i]], vecs[face_id_2[i]]);
 			Point_3 p0(vecs[face_id_0[i]][0], vecs[face_id_0[i]][1], vecs[face_id_0[i]][2]);
 			Point_3 p1(vecs[face_id_1[i]][0], vecs[face_id_1[i]][1], vecs[face_id_1[i]][2]);
 			Point_3 p2(vecs[face_id_2[i]][0], vecs[face_id_2[i]][1], vecs[face_id_2[i]][2]);
@@ -4100,7 +4104,7 @@ extern "C" LIBHGP_EXPORT void HGP_Normal_Mesh_C2(const char* path_, const Vector
 	}
 }
 /********************************************************
-* Function name: HGP_3D_Mesh_Normal_C1
+* Function name: CGAL_3D_Mesh_Normal_C1
 * Description: Computes the normals for a 3D mesh.
 * Parameters:
 * @ps: A vector of 3D vertices.
@@ -4108,7 +4112,7 @@ extern "C" LIBHGP_EXPORT void HGP_Normal_Mesh_C2(const char* path_, const Vector
 * @normals: Output vector to store the computed normals.
 * Return: void
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Normal_C1(const Vector3d1 & ps, const Vector1i2&face_ids, Vector3d1 & normals)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Normal_C1(const Vector3d1 & ps, const Vector1i2 & face_ids, Vector3d1 & normals)
 {
 	int verticeSize = ps.size();
 	int faceindiceSize = face_ids.size() * 3;
@@ -4138,7 +4142,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Normal_C1(const Vector3d1 & ps, const 
 	}
 }
 /********************************************************
-* Function name: HGP_3D_Mesh_Normal_C2
+* Function name: CGAL_3D_Mesh_Normal_C2
 * Description: Computes the normals for a 3D mesh.
 * Parameters:
 * @ps: A vector of 3D vertices.
@@ -4147,7 +4151,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Normal_C1(const Vector3d1 & ps, const 
 * @face_id_2: A vector of vertex indices for the third vertex of each face.
 * @normals: Output vector to store the computed normals.
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Normal_C2(const Vector3d1 & ps, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, Vector3d1 & normals)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Normal_C2(const Vector3d1 & ps, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, Vector3d1 & normals)
 {
 	int verticeSize = ps.size();
 	int faceindiceSize = face_id_0.size() * 3;
@@ -4178,27 +4182,27 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Normal_C2(const Vector3d1 & ps, const 
 	}
 }
 /********************************************************
-* Function name: HGP_3D_Mesh_Center_C1
+* Function name: CGAL_3D_Mesh_Center_C1
 * Description: Computes the center point (center of mass) of a collection of 3D points.
 * Parameters:
 * @ps: A 2D vector containing collections of 3D points.
 * Return value: The center point (center of mass) of all the input 3D points.
 **********************************************************/
 
-extern "C" LIBHGP_EXPORT Vector3d HGP_3D_Mesh_Center_C1(const Vector3d2 & ps)
+extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Mesh_Center_C1(const Vector3d2 & ps)
 {
 	Vector3d1 ps1;
 	for (auto ps_ : ps)for (auto p : ps_)ps1.emplace_back(p);
-	return HGP_3D_Mesh_Center_C2(ps1);
+	return CGAL_3D_Mesh_Center_C2(ps1);
 }
 /********************************************************
-* Function name: HGP_3D_Mesh_Center_C2
+* Function name: CGAL_3D_Mesh_Center_C2
 * Description: Computes the center point (center of mass) of a collection of 3D points.
 * Parameters:
 * @ps: A vector containing 3D points.
 * Return value: The center point (center of mass) of all the input 3D points.
 **********************************************************/
-extern "C" LIBHGP_EXPORT Vector3d HGP_3D_Mesh_Center_C2(const Vector3d1 & ps)
+extern "C" LIBHGP_EXPORT Vector3d CGAL_3D_Mesh_Center_C2(const Vector3d1 & ps)
 {
 	Vector3d center(0.0, 0.0, 0.0);
 
@@ -4211,28 +4215,28 @@ extern "C" LIBHGP_EXPORT Vector3d HGP_3D_Mesh_Center_C2(const Vector3d1 & ps)
 	return center;
 }
 /********************************************************
-* Function name: HGP_3D_Mesh_Boundingbox_C1
+* Function name: CGAL_3D_Mesh_Boundingbox_C1
 * Description: Computes the bounding box of a collection of 3D points.
 * Parameters:
 * @ps: A vector containing 3D points.
 * @min_corner: Output parameter to store the minimum corner of the bounding box.
 * @max_corner: Output parameter to store the maximum corner of the bounding box.
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Boundingbox_C1(const Vector3d2 & ps, Vector3d & min_corner, Vector3d & max_corner)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Boundingbox_C1(const Vector3d2 & ps, Vector3d & min_corner, Vector3d & max_corner)
 {
 	Vector3d1 ps1;
 	for (auto ps_ : ps)for (auto p : ps_)ps1.emplace_back(p);
-	HGP_3D_Mesh_Boundingbox_C2(ps1, min_corner, max_corner);
+	CGAL_3D_Mesh_Boundingbox_C2(ps1, min_corner, max_corner);
 }
 /********************************************************
-* Function name: HGP_3D_Mesh_Boundingbox_C2
+* Function name: CGAL_3D_Mesh_Boundingbox_C2
 * Description: Computes the bounding box of a collection of 3D points.
 * Parameters:
 * @ps: A vector containing 3D points.
 * @min_corner: Output parameter to store the minimum corner of the bounding box.
 * @max_corner: Output parameter to store the maximum corner of the bounding box.
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Boundingbox_C2(const Vector3d1 & ps, Vector3d & min_corner, Vector3d & max_corner)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Boundingbox_C2(const Vector3d1 & ps, Vector3d & min_corner, Vector3d & max_corner)
 {
 	min_corner = ps[0];
 	max_corner = ps[0];
@@ -4247,7 +4251,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Boundingbox_C2(const Vector3d1 & ps, V
 	}
 }
 /********************************************************
-* Function name: HGP_Surface_Decomposition
+* Function name: CGAL_Surface_Decomposition
 * Description: Performs surface decomposition of a 3D mesh.
 * Parameters:
 * @path: The path to the 3D mesh file.
@@ -4255,7 +4259,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Boundingbox_C2(const Vector3d1 & ps, V
 * @regions_nb: Output parameter to store the number of segmented regions.
 * @face_segments: Output parameter to store the segment ID for each face.
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Surface_Decomposition(const char* path, Vector1d1&face_sdf, int& regions_nb, Vector1i1&face_segments)
+extern "C" LIBHGP_EXPORT void CGAL_Surface_Decomposition(const char* path, Vector1d1 & face_sdf, int& regions_nb, Vector1i1 & face_segments)
 {
 	Polyhedron_3 polyhedron;
 
@@ -4298,7 +4302,7 @@ extern "C" LIBHGP_EXPORT void HGP_Surface_Decomposition(const char* path, Vector
 	}
 }
 /********************************************************
-* Function name: HGP_Intergral_Curvature
+* Function name: CGAL_Intergral_Curvature
 * Description: Computes integral curvature properties of input points.
 * Parameters:
 * @input_points: A vector of 2D input points.
@@ -4308,27 +4312,27 @@ extern "C" LIBHGP_EXPORT void HGP_Surface_Decomposition(const char* path, Vector
 * @output_points: Output vector containing selected points.
 * @output_rates: Output vector containing corresponding rates.
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_points, const int& sampling_points_nb, const double& radius, const double& thresholder, Vector2d1 & output_points, Vector1d1&output_rates)
+extern "C" LIBHGP_EXPORT void CGAL_Intergral_Curvature(const Vector2d1 & input_points, const int& sampling_points_nb, const double& radius, const double& thresholder, Vector2d1 & output_points, Vector1d1 & output_rates)
 {
-	auto Strip_Get_Total_length=[](const Vector2d1 & input_points)
+	auto Strip_Get_Total_length = [](const Vector2d1& input_points)
 	{
 		double total_length = 0.0;
 		if (input_points.size() >= 2) {
 			for (int i = 0; i < input_points.size() - 1; i++) {
-				total_length += HGP_2D_Distance_Point_Point(input_points[i], input_points[i + 1]);
+				total_length += CGAL_2D_Distance_Point_Point(input_points[i], input_points[i + 1]);
 			}
 		}
 		return total_length;
 	};
 
-	auto Strip_Get_One_Point_From_Strip=[](double d, const Vector2d1 & input_points, int& index)
+	auto Strip_Get_One_Point_From_Strip = [](double d, const Vector2d1& input_points, int& index)
 	{
 		Vector2d v;
 
 		double length = 0.0;
 		for (int i = 0; i < input_points.size() - 1; i++)
 		{
-			length += sqrt((double)HGP_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]));
+			length += sqrt((double)CGAL_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]));
 		}
 		double total_length = length;
 
@@ -4336,7 +4340,7 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 
 		for (int i = 0; i < input_points.size() - 1; i++)
 		{
-			double l = sqrt((double)HGP_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]));
+			double l = sqrt((double)CGAL_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]));
 
 			if (d * total_length >= length && d * total_length <= length + l)
 			{
@@ -4351,21 +4355,21 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 		return v;
 	};
 
-	auto GenerateACircle=[](int divided_nb, Vector2d v, double distance, Vector2d1 & circle_points)
+	auto GenerateACircle = [](int divided_nb, Vector2d v, double distance, Vector2d1& circle_points)
 	{
 		for (int i = 0; i < divided_nb; i++)
 		{
-			Vector2d p0(v[0] + abs(distance) * sin(i * 2 *Math_PI / (double)divided_nb), v[1] + abs(distance) * cos(i * 2 * Math_PI / (double)divided_nb));
+			Vector2d p0(v[0] + abs(distance) * sin(i * 2 * Math_PI / (double)divided_nb), v[1] + abs(distance) * cos(i * 2 * Math_PI / (double)divided_nb));
 			circle_points.push_back(p0);
 		}
 	};
 
-	auto CircleIntersectWithSegment=[](Vector2d1 & circle_points, Vector2d v0, Vector2d v1)
+	auto CircleIntersectWithSegment = [](Vector2d1& circle_points, Vector2d v0, Vector2d v1)
 	{
 		for (int i = 0; i < circle_points.size(); i++)
 		{
 			Vector2d inter;
-			if (HGP_2D_Intersection_Segment_Segment(circle_points[i], circle_points[(i + 1) % circle_points.size()], v0, v1, inter))
+			if (CGAL_2D_Intersection_Segment_Segment(circle_points[i], circle_points[(i + 1) % circle_points.size()], v0, v1, inter))
 			{
 				return inter;
 			}
@@ -4374,15 +4378,15 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 		return v;
 	};
 
-	auto FindLastIndexPoint=[&](const Vector2d1 & input_points, Vector2d center, double radius, Vector2d1 & circle_points, int start_index, Vector2d1 & output_points)
+	auto FindLastIndexPoint = [&](const Vector2d1& input_points, Vector2d center, double radius, Vector2d1& circle_points, int start_index, Vector2d1& output_points)
 	{
 		for (int i = start_index; i >= 0; i--)
 		{
 			if (i >= 0 && i < input_points.size())
 			{
-				double distance = HGP_2D_Distance_Point_Point(input_points[i], center);
+				double distance = CGAL_2D_Distance_Point_Point(input_points[i], center);
 
-				if (HGP_2D_Location_Point_Polygon(input_points[i], circle_points))
+				if (CGAL_2D_Location_Point_Polygon(input_points[i], circle_points))
 				{
 					output_points.push_back(input_points[i]);
 				}
@@ -4405,13 +4409,13 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 	};
 
 
-	auto FindNextIndexPoint=[&](const Vector2d1& input_points, Vector2d center, double radius, Vector2d1& circle_points, int start_index, Vector2d1& output_points)
+	auto FindNextIndexPoint = [&](const Vector2d1& input_points, Vector2d center, double radius, Vector2d1& circle_points, int start_index, Vector2d1& output_points)
 	{
 		for (int i = start_index; i < input_points.size(); i++)
 		{
 			if (i >= 0 && i < input_points.size())
 			{
-				if (HGP_2D_Location_Point_Polygon(input_points[i], circle_points))
+				if (CGAL_2D_Location_Point_Polygon(input_points[i], circle_points))
 				{
 					output_points.push_back(input_points[i]);
 				}
@@ -4434,16 +4438,16 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 		}
 	};
 
-	auto Circuit_Get_Total_length=[](Vector2d1& input_points)
+	auto Circuit_Get_Total_length = [](Vector2d1& input_points)
 	{
 		double total_length = 0.0;
 		for (int i = 0; i < input_points.size(); i++) {
-			total_length += HGP_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]);
+			total_length += CGAL_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]);
 		}
 		return total_length;
 	};
 
-	auto Circuit_Find_Nearest_Point_Par=[&](Vector2d v, Vector2d1& input_points)
+	auto Circuit_Find_Nearest_Point_Par = [&](Vector2d v, Vector2d1& input_points)
 	{
 		Vector2d n_p;
 
@@ -4456,7 +4460,7 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 			Vector2d p0(input_points[i].x, input_points[i].y);
 			Vector2d p1(input_points[(i + 1) % input_points.size()].x, input_points[(i + 1) % input_points.size()].y);
 
-			double l = HGP_2D_Distance_Point_Segment(v, p0, p1);
+			double l = CGAL_2D_Distance_Point_Segment(v, p0, p1);
 
 			if (l < min_d)
 			{
@@ -4470,18 +4474,18 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 			double length = 0.0;
 			for (int i = 0; i < min_i; i++)
 			{
-				length += HGP_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]);
+				length += CGAL_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]);
 			}
 
 			Vector2d p0(input_points[min_i].x, input_points[min_i].y);
 			Vector2d p1(input_points[(min_i + 1) % input_points.size()].x, input_points[(min_i + 1) % input_points.size()].y);
 
-			double l0 = HGP_2D_Distance_Point_Point(v, p0);
-			double l1 = HGP_2D_Distance_Point_Point(v, p1);
+			double l0 = CGAL_2D_Distance_Point_Point(v, p0);
+			double l1 = CGAL_2D_Distance_Point_Point(v, p1);
 
 			if (min_d < l0 && min_d < l1 && abs(min_d - l0)>0.0001 && abs(min_d - l1)>0.0001)
 			{
-				double l = HGP_2D_Distance_Point_Point(p0, p1);
+				double l = CGAL_2D_Distance_Point_Point(p0, p1);
 				if (l < 0.00001)
 				{
 					v[0] = p0[0];
@@ -4503,7 +4507,7 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 						r_vec[1] = -vec[0];
 					}
 
-					if (HGP_2D_Intersection_Segment_Line(p0, p1, v, v + r_vec, n_p))
+					if (CGAL_2D_Intersection_Segment_Line(p0, p1, v, v + r_vec, n_p))
 					{
 
 					}
@@ -4528,7 +4532,7 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 
 			}
 
-			length += HGP_2D_Distance_Point_Point(input_points[min_i], n_p);
+			length += CGAL_2D_Distance_Point_Point(input_points[min_i], n_p);
 
 			return length / total_length;
 		}
@@ -4541,13 +4545,13 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 	};
 
 
-	auto Circuit_Get_One_Point_From_Offset=[](double d, Vector2d1& input_points)
+	auto Circuit_Get_One_Point_From_Offset = [](double d, Vector2d1& input_points)
 	{
 		Vector2d v;
 		double length = 0.0;
 		for (int i = 0; i < input_points.size(); i++)
 		{
-			length += HGP_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]);
+			length += CGAL_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]);
 		}
 
 		double total_length = length;
@@ -4555,7 +4559,7 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 
 		for (int i = 0; i < input_points.size(); i++)
 		{
-			double l = HGP_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]);
+			double l = CGAL_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]);
 
 			if (d * total_length >= length && d * total_length <= length + l)
 			{
@@ -4572,7 +4576,7 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 
 
 
-	auto Circuit_Select_One_Part_Offset=[&](Vector2d1& input_points, double d0, double d1, Vector2d1& vecs)
+	auto Circuit_Select_One_Part_Offset = [&](Vector2d1& input_points, double d0, double d1, Vector2d1& vecs)
 	{
 		if (abs(d0 - d1) < 0.0000001)
 		{
@@ -4594,7 +4598,7 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 				double length = 0.0;
 				for (int i = 0; i < input_points.size(); i++)
 				{
-					length += HGP_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]);
+					length += CGAL_2D_Distance_Point_Point(input_points[i], input_points[(i + 1) % input_points.size()]);
 					vec_ds.push_back(length / total_length);
 				}
 
@@ -4663,7 +4667,7 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 		}
 	};
 
-	auto GetHalfCircleArea=[&](Vector2d1& last_points, Vector2d1& next_points, Vector2d center, double radius, Vector2d1& circle_points)
+	auto GetHalfCircleArea = [&](Vector2d1& last_points, Vector2d1& next_points, Vector2d center, double radius, Vector2d1& circle_points)
 	{
 		Vector2d1 polygon_points;
 		polygon_points.push_back(center);
@@ -4678,7 +4682,7 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 		for (int i = next_points.size() - 2; i >= 0; i--)
 			polygon_points.push_back(next_points[i]);
 
-		return HGP_2D_Polygon_Area(polygon_points);
+		return CGAL_2D_Polygon_Area(polygon_points);
 	};
 
 	double total_length = Strip_Get_Total_length(input_points);
@@ -4728,7 +4732,7 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 	}
 }
 /********************************************************
-* Function name: HGP_3D_Mesh_Gradient
+* Function name: CGAL_3D_Mesh_Gradient
 * Description: Calculates gradients for a 3D mesh.
 * Parameters:
 * @vecs: A vector of 3D vertex coordinates.
@@ -4739,7 +4743,7 @@ extern "C" LIBHGP_EXPORT void HGP_Intergral_Curvature(const Vector2d1 & input_po
 * @vecs_gradients: Output vector for vertex gradients.
 * @faces_gradients: Output vector for face gradients.
 **********************************************************/
-extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Gradient(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, const Vector1d1&psd, Vector3d1 & vecs_gradients, Vector3d1 & faces_gradients)
+extern "C" LIBHGP_EXPORT void CGAL_3D_Mesh_Gradient(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, const Vector1d1 & psd, Vector3d1 & vecs_gradients, Vector3d1 & faces_gradients)
 {
 	Vector3d1().swap(vecs_gradients);
 	Vector3d1().swap(faces_gradients);
@@ -4762,7 +4766,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Gradient(const Vector3d1 & vecs, const
 		Vector3d   n = Functs::GetCrossproduct(v_0 - v_2, v_1 - v_2);
 		Functs::SetVectorLength(n, 1.0);
 
-		double area = HGP_3D_One_Triangle_Area(v_0, v_1, v_2);
+		double area = CGAL_3D_One_Triangle_Area(v_0, v_1, v_2);
 
 		Vector3d gradient(0.0, 0.0, 0.0);
 
@@ -4796,7 +4800,7 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Gradient(const Vector3d1 & vecs, const
 }
 
 /********************************************************
-* Function name: HGP_3D_Mesh_Extract_Isoline
+* Function name: CGAL_3D_Mesh_Extract_Isoline
 * Description: Extracts isolines from a 3D mesh based on scalar values.
 * Parameters:
 * @vecs: A vector of 3D vertex coordinates.
@@ -4808,9 +4812,9 @@ extern "C" LIBHGP_EXPORT void HGP_3D_Mesh_Gradient(const Vector3d1 & vecs, const
 * @isolines: Output vector to store extracted isolines.
 * @return: Boolean indicating success (true) or failure (false).
 **********************************************************/
-extern "C" LIBHGP_EXPORT bool HGP_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs, const Vector1i1&face_id_0, const Vector1i1&face_id_1, const Vector1i1&face_id_2, const Vector1d1&psd, const double& d, Vector3d2 & isolines)
+extern "C" LIBHGP_EXPORT bool CGAL_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, const Vector1d1 & psd, const double& d, Vector3d2 & isolines)
 {
-	auto InterpolationPoint=[](Vector3d v0, Vector3d v1, double psd0, double  psd1, double d, Vector3d & inter)
+	auto InterpolationPoint = [](Vector3d v0, Vector3d v1, double psd0, double  psd1, double d, Vector3d& inter)
 	{
 		if (Functs::IsAlmostZero(d - psd0)) psd0 = d;
 		if (Functs::IsAlmostZero(psd1 - d)) psd1 = d;
@@ -4839,7 +4843,7 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs
 	//compute gredient
 	Vector3d1 vecs_gradients;
 	Vector3d1 faces_gradients;
-	HGP_3D_Mesh_Gradient(vecs, face_id_0, face_id_1, face_id_2, psd, vecs_gradients, faces_gradients);
+	CGAL_3D_Mesh_Gradient(vecs, face_id_0, face_id_1, face_id_2, psd, vecs_gradients, faces_gradients);
 
 	Vector3d2 segments;
 	VectorPI2 edges;
@@ -4872,10 +4876,10 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs
 			segment.push_back(inter_1_2);
 
 			VectorPI1 endedge;
-			endedge.push_back(std::pair<int,int>(index_0, index_1));
+			endedge.push_back(std::pair<int, int>(index_0, index_1));
 			endedge.push_back(std::pair<int, int>(index_1, index_2));
 
-			if (!Functs::IsAlmostZero(HGP_3D_Distance_Point_Point(segment[0], segment[1])))
+			if (!Functs::IsAlmostZero(CGAL_3D_Distance_Point_Point(segment[0], segment[1])))
 			{
 				Vector3d  gradient_n = Functs::GetCrossproduct(segment[0] - segment[1], gradient);
 				double angle = Functs::GetAngleBetween(gradient_n, n);
@@ -4893,10 +4897,10 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs
 			segment.push_back(inter_2_0);
 
 			VectorPI1 endedge;
-			endedge.push_back(std::pair<int,int>(index_1, index_2));
+			endedge.push_back(std::pair<int, int>(index_1, index_2));
 			endedge.push_back(std::pair<int, int>(index_2, index_0));
 
-			if (!Functs::IsAlmostZero(HGP_3D_Distance_Point_Point(segment[0], segment[1])))
+			if (!Functs::IsAlmostZero(CGAL_3D_Distance_Point_Point(segment[0], segment[1])))
 			{
 				Vector3d  gradient_n = Functs::GetCrossproduct(segment[0] - segment[1], gradient);
 				double angle = Functs::GetAngleBetween(gradient_n, n);
@@ -4914,10 +4918,10 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs
 			segment.push_back(inter_0_1);
 
 			VectorPI1 endedge;
-			endedge.push_back(std::pair<int,int>(index_2, index_0));
-			endedge.push_back(std::pair<int,int>(index_0, index_1));
+			endedge.push_back(std::pair<int, int>(index_2, index_0));
+			endedge.push_back(std::pair<int, int>(index_0, index_1));
 
-			if (!Functs::IsAlmostZero(HGP_3D_Distance_Point_Point(segment[0], segment[1])))
+			if (!Functs::IsAlmostZero(CGAL_3D_Distance_Point_Point(segment[0], segment[1])))
 			{
 				Vector3d  gradient_n = Functs::GetCrossproduct(segment[0] - segment[1], gradient);
 				double angle = Functs::GetAngleBetween(gradient_n, n);
@@ -4930,7 +4934,7 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs
 		}
 	}
 
-	std::cout << "HGP_3D_Mesh_Extract_Isoline: " << segments.size() << std::endl;
+	std::cout << "CGAL_3D_Mesh_Extract_Isoline: " << segments.size() << std::endl;
 
 
 	//std::ofstream export_fie("G:\\segments.obj");
@@ -4947,7 +4951,7 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs
 
 	if (segments.size() == 0) return false;
 
-	HGP_3D_Connecting_Segments_C2(segments, isolines);
+	CGAL_3D_Connecting_Segments_C2(segments, isolines);
 
 	//std::ofstream export_fie_0("G:\\isolines.obj");
 	//export_int = 1;
@@ -4967,7 +4971,7 @@ extern "C" LIBHGP_EXPORT bool HGP_3D_Mesh_Extract_Isoline(const Vector3d1 & vecs
 
 	return true;
 }
-extern "C" LIBHGP_EXPORT void HGP_BSplineCurveFit(const Vector3d1 & samples, Vector3d1 & output)
+extern "C" LIBHGP_EXPORT void CGAL_BSplineCurveFit(const Vector3d1 & samples, Vector3d1 & output)
 {
 	/********************************/
 	//float mult = 2.0f / (1000 - 1), t;
@@ -5015,7 +5019,7 @@ extern "C" LIBHGP_EXPORT void HGP_BSplineCurveFit(const Vector3d1 & samples, Vec
 }
 
 /********************************************************
-* Function name: HGP_Cut_Surface
+* Function name: CGAL_Cut_Surface
 * Description: Cuts a surface with a given boundary and inside point.
 * Parameters:
 * @boundary: A vector of 3D vertex coordinates representing the boundary of the surface.
@@ -5026,10 +5030,10 @@ extern "C" LIBHGP_EXPORT void HGP_BSplineCurveFit(const Vector3d1 & samples, Vec
 **********************************************************/
 //assumption: one projecting line can intersect with the three edges at most twice times
 //it's impossible to meet one edge for more than one times
-extern "C" LIBHGP_EXPORT void HGP_Cut_Surface(const Vector3d1 & boundary, const Vector3d & inside_point, const char* full_path, char* output_path)
+extern "C" LIBHGP_EXPORT void CGAL_Cut_Surface(const Vector3d1 & boundary, const Vector3d & inside_point, const char* full_path, char* output_path)
 {
 	Vector3d2 multi_boundary(1, boundary);
-	HGP_Cut_Surface_by_Multi_Boundaries(multi_boundary, inside_point, full_path, output_path);
+	CGAL_Cut_Surface_by_Multi_Boundaries(multi_boundary, inside_point, full_path, output_path);
 	return;
 }
 
@@ -5171,13 +5175,13 @@ void ComputeEdgeLables(const int size_of_vertice, Halfedge_handle& start_hh, Vec
 }
 
 /********************************************************
-* Function name: HGP_2D_Polygon_Simple_0
+* Function name: CGAL_2D_Polygon_Simple_0
 * Description: Checks if a 2D polygon defined by points is simple (non-self-intersecting).
 * Parameters:
 * @points_2d: A vector of 2D points representing the vertices of the polygon.
 * @return: None (void).
 **********************************************************/
-void HGP_2D_Polygon_Simple_0(Vector2d1 points_2d)
+void CGAL_2D_Polygon_Simple_0(Vector2d1 points_2d)
 {
 	for (int i = 0; i < points_2d.size(); i++)
 	{
@@ -5190,7 +5194,7 @@ void HGP_2D_Polygon_Simple_0(Vector2d1 points_2d)
 			auto s1 = points_2d[(j) % points_2d.size()];
 			auto e1 = points_2d[(j + 1) % points_2d.size()];
 			Vector2d inter;
-			if (HGP_2D_Intersection_Segment_Segment(s0, e0, s1, e1, inter))
+			if (CGAL_2D_Intersection_Segment_Segment(s0, e0, s1, e1, inter))
 			{
 				std::cerr << i << " " << (j) % points_2d.size() << std::endl;
 			}
@@ -5242,10 +5246,10 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const Vector1i1& face_id_0, c
 		Vector3d v_0_1 = cutting_points[cut_0_1];
 		Vector3d v_0_2 = cutting_points[cut_0_2];
 
-		bool b_0 = HGP_3D_Distance_Point_Point(v_0, v_0_1) <= 0.001;
-		bool b_1 = HGP_3D_Distance_Point_Point(v_1, v_0_1) <= 0.001;
-		bool b_2 = HGP_3D_Distance_Point_Point(v_0, v_0_2) <= 0.001;
-		bool b_3 = HGP_3D_Distance_Point_Point(v_2, v_0_2) <= 0.001;
+		bool b_0 = CGAL_3D_Distance_Point_Point(v_0, v_0_1) <= 0.001;
+		bool b_1 = CGAL_3D_Distance_Point_Point(v_1, v_0_1) <= 0.001;
+		bool b_2 = CGAL_3D_Distance_Point_Point(v_0, v_0_2) <= 0.001;
+		bool b_3 = CGAL_3D_Distance_Point_Point(v_2, v_0_2) <= 0.001;
 
 		Vector1i1 triangle;
 		triangle.push_back(index_0);
@@ -5453,7 +5457,7 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const Vector1i1& face_id_0, c
 	{
 		for (int i = 0; i < add_points.size(); i++)
 		{
-			double distance = HGP_3D_Distance_Point_Point(add_points[i], v);
+			double distance = CGAL_3D_Distance_Point_Point(add_points[i], v);
 			if (Functs::IsAlmostZero(distance))
 			{
 				return i;
@@ -5546,7 +5550,7 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const Vector1i1& face_id_0, c
 			int export_index = 1;
 			for (int j = 0; j < cutting_id_points[i].size(); j++)
 			{
-				Functs::ExportSegment(export_file_output, export_index, "intersection",Vector3d(1, 0, 0),
+				Functs::ExportSegment(export_file_output, export_index, "intersection", Vector3d(1, 0, 0),
 					remesh_points[cutting_id_points[i][j]], remesh_points[cutting_id_points[i][(j + 1) % cutting_id_points[i].size()]], 0.05);
 			}
 			export_file_output.clear();
@@ -5571,19 +5575,19 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const Vector1i1& face_id_0, c
 		for (auto& id : nids) points_3d.emplace_back(remesh_points[id]);
 		Vector2d1 points_2d = Functs::Vector3dto2d(points_3d);
 
-		if (!HGP_2D_Polygon_Simple(points_2d))
+		if (!CGAL_2D_Polygon_Simple(points_2d))
 		{
-			HGP_2D_Polygon_Simple_0(points_2d);
+			CGAL_2D_Polygon_Simple_0(points_2d);
 
-			std::cerr << "if (!HGP_2D_Polygon_Simple(points))" << std::endl;
+			std::cerr << "if (!CGAL_2D_Polygon_Simple(points))" << std::endl;
 			system("pause");
 		}
 
-		auto triangles = HGP_2D_Polygon_Triangulation_C3(points_2d);
+		auto triangles = CGAL_2D_Polygon_Triangulation_C3(points_2d);
 
 		for (auto& triangle : triangles)
 		{
-			remesh_triangles.emplace_back(Vector1i1{nids[triangle[2]], nids[triangle[1]], nids[triangle[0]]});
+			remesh_triangles.emplace_back(Vector1i1{ nids[triangle[2]], nids[triangle[1]], nids[triangle[0]] });
 			remesh_triangles_lables.emplace_back(1);
 		}
 	};
@@ -5594,10 +5598,10 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const Vector1i1& face_id_0, c
 	}
 
 
-	//HGP_Output_Boundary("G:\\abcd0.obj", remesh_points, remesh_triangles, remesh_triangles_lables);
-	//HGP_Output_Obj("G:\\remesh_full.obj", remesh_points, remesh_triangles);
+	//CGAL_Output_Boundary("G:\\abcd0.obj", remesh_points, remesh_triangles, remesh_triangles_lables);
+	//CGAL_Output_Obj("G:\\remesh_full.obj", remesh_points, remesh_triangles);
 
-	//HGP_Output_Obj(path_0, remesh_points, remesh_triangles, remesh_triangles_lables, 0);
+	//CGAL_Output_Obj(path_0, remesh_points, remesh_triangles, remesh_triangles_lables, 0);
 	Functs::OutputObj3d(output_path.c_str(), remesh_points, remesh_triangles, remesh_triangles_lables, 1);
 }
 //Vector1i2 surface_vectices_to_vectices;
@@ -5610,7 +5614,7 @@ void ComputeRemeshTriangles(const Vector3d1& vecs, const Vector1i1& face_id_0, c
 //output_path: file path of output mesh
 //assumption: one projecting line can intersect with the three edges of one triangle at most twice times
 //            it's impossible to meet one edge for more than one times
-extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const char* full_path, char* output_path)
+extern "C" LIBHGP_EXPORT void CGAL_Cut_Surface_by_Multi_Boundaries(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const char* full_path, char* output_path)
 {
 	auto Intersection = [](const Halfedge_handle& hh, const int nb, const Vector3d inside, const Vector3d outside, Halfedge_handle& handle, Vector3d& intersection)
 	{
@@ -5624,14 +5628,14 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 			Vector3d edge_0 = PointVector3d(hh_3d->vertex()->point());
 			Vector3d edge_1 = PointVector3d(hh_3d->opposite()->vertex()->point());
 
-			double inside_d = HGP_3D_Distance_Point_Segment(inside, edge_0, edge_1);
+			double inside_d = CGAL_3D_Distance_Point_Segment(inside, edge_0, edge_1);
 			if (Functs::IsAlmostZero(inside_d))
 			{
 				result_vecs.emplace_back(inside);
 				result_handles.emplace_back(hh_3d);
 			}
 
-			double outside_d = HGP_3D_Distance_Point_Segment(outside, edge_0, edge_1);
+			double outside_d = CGAL_3D_Distance_Point_Segment(outside, edge_0, edge_1);
 			if (Functs::IsAlmostZero(outside_d))
 			{
 				result_vecs.emplace_back(outside);
@@ -5665,10 +5669,10 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 
 			Vector2d iter;
 
-			if (HGP_2D_Intersection_Segment_Segment(edge_0, edge_1, inside_2d, outside_2d, iter))
+			if (CGAL_2D_Intersection_Segment_Segment(edge_0, edge_1, inside_2d, outside_2d, iter))
 			{
 				intersection = PointVector3d(point_to_3d(VectorPoint2d(iter), plane));
-				intersection = HGP_3D_Projection_Point_Segment(intersection, edge_3d_0, edge_3d_1);
+				intersection = CGAL_3D_Projection_Point_Segment(intersection, edge_3d_0, edge_3d_1);
 				result_vecs.emplace_back(intersection);
 				result_handles.emplace_back(hh_3d);
 			}
@@ -5683,7 +5687,7 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 			double min_d = 1000000000000.0;
 			for (int i = 0; i < result_vecs.size(); i++)
 			{
-				double dis = HGP_3D_Distance_Point_Point(result_vecs[i], outside);
+				double dis = CGAL_3D_Distance_Point_Point(result_vecs[i], outside);
 				if (min_d > dis)
 				{
 					min_d = dis;
@@ -5724,7 +5728,7 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 				auto vec_0 = full_face_id_0[faces[i]];
 				auto vec_1 = full_face_id_1[faces[i]];
 				auto vec_2 = full_face_id_2[faces[i]];
-				auto d = HGP_3D_Distance_Point_Triangle(query, full_vecs[vec_0], full_vecs[vec_1], full_vecs[vec_2]);
+				auto d = CGAL_3D_Distance_Point_Triangle(query, full_vecs[vec_0], full_vecs[vec_1], full_vecs[vec_2]);
 				if (Functs::IsAlmostZero(d))return faces[i];
 
 				for (int j = 0; j < surface_vectices_to_face[vec_0].size(); j++)
@@ -5798,7 +5802,7 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 				auto vec_0 = full_face_id_0[faces[i]];
 				auto vec_1 = full_face_id_1[faces[i]];
 				auto vec_2 = full_face_id_2[faces[i]];
-				auto d = HGP_3D_Distance_Point_Triangle(query, full_vecs[vec_0], full_vecs[vec_1], full_vecs[vec_2]);
+				auto d = CGAL_3D_Distance_Point_Triangle(query, full_vecs[vec_0], full_vecs[vec_1], full_vecs[vec_2]);
 				//if (Functs::IsAlmostZero(d))return faces[i];
 
 				if (d < return_face_d)
@@ -5865,7 +5869,7 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 				Vector3d end_0 = multi_projects[i][j];
 				Vector3d end_1 = multi_projects[i][(j + 1) % multi_projects[i].size()];
 				std::string str = "projection_" + Functs::Int2String(i);
-				Functs::ExportSegment(export_file_output, export_index_0, str.c_str(),  end_0, end_1, 0.002);
+				Functs::ExportSegment(export_file_output, export_index_0, str.c_str(), end_0, end_1, 0.002);
 			}
 		}
 		export_file_output.clear();
@@ -5927,13 +5931,13 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 				Vector3d end_0 = cutting_points[j];
 				Vector3d end_1 = cutting_points[j + 1];
 				std::string str = "cutting_points_" + Functs::Int2String(j);
-				Functs::ExportSegment(export_file_output, export_index, str.c_str(),  end_0, end_1, 0.05);
+				Functs::ExportSegment(export_file_output, export_index, str.c_str(), end_0, end_1, 0.05);
 			}
 		//Functs::ExportSegment(export_file_output, export_index, "inside_outside_segment", 1.0, 0.0, 0.0, inside, multi_projects[i][next_index], 0.01);
-		Functs::ExportSegment(export_file_output, export_index, "cur_tri_edge",  v1, v3, 0.001);
+		Functs::ExportSegment(export_file_output, export_index, "cur_tri_edge", v1, v3, 0.001);
 		std::string str = "cur_tri_center_" + std::to_string(cur_handle->face()->id());
-		Functs::ExportPoint(export_file_output, export_index, str.c_str(),  center, 0.002);
-		Functs::ExportPoint(export_file_output, export_index, "cur_tri_inside",  inside, 0.002);
+		Functs::ExportPoint(export_file_output, export_index, str.c_str(), center, 0.002);
+		Functs::ExportPoint(export_file_output, export_index, "cur_tri_inside", inside, 0.002);
 		str = "cur_tri_outside_" + std::to_string(multi_project_faces[i][next_index]->id());
 		Functs::ExportPoint(export_file_output, export_index, str.c_str(), multi_projects[i][next_index], 0.002);
 
@@ -5941,9 +5945,9 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 		{
 			Vector3d vv0 = PointVector3d(handle->vertex()->point());
 			Vector3d vv1 = PointVector3d(handle->opposite()->vertex()->point());
-			Functs::ExportSegment(export_file_output, export_index, "next_edge",  vv0, vv1, 0.001);
+			Functs::ExportSegment(export_file_output, export_index, "next_edge", vv0, vv1, 0.001);
 
-			Functs::ExportPoint(export_file_output, export_index, "inters_point",  intersection, 0.002);
+			Functs::ExportPoint(export_file_output, export_index, "inters_point", intersection, 0.002);
 		}
 
 		export_file_output.clear();
@@ -5957,7 +5961,7 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 		for (int i = 0; i < cutting_points.size() - 1; i++)
 		{
 			std::string str = "intersection_" + Functs::Int2String(i);
-			Functs::ExportSegment(export_file_output, export_index, str.c_str(),  cutting_points[i], cutting_points[i + 1], 0.05);
+			Functs::ExportSegment(export_file_output, export_index, str.c_str(), cutting_points[i], cutting_points[i + 1], 0.05);
 		}
 		export_file_output.clear();
 		export_file_output.close();
@@ -5972,8 +5976,8 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 		for (int i = 0; i < handles.size(); i++)
 		{
 			auto name = "edge_" + std::to_string(i) + "_" + std::to_string(handles[i]->face()->id());
-			Functs::ExportSegment(export_file_output_0, export_index_0, name.c_str(),  full_vecs[edges[i].first], full_vecs[edges[i].second], 0.03);
-			Functs::ExportPoint(export_file_output_0, export_index_0, name.c_str(),  cutting_points[i], 0.05);
+			Functs::ExportSegment(export_file_output_0, export_index_0, name.c_str(), full_vecs[edges[i].first], full_vecs[edges[i].second], 0.03);
+			Functs::ExportPoint(export_file_output_0, export_index_0, name.c_str(), cutting_points[i], 0.05);
 
 			Point_3 p0 = handles[i]->next()->next()->vertex()->point();
 			Point_3 p1 = handles[i]->vertex()->point();
@@ -5982,7 +5986,7 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 			Vector3d v1 = PointVector3d(p1);
 			Vector3d v2 = PointVector3d(p2);
 			Vector3d center = (v0 + v1 + v2) / (double)3.0;
-			Functs::ExportPoint(export_file_output_0, export_index_0, name.c_str(),  center, 0.05);
+			Functs::ExportPoint(export_file_output_0, export_index_0, name.c_str(), center, 0.05);
 
 		}
 
@@ -5994,7 +5998,7 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 	{
 		std::ofstream  export_file_output_0("Z:\\Documents\\Windows\\SmartSFC\\workspace\\CFS\\inside.obj");
 		int export_index_0 = 1;
-		Functs::ExportPoint(export_file_output_0, export_index_0, "start_point",  inside, 0.05);
+		Functs::ExportPoint(export_file_output_0, export_index_0, "start_point", inside, 0.05);
 		export_file_output_0.clear();
 		export_file_output_0.close();
 	};
@@ -6004,7 +6008,7 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 		std::ofstream  export_file_output_0(path);
 		int export_index_0 = 1;
 		for (auto inside : insides)
-			Functs::ExportPoint(export_file_output_0, export_index_0, "start_point",  inside, 0.05);
+			Functs::ExportPoint(export_file_output_0, export_index_0, "start_point", inside, 0.05);
 		export_file_output_0.clear();
 		export_file_output_0.close();
 	};
@@ -6043,9 +6047,9 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 
 	//surface_vectices_to_face and surface_vectices_to_vectices
 	Vector1i2 surface_vectices_to_face;
-	HGP_3D_Triangle_Mesh_Vecs_Faces(full_vecs, full_face_id_0, full_face_id_1, full_face_id_2, surface_vectices_to_face);
+	CGAL_3D_Triangle_Mesh_Vecs_Faces(full_vecs, full_face_id_0, full_face_id_1, full_face_id_2, surface_vectices_to_face);
 	Vector1i2 surface_vectices_to_vectices;
-	HGP_3D_Triangle_Mesh_Vecs_Neighbors(full_vecs, full_face_id_0, full_face_id_1, full_face_id_2, surface_vectices_to_vectices);
+	CGAL_3D_Triangle_Mesh_Vecs_Neighbors(full_vecs, full_face_id_0, full_face_id_1, full_face_id_2, surface_vectices_to_vectices);
 
 	//kd tree
 	Vector1i1 full_vec_ids(full_vecs.size(), 0);
@@ -6237,18 +6241,4 @@ extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d
 
 	std::cout << "over" << std::endl;
 	return;
-}
-
-
-
-#include <iostream>
-
-
-
-int main()
-{
-	auto a = HGP_2D_Distance_Point_Point(Vector2d(0, 0), Vector2d(1, 1));
-	std::cerr << a << std::endl;
-
-	std::cout << "Hello World!\n";
 }

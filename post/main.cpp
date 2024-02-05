@@ -5,11 +5,11 @@
 using namespace std;
 using namespace liblgp;
 
-void Generate_LIBHGP_H(const std::string & input_path, const std::string & output_path)
+void Generate_LIBHGP_H(const std::string& input_path, const std::string& output_path)
 {
 	if (!Functs::DetectExisting(input_path))
 	{
-		Functs::MAssert(Functs::DetectExisting(input_path), "File is not existing: "+ input_path);
+		Functs::MAssert(Functs::DetectExisting(input_path), "File is not existing: " + input_path);
 		return;
 	}
 
@@ -20,26 +20,26 @@ void Generate_LIBHGP_H(const std::string & input_path, const std::string & outpu
 		std::ifstream file(input_path);
 		for (std::string line; std::getline(file, line); )
 		{
-			if (Functs::StringContain(line, " HGP_")&& Functs::StringContain(line, "extern \"C\" LIBHGP_EXPORT"))
+			if (Functs::StringContain(line, "CGAL") && Functs::StringContain(line, "extern \"C\" LIBHGP_EXPORT"))
 			{
 				if (!Functs::StringContain(line, "(") || !Functs::StringContain(line, ")"))
 				{
 					Functs::MAssert("Does not include both ( and )");
 				}
 
-				auto value = line.substr(line.find("LIBHGP_EXPORT") + 14, line.find(" HGP_") - line.find("LIBHGP_EXPORT") - 14);
-				auto title = line.substr(line.find(" HGP_"), line.find("(") - line.find(" HGP_"));
+				auto value = line.substr(line.find("LIBHGP_EXPORT") + 14, line.find("CGAL") - line.find("LIBHGP_EXPORT") - 15);
+				auto title = line.substr(line.find("CGAL"), line.find("(") - line.find("CGAL"));
 				auto para = line.substr(line.find("("));
 				funct_values.push_back(value);
 				funct_titles.push_back(title);
 				funct_paras.push_back(para);
-				std::cerr << "Function: " << title  << std::endl;
+				std::cerr << "Function: " << title << std::endl;
 			}
 			else
 			{
 				if (Functs::StringContain(line, "//"))
 				{
-					funct_notations[funct_values.size()-1].push_back(line);
+					funct_notations[funct_values.size() - 1].push_back(line);
 				}
 			}
 
@@ -63,7 +63,7 @@ void Generate_LIBHGP_H(const std::string & input_path, const std::string & outpu
 	libhgp_file << "#include \"glm/glm.hpp\"" << std::endl;
 
 	libhgp_file << "using namespace std;" << std::endl;
-	
+
 	libhgp_file << "namespace libhgp {" << std::endl;
 
 	libhgp_file << "" << std::endl;
@@ -162,7 +162,7 @@ void Generate_LIBHGP_H(const std::string & input_path, const std::string & outpu
 		auto value = funct_values[i];
 		auto title = funct_titles[i];
 		auto para = funct_paras[i];
-		libhgp_file << "typedef "+value+" (*" << title << ")" << para << std::endl;
+		libhgp_file << "typedef " + value + " (*" << title << ")" << para << std::endl;
 		if (funct_notations.find(i) != funct_notations.end())
 			for (auto& line : funct_notations[i])
 				libhgp_file << line << std::endl;
@@ -171,10 +171,10 @@ void Generate_LIBHGP_H(const std::string & input_path, const std::string & outpu
 	//define class
 	libhgp_file << std::endl;
 	libhgp_file << std::endl;
-	libhgp_file << "class HGPPL" << std::endl;
+	libhgp_file << "class CGALPL" << std::endl;
 	libhgp_file << "{" << std::endl;
 	libhgp_file << "	public:" << std::endl;
-	libhgp_file << "	HGPPL()" << std::endl;
+	libhgp_file << "	CGALPL()" << std::endl;
 	libhgp_file << "	{" << std::endl;
 	libhgp_file << "		hModule = LoadHMODULE(\"libhgp.dll\");" << std::endl;
 
@@ -182,16 +182,16 @@ void Generate_LIBHGP_H(const std::string & input_path, const std::string & outpu
 	{
 		std::string pre_str = "		";
 		auto title = funct_titles[i];
-		libhgp_file << pre_str << title << "_C = ("<<title<<")GetProcAddress(hModule, \""<<title<<"\");" << std::endl;
+		libhgp_file << pre_str << title << "_C = (" << title << ")GetProcAddress(hModule, \"" << title << "\");" << std::endl;
 		if (funct_notations.find(i) != funct_notations.end())
 			for (auto& line : funct_notations[i])
 				libhgp_file << pre_str << line << std::endl;
 	}
 	libhgp_file << "	};" << std::endl << std::endl;
 
-	libhgp_file << "	static HGPPL& Inst()" << std::endl;
+	libhgp_file << "	static CGALPL& Inst()" << std::endl;
 	libhgp_file << "	{" << std::endl;
-	libhgp_file << "		static HGPPL instance;" << std::endl;
+	libhgp_file << "		static CGALPL instance;" << std::endl;
 	libhgp_file << "		return instance;" << std::endl;
 	libhgp_file << "	};" << std::endl << std::endl;
 
@@ -210,7 +210,7 @@ void Generate_LIBHGP_H(const std::string & input_path, const std::string & outpu
 
 	libhgp_file << "};" << std::endl;
 
-	libhgp_file << "#define PL() HGPPL::Inst()" << std::endl;
+	libhgp_file << "#define PL() CGALPL::Inst()" << std::endl;
 
 	libhgp_file << "}" << std::endl;
 
@@ -222,13 +222,13 @@ int main(int argc, char* argv[])
 {
 	//get root path
 	std::string build_path = Functs::WinGetCurDirectory().substr(0, Functs::WinGetCurDirectory().find_last_of("\\"));
-	std::string root_path = build_path.substr(0, build_path.find_last_of("\\")+1);
+	std::string root_path = build_path.substr(0, build_path.find_last_of("\\") + 1);
 
 	//generate libhgp.h
 	Generate_LIBHGP_H(root_path + "dev\\geom.h", root_path + "libhgp\\libhgp.h");
 
 	//copy dll - Release
-	VectorStr1 pds = {"Debug", "Release", "RelWithDebInfo"};
+	VectorStr1 pds = { "Debug", "Release", "RelWithDebInfo" };
 	for (auto pd : pds)
 	{
 		std::string dev_path = build_path + "\\dev\\" + pd;
