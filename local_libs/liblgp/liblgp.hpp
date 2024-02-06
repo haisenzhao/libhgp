@@ -4255,6 +4255,7 @@ namespace liblgp {
         }
 
 #pragma endregion
+
         //Returns a three-dimensional vector representing color(RGB)
         static Vector3d ColorMapping(const int& cur, const int& all)
         {

@@ -94,12 +94,6 @@ static HMODULE LoadHMODULE(const string& dll_path)
 		std::cerr << "LoadLibrary success\n";
 	return hModule;
 };
-//Project p onto the planar surface of 3d triangle
-//Checking the position relationship between the p and 3d triangle
-//face: 3d triangle
-//p: 3d point
-//return true: inside
-//return false: outside
 typedef void (*HGP_Test_PGL)(const Vector3d & n, const char* str, const char* char_);
 //implementation in "io.cpp"
 //####################################################################################

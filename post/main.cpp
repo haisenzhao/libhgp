@@ -13,7 +13,7 @@ void Generate_LIBHGP_H(const std::string& input_path, const std::string& output_
 		return;
 	}
 
-	//parse geom.h
+	//parse libhgp.h
 	VectorStr1 funct_values, funct_titles, funct_paras;
 	std::map<int, VectorStr1> funct_notations;
 	{
@@ -225,7 +225,7 @@ int main(int argc, char* argv[])
 	std::string root_path = build_path.substr(0, build_path.find_last_of("\\") + 1);
 
 	//generate libhgp.h
-	Generate_LIBHGP_H(root_path + "dev\\geom.h", root_path + "libhgp\\libhgp.h");
+	Generate_LIBHGP_H(root_path + "dev\\libhgp.h", root_path + "libhgp\\libhgp.h");
 
 	//copy dll - Release
 	VectorStr1 pds = { "Debug", "Release", "RelWithDebInfo" };

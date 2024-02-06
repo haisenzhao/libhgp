@@ -82,7 +82,7 @@ endif()
 
 
 
-add_library(${PROJECT_NAME} SHARED geom.h twoD.cpp threeD.cpp mesh.cpp clipper/clipper.cpp io.cpp  include_cgal.h  kdtree.h kdtree.cpp NewtonApple_hull3D.h NewtonApple_hull3D.cpp)
+add_library(${PROJECT_NAME} SHARED libhgp.h cgal.h hull3D.h kdtree.h hgp2d.cpp hgp3d.cpp hgpmesh.cpp hgpio.cpp clipper/clipper.cpp  kdtree.cpp hull3D.cpp cgal.cpp)
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Export interface symbols and hide internal implementation
