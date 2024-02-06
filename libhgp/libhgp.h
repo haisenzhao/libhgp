@@ -94,14 +94,14 @@ static HMODULE LoadHMODULE(const string& dll_path)
 		std::cerr << "LoadLibrary success\n";
 	return hModule;
 };
-typedef void (*HGP_Test_PGL)(const Vector3d & n, const char* str, const char* char_);
 //implementation in "io.cpp"
 //####################################################################################
 //Usage: Get a vector which is perpenticular to the input vector;
 //Input: input vector "n"; 
 //Output: output vector "r";
 typedef void (*HGP_Vector_Base)(const Vector3d & n, Vector3d & r);
-//implementation in "twoD.cpp"
+typedef void (*HGP_Test_PGL)(const Vector3d & n, const char* str, const char* char_);
+//implementation in "hgp2d.cpp"
 //####################################################################################
 typedef double (*HGP_2D_Distance_Point_Point)(const Vector2d & p_0, const Vector2d & p_1);
 typedef double (*HGP_2D_Distance_Point_Line)(const Vector2d & v, const Vector2d & l_0, const Vector2d & l_1);
@@ -163,7 +163,7 @@ typedef void (*HGP_Image_Grid_Decomposition_C1)(Vector1i2 & image, Vector1d2 & b
 typedef void (*HGP_Image_Grid_Decomposition_Conservative_C1)(Vector1i2 & image, Vector1d2 & boundary_xs, Vector1d2 & boundary_ys);
 typedef void (*HGP_Image_Grid_Decomposition_C2)(Vector1i2 & image, Vector2d2 & boundaries);
 typedef void (*HGP_Image_Grid_Decomposition_Conservative_C2)(Vector1i2 & image, Vector2d2 & boundaries);
-//implementation in "threeD.cpp"
+//implementation in "hgp3d.cpp"
 //####################################################################################
 typedef double (*HGP_3D_Distance_Point_Segment)(const Vector3d & p, const Vector3d & s_s, const Vector3d & s_e);
 typedef void (*HGP_3D_Plane_Fitting)(const Vector3d1 & points, Vector3d & plane_p, Vector3d & plane_n);
@@ -195,7 +195,7 @@ typedef Vector2d (*HGP_3D_Projection_3D_Point_Plane_2D_C2)(const Vector3d & p, c
 typedef void (*HGP_3D_Plane_ABCD)(const Vector3d & plane_p, const Vector3d & plane_n, double& a, double& b, double& c, double& d);
 typedef Vector3d (*HGP_3D_Plane_Base_1)(const Vector3d & plane_p, const Vector3d & plane_n);
 typedef Vector3d (*HGP_Face_Normal)(const Vector3d & source, const Vector3d & tri_0, const Vector3d & tri_1, const Vector3d & tri_2, Vector3d & normal_0, Vector3d & normal_1, Vector3d & normal_2);
-//implementation in "mesh.cpp"
+//implementation in "hgpmesh.cpp"
 //####################################################################################
 typedef void (*HGP_Remesh_Surface_by_Adding_Feature)(const Vector3d1 & feature, const Vector1i1 & face_ids, const Vector3d1 & vecs, const Vector1i1 & face_id_0, const Vector1i1 & face_id_1, const Vector1i1 & face_id_2, Vector1i1 & igl_cutting_0_edges, Vector1i1 & igl_cutting_1_edges, Vector3d1 & igl_cutting_points, Vector1i2 & cutting_faces);
 typedef void (*HGP_Mesh_Edges)(const char* path);
@@ -305,14 +305,9 @@ class HGPPL
 	HGPPL()
 	{
 		hModule = LoadHMODULE("libhgp.dll");
-		HGP_Test_PGL_C = (HGP_Test_PGL)GetProcAddress(hModule, "HGP_Test_PGL");
-		//implementation in "io.cpp"
-		//####################################################################################
-		//Usage: Get a vector which is perpenticular to the input vector;
-		//Input: input vector "n"; 
-		//Output: output vector "r";
 		HGP_Vector_Base_C = (HGP_Vector_Base)GetProcAddress(hModule, "HGP_Vector_Base");
-		//implementation in "twoD.cpp"
+		HGP_Test_PGL_C = (HGP_Test_PGL)GetProcAddress(hModule, "HGP_Test_PGL");
+		//implementation in "hgp2d.cpp"
 		//####################################################################################
 		HGP_2D_Distance_Point_Point_C = (HGP_2D_Distance_Point_Point)GetProcAddress(hModule, "HGP_2D_Distance_Point_Point");
 		HGP_2D_Distance_Point_Line_C = (HGP_2D_Distance_Point_Line)GetProcAddress(hModule, "HGP_2D_Distance_Point_Line");
@@ -374,7 +369,7 @@ class HGPPL
 		HGP_Image_Grid_Decomposition_Conservative_C1_C = (HGP_Image_Grid_Decomposition_Conservative_C1)GetProcAddress(hModule, "HGP_Image_Grid_Decomposition_Conservative_C1");
 		HGP_Image_Grid_Decomposition_C2_C = (HGP_Image_Grid_Decomposition_C2)GetProcAddress(hModule, "HGP_Image_Grid_Decomposition_C2");
 		HGP_Image_Grid_Decomposition_Conservative_C2_C = (HGP_Image_Grid_Decomposition_Conservative_C2)GetProcAddress(hModule, "HGP_Image_Grid_Decomposition_Conservative_C2");
-		//implementation in "threeD.cpp"
+		//implementation in "hgp3d.cpp"
 		//####################################################################################
 		HGP_3D_Distance_Point_Segment_C = (HGP_3D_Distance_Point_Segment)GetProcAddress(hModule, "HGP_3D_Distance_Point_Segment");
 		HGP_3D_Plane_Fitting_C = (HGP_3D_Plane_Fitting)GetProcAddress(hModule, "HGP_3D_Plane_Fitting");
@@ -406,7 +401,7 @@ class HGPPL
 		HGP_3D_Plane_ABCD_C = (HGP_3D_Plane_ABCD)GetProcAddress(hModule, "HGP_3D_Plane_ABCD");
 		HGP_3D_Plane_Base_1_C = (HGP_3D_Plane_Base_1)GetProcAddress(hModule, "HGP_3D_Plane_Base_1");
 		HGP_Face_Normal_C = (HGP_Face_Normal)GetProcAddress(hModule, "HGP_Face_Normal");
-		//implementation in "mesh.cpp"
+		//implementation in "hgpmesh.cpp"
 		//####################################################################################
 		HGP_Remesh_Surface_by_Adding_Feature_C = (HGP_Remesh_Surface_by_Adding_Feature)GetProcAddress(hModule, "HGP_Remesh_Surface_by_Adding_Feature");
 		HGP_Mesh_Edges_C = (HGP_Mesh_Edges)GetProcAddress(hModule, "HGP_Mesh_Edges");
@@ -517,14 +512,9 @@ class HGPPL
 	};
 
 	HMODULE hModule;
-	HGP_Test_PGL HGP_Test_PGL_C;
-	//implementation in "io.cpp"
-	//####################################################################################
-	//Usage: Get a vector which is perpenticular to the input vector;
-	//Input: input vector "n"; 
-	//Output: output vector "r";
 	HGP_Vector_Base HGP_Vector_Base_C;
-	//implementation in "twoD.cpp"
+	HGP_Test_PGL HGP_Test_PGL_C;
+	//implementation in "hgp2d.cpp"
 	//####################################################################################
 	HGP_2D_Distance_Point_Point HGP_2D_Distance_Point_Point_C;
 	HGP_2D_Distance_Point_Line HGP_2D_Distance_Point_Line_C;
@@ -586,7 +576,7 @@ class HGPPL
 	HGP_Image_Grid_Decomposition_Conservative_C1 HGP_Image_Grid_Decomposition_Conservative_C1_C;
 	HGP_Image_Grid_Decomposition_C2 HGP_Image_Grid_Decomposition_C2_C;
 	HGP_Image_Grid_Decomposition_Conservative_C2 HGP_Image_Grid_Decomposition_Conservative_C2_C;
-	//implementation in "threeD.cpp"
+	//implementation in "hgp3d.cpp"
 	//####################################################################################
 	HGP_3D_Distance_Point_Segment HGP_3D_Distance_Point_Segment_C;
 	HGP_3D_Plane_Fitting HGP_3D_Plane_Fitting_C;
@@ -618,7 +608,7 @@ class HGPPL
 	HGP_3D_Plane_ABCD HGP_3D_Plane_ABCD_C;
 	HGP_3D_Plane_Base_1 HGP_3D_Plane_Base_1_C;
 	HGP_Face_Normal HGP_Face_Normal_C;
-	//implementation in "mesh.cpp"
+	//implementation in "hgpmesh.cpp"
 	//####################################################################################
 	HGP_Remesh_Surface_by_Adding_Feature HGP_Remesh_Surface_by_Adding_Feature_C;
 	HGP_Mesh_Edges HGP_Mesh_Edges_C;
