@@ -6,4 +6,4 @@ project(libhgp)
 
 # Add sub directories
 add_subdirectory(dev)
-add_subdirectory(post)
+add_subdirectory(dev/post)
