@@ -12,7 +12,6 @@ Besides that, a set of commonly used functions are included. Currently, we relea
 
 [Call libhgp](#Call-libhgp)
 
-​	[Prepare a project](#Prepare-a-project)  
 ​	[Copy libhgp](#Copy-libhgp )  
 ​	[Call libhgp in your project](#Call-libhgp-in-your-project)    
 
