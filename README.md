@@ -1,5 +1,5 @@
-This repository is developed by Haisen Zhao for his research projects. A set of fundamental geometric process functions are well organized based on some third-party library. 
-Besides that, a set of commonly used functions are included. Currently, we release a dynamic link library file of "ppgl.dll". An example of using this library is a port-example. 
+This repository is developed by Haisen Zhao. A set of fundamental geometric process functions are well organized based on some third-party library. 
+Besides that, a set of commonly used functions are included. Currently, we release a dynamic link library file of "libhgp.dll". An example of using this library is in the example folder. 
 
 
 
@@ -7,13 +7,13 @@ Besides that, a set of commonly used functions are included. Currently, we relea
 
 [Dependency](#Dependency)
 
-[Develop PPGL](Develop%20PPGL.md)
+[Develop LIBHGP](Develop%20libhgp.md)
 
-[Call PPGL](#Call-PPGL)
+[Call libhgp](#Call-libhgp)
 
 ​	[Prepare a project](#Prepare-a-project)  
-​	[Copy PPGL](#Copy-PPGL )  
-​	[Call PPGL in your project](#Call-PPGL-in-your-project)    
+​	[Copy libhgp](#Copy-libhgp )  
+​	[Call libhgp in your project](#Call-libhgp-in-your-project)    
 
 [License](#License)
 
@@ -22,9 +22,9 @@ Besides that, a set of commonly used functions are included. Currently, we relea
 You should install [CGAL](https://github.com/CGAL/cgal) before compiling this project. For Windows, recommend using vcpkg to install CGAL. 
 Our project also depends on [glm](https://github.com/g-truc/glm.git) and [Clipper](http://www.angusj.com/delphi/clipper.php), but you don't need to install them explicitly.
 
-# Call PPGL
+# Call libhgp
 
-If you already have a VS project, please start from "[Copy PPGL](Copy-PPGL)". Otherwise, follow these steps to create a new project.
+If you already have a VS project, please start from "[Copy libhgp](Copy-libhgp)". Otherwise, follow these steps to create a new project.
 
 ## Prepare a project
 
@@ -67,7 +67,7 @@ If you already have a VS project, please start from "[Copy PPGL](Copy-PPGL)". Ot
 
 - Seeing these words, it means that the run was successful.![image-run_successful](images/image-run_successful.png)
 
-## Copy PPGL 
+## Copy libhgp 
 
 - First, download the folder "[port](https://github.com/haisenzhao/personal-pack-geom-lib/tree/master/port)" to your computer.
 - Open the "port" folder and copy `cgal.h` and "glm".
@@ -75,7 +75,7 @@ If you already have a VS project, please start from "[Copy PPGL](Copy-PPGL)". Ot
 - Back to the "port" folder, open the "Debug" folder, and copy all the files.
 - Back to the folder where your project is located, open the "x64" folder, open the "Debug" folder, and paste the file you just copied here.![image-paste_dll](images/image-paste_dll.png)
 
-## Call PPGL in your project
+## Call libhgp in your project
 
 - Right-click on your project in the "Solution Explorer" and select "Add" "Exsting item...". ![image-add_existing_item](images/image-add_existing_item.png)
 
@@ -83,9 +83,9 @@ If you already have a VS project, please start from "[Copy PPGL](Copy-PPGL)". Ot
 
 - Use "cgal.h" in your code `#include"cgal.h"`
 
-- Use namespace "PPGL": `using namespace PPGL;`
+- Use namespace "libhgp": `using namespace libhgp;`
 
-- Add the following code to the main function to test PPGL.
+- Add the following code to the main function to test libhgp.
 
 
   ```cpp
