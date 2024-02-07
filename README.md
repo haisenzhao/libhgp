@@ -41,7 +41,7 @@ If you already have a VS project, please start from "[Copy libhgp](Copy-libhgp)"
 - Use namespace "libhgp": `using namespace libhgp;`.
 - Add the following code to the main function to test libhgp.
   ```cpp
-  auto a = PL().CGAL_2D_Distance_Point_Point_C(Vector2d(0, 0), Vector2d(1, 1));
+  auto a = PL().HGP_2D_Distance_Point_Point_C(Vector2d(0, 0), Vector2d(1, 1));
   std::cerr << a << std::endl;
   ```
 - Click "Local Windows Debugger". Seeing these words, it means that the run was successful.<br> <img src="dev/images/5.png" width = "30%" />
