@@ -37,11 +37,7 @@ If you already have a VS project, please start from "[Copy libhgp](Copy-libhgp)"
 
 ## Call libhgp in your project
 
-- Right-click on your project in the "Solution Explorer" and select "Add" "Exsting item...". <br>![image-add_existing_item](images/image-add_existing_item.png)
-
-- Select "cgal.h" and click "Add".![image-add_cgal_h](images/image-add_cgal_h.png)
-
-- Use "cgal.h" in your code `#include"libhgp.h"`.
+- Include "libhgp.h" in your code `#include"libhgp.h"`.
 - Use namespace "libhgp": `using namespace libhgp;`.
 - Add the following code to the main function to test libhgp.
   ```cpp
