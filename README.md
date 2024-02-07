@@ -31,7 +31,7 @@ If you already have a VS project, please start from "[Copy libhgp](Copy-libhgp)"
 
 - First, download this  repository "[libhgp](https://github.com/haisenzhao/libhgp)" to your computer.
 - Open the "libhgp" folder and copy `libhgp.h` and "glm".
-- Open the folder where your own project is located, the paste the files.![image-paste_cgal_h_and_glm](images/image-paste_cgal_h_and_glm.png)
+- Open the folder where your own project is located, then paste the files.![image-paste_cgal_h_and_glm](images/image-paste_cgal_h_and_glm.png)
 - Back to the "libhgp" folder, open the "Debug/Release/RelWithDebInfo" folder, and copy all files.
 - Back to the folder where your project is located, and paste the files to your current working directory.![image-paste_dll](images/image-paste_dll.png)
 
