@@ -30,10 +30,10 @@ If you already have a VS project, please start from "[Copy libhgp](Copy-libhgp)"
 ## Copy libhgp 
 
 - First, download this  repository "[libhgp](https://github.com/haisenzhao/libhgp)" to your computer.
-- Open the "libhgp" folder and copy `libhgp.h` and "glm".<br> <img src="dev/images/1.png" width = "40%" />
-- Open the folder where your own project is located, then paste the files.<br> <img src="dev/images/2.png" width = "40%" />
-- Back to the "libhgp" folder, open the "Debug/Release/RelWithDebInfo" folder, and copy all files.<br> <img src="dev/images/3.png" width = "40%" />
-- Back to the folder where your project is located, and paste the files to your current working directory.<br> <img src="dev/images/4.png" width = "40%" />
+- Open the "libhgp" folder and copy `libhgp.h` and "glm".<br> <img src="dev/images/1.png" width = "30%" />
+- Open the folder where your own project is located, then paste the files.<br> <img src="dev/images/2.png" width = "30%" />
+- Back to the "libhgp" folder, open the "Debug/Release/RelWithDebInfo" folder, and copy all files.<br> <img src="dev/images/3.png" width = "30%" />
+- Back to the folder where your project is located, and paste the files to your current working directory.<br> <img src="dev/images/4.png" width = "30%" />
 
 ## Call libhgp in your project
 
