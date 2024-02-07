@@ -30,29 +30,21 @@ If you already have a VS project, please start from "[Copy libhgp](Copy-libhgp)"
 ## Copy libhgp 
 
 - First, download this  repository "[libhgp](https://github.com/haisenzhao/libhgp)" to your computer.
-- Open the "libhgp" folder and copy `libhgp.h` and "glm".<br>
- <img src="dev/images/1.png" width = "80%" />
-- Open the folder where your own project is located, then paste the files.<br>
- <img src="dev/images/2.png" width = "80%" />
-- Back to the "libhgp" folder, open the "Debug/Release/RelWithDebInfo" folder, and copy all files.
- <img src="dev/images/3.png" width = "80%" />
-- Back to the folder where your project is located, and paste the files to your current working directory.
- <img src="dev/images/4.png" width = "80%" />
+- Open the "libhgp" folder and copy `libhgp.h` and "glm".<br> <img src="dev/images/1.png" width = "30%" />
+- Open the folder where your own project is located, then paste the files.<br> <img src="dev/images/2.png" width = "30%" />
+- Back to the "libhgp" folder, open the "Debug/Release/RelWithDebInfo" folder, and copy all files.<br> <img src="dev/images/3.png" width = "30%" />
+- Back to the folder where your project is located, and paste the files to your current working directory.<br> <img src="dev/images/4.png" width = "30%" />
 
 ## Call libhgp in your project
 
-- Right-click on your project in the "Solution Explorer" and select "Add" "Exsting item...". <br>![image-add_existing_item](images/image-add_existing_item.png)
-
-- Select "cgal.h" and click "Add".![image-add_cgal_h](images/image-add_cgal_h.png)
-
-- Use "cgal.h" in your code `#include"libhgp.h"`.
+- Include "libhgp.h" in your code `#include"libhgp.h"`.
 - Use namespace "libhgp": `using namespace libhgp;`.
 - Add the following code to the main function to test libhgp.
   ```cpp
-  auto a = PL().CGAL_2D_Distance_Point_Point_C(Vector2d(0, 0), Vector2d(1, 1));
+  auto a = PL().HGP_2D_Distance_Point_Point_C(Vector2d(0, 0), Vector2d(1, 1));
   std::cerr << a << std::endl;
   ```
-- Click "Local Windows Debugger". Seeing these words, it means that the run was successful.![image-successful](images/image-successful.png)
+- Click "Local Windows Debugger". Seeing these words, it means that the run was successful.<br> <img src="dev/images/5.png" width = "30%" />
 
 # License
 
