@@ -30,9 +30,11 @@ If you already have a VS project, please start from "[Copy libhgp](Copy-libhgp)"
 
 - Open Visual Studio
 
-- Click the "Create a new project" to create a new project.![image-create_a_new_project](images/image-create_a_new_project.png)
+- Click the "Create a new project" to create a new project.<br>
+   <img src="images/image-create_a_new_project.png"/>
 
-- Then, select the "Empty Project" and click "Next".![image-configure_your_new_project](images/image-configure_your_new_project.png)
+- Then, select the "Empty Project" and click "Next".<br>
+  ![image-configure_your_new_project](images/image-configure_your_new_project.png)
 
 - Name your project and choose the location you want to place. And then, click "create".![image-empty_project](images/image-empty_project.png)
 
