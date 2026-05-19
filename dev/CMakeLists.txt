@@ -1,109 +1,91 @@
-cmake_minimum_required(VERSION 3.5)
-project(libhgp)
+cmake_minimum_required(VERSION 3.16)
 
-#add _CRT_SECURE_NO_WARNINGS
+# CMP0091 必须在 project() 之前声明！
+cmake_policy(SET CMP0091 NEW)
+
+project(libhgp)
+# 显式保证所有目标使用 /MD（Release）或 /MDd（Debug）
+#与 x64-windows-static-md triplet 保持一致
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+endif()
+
+set(CMAKE_CXX_STANDARD 17)
+
 if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    add_compile_options(/utf-8)
 endif()
 
-
-#define option to use local libs
 option(USE_LOCAL_LIBS "Use local library" ON)
 
-
+# 通过 vcpkg 找 CGAL
 set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
-find_package( CGAL QUIET COMPONENTS Core)
-if ( NOT CGAL_FOUND )
-    message(STATUS "This project requires the CGAL library, and will not be compiled.")
-    return()
+find_package(CGAL REQUIRED COMPONENTS Core)
+
+# 公共源码列表
+set(LIBHGP_SOURCES
+    libhgp.h
+    cgal.h
+    hull3D.h
+    kdtree.h
+    hgp2d.cpp
+    hgp3d.cpp
+    hgpmesh.cpp
+    hgpio.cpp
+    clipper/clipper.cpp
+    kdtree.cpp
+    hull3D.cpp
+    cgal.cpp
+    lgp_api.cpp
+)
+
+# 动态库（原来的 libhgp.dll）
+add_library(libhgp SHARED ${LIBHGP_SOURCES})
+
+target_include_directories(libhgp
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/local_libs
+)
+
+target_link_libraries(libhgp
+    PRIVATE
+        CGAL::CGAL
+        CGAL::CGAL_Core
+)
+
+# 静态库版本，用于 hgp_py 静态链接
+add_library(libhgp_static STATIC ${LIBHGP_SOURCES})
+
+# ✅ 关键：为静态库启用位置独立代码（PIC）
+set_target_properties(libhgp_static PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+target_include_directories(libhgp_static
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/local_libs
+)
+
+target_link_libraries(libhgp_static
+    PUBLIC
+        CGAL::CGAL
+        CGAL::CGAL_Core
+)
+
+# 通过 vcpkg 找 pybind11，并让 hgp_py 链接静态库
+option(BUILD_PYTHON_BINDINGS "Build Python bindings with pybind11" ON)
+if(BUILD_PYTHON_BINDINGS)
+    find_package(pybind11 CONFIG REQUIRED)
+    pybind11_add_module(hgp_py hgp_py.cpp)
+    
+    # 链接静态库
+    target_link_libraries(hgp_py PRIVATE libhgp_static)
+
+    # ✅ 可选但推荐：显式设置符号可见性
+    set_target_properties(hgp_py PROPERTIES
+        CXX_VISIBILITY_PRESET hidden
+        VISIBILITY_INLINES_HIDDEN ON
+    )
 endif()
-include( ${CGAL_USE_FILE} )
-
-if(USE_LOCAL_LIBS)
-   set(PglIncludeDir ${PROJECT_SOURCE_DIR}/../dev/local_libs)
-   set(GlmIncludeDir ${PROJECT_SOURCE_DIR}/../dev/local_libs)
-   set(EigenIncludeDir ${PROJECT_SOURCE_DIR}/../dev/local_libs)
-   set(GteIncludeDir ${PROJECT_SOURCE_DIR}/../dev/local_libs)
-else()
-	include(ExternalProject)
-	ExternalProject_Add(
-		pgl
-		PREFIX ${CMAKE_BINARY_DIR}/third_party/pgl
-		GIT_REPOSITORY https://github.com/haisenzhao/personal-geom-lib.git
-		CONFIGURE_COMMAND ""
-		UPDATE_DISCONNECTED 1
-		BUILD_COMMAND ""
-		INSTALL_COMMAND ""
-		LOG_DOWNLOAD ON
-		)
-	ExternalProject_Get_Property(pgl source_dir)
-	set(PglIncludeDir ${source_dir})
-	
-	ExternalProject_Add(
-		glm
-		PREFIX ${CMAKE_BINARY_DIR}/third_party/glm
-		GIT_REPOSITORY https://github.com/g-truc/glm.git
-		CONFIGURE_COMMAND ""
-		UPDATE_DISCONNECTED 1
-		BUILD_COMMAND ""
-		INSTALL_COMMAND ""
-		LOG_DOWNLOAD ON
-		)
-	ExternalProject_Get_Property(glm source_dir)
-	set(GlmIncludeDir ${source_dir})
-	
-	ExternalProject_Add(
-		eigen
-		PREFIX ${CMAKE_BINARY_DIR}/third_party/eigen
-		GIT_REPOSITORY https://github.com/libigl/eigen.git
-		CONFIGURE_COMMAND ""
-		UPDATE_DISCONNECTED 1
-		BUILD_COMMAND ""
-		INSTALL_COMMAND ""
-		LOG_DOWNLOAD ON
-		)
-	ExternalProject_Get_Property(eigen source_dir)
-	set(EigenIncludeDir ${source_dir})
-	
-	
-	ExternalProject_Add(
-		gte
-		PREFIX ${CMAKE_BINARY_DIR}/third_party/gte
-		GIT_REPOSITORY https://github.com/davideberly/GeometricTools.git
-		CONFIGURE_COMMAND ""
-		UPDATE_DISCONNECTED 1
-		BUILD_COMMAND ""
-		INSTALL_COMMAND ""
-		LOG_DOWNLOAD ON
-		)
-	ExternalProject_Get_Property(gte source_dir)
-	set(GteIncludeDir ${source_dir}/GTE)
-endif()
-
-
-
-add_library(${PROJECT_NAME} SHARED libhgp.h cgal.h hull3D.h kdtree.h hgp2d.cpp hgp3d.cpp hgpmesh.cpp hgpio.cpp clipper/clipper.cpp  kdtree.cpp hull3D.cpp cgal.cpp)
-#target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-# Export interface symbols and hide internal implementation
-include(GenerateExportHeader)
-generate_export_header(${PROJECT_NAME})
-add_library(sub::hgplib ALIAS ${PROJECT_NAME})
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_BINARY_DIR} PRIVATE ${GlmIncludeDir} ${PglIncludeDir} ${EigenIncludeDir} ${GteIncludeDir})
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-
-
-if(NOT USE_LOCAL_LIBS)
-	add_dependencies(${PROJECT_NAME} glm)
-	add_dependencies(${PROJECT_NAME} pgl)
-	add_dependencies(${PROJECT_NAME} eigen)
-	add_dependencies(${PROJECT_NAME} gte)
-endif()
-
-
-
-#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#    COMMAND start ${CMAKE_BINARY_DIR}/post/Release/post.exe
-#)
-
-

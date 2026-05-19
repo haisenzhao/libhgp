@@ -9,7 +9,14 @@
 #include <string>
 #include <algorithm>
 #include <list>
-#include <libhgp_export.h>
+
+#ifndef LIBHGP_EXPORT
+#  ifdef _WIN32
+#    define LIBHGP_EXPORT __declspec(dllexport)
+#  else
+#    define LIBHGP_EXPORT
+#  endif
+#endif
 
 
 #include "cgal.h"
@@ -260,9 +267,103 @@ extern "C" LIBHGP_EXPORT void HGP_BSplineCurveFit(const Vector3d1 & samples, Vec
 extern "C" LIBHGP_EXPORT void HGP_Cut_Surface(const Vector3d1 & boundary, const Vector3d & inside_point, const char* full_path, char* output_path);
 extern "C" LIBHGP_EXPORT void HGP_Cut_Surface_by_Multi_Boundaries(const Vector3d2 & multi_boundary, const Vector3d & inside_point, const char* full_path, char* output_path);
 
+// ── CSG: Primitive Generators ────────────────────────────────────────────────
+// Generate a box (cuboid). cx/cy/cz = center, wx/wy/wz = half-extents.
+extern "C" LIBHGP_EXPORT void HGP_Mesh_Make_Box(
+    const double& cx, const double& cy, const double& cz,
+    const double& wx, const double& wy, const double& wz,
+    Vector3d1& vecs, Vector1i1& fi0, Vector1i1& fi1, Vector1i1& fi2);
+
+// Generate a cylinder. cx/cy/cz = center (mid-height), segments >= 3.
+extern "C" LIBHGP_EXPORT void HGP_Mesh_Make_Cylinder(
+    const double& cx, const double& cy, const double& cz,
+    const double& radius, const double& height, const int& segments,
+    Vector3d1& vecs, Vector1i1& fi0, Vector1i1& fi1, Vector1i1& fi2);
+
+// Generate a UV sphere. rings >= 2, segments >= 3.
+extern "C" LIBHGP_EXPORT void HGP_Mesh_Make_Sphere(
+    const double& cx, const double& cy, const double& cz,
+    const double& radius, const int& rings, const int& segments,
+    Vector3d1& vecs, Vector1i1& fi0, Vector1i1& fi1, Vector1i1& fi2);
+
+// Generate a cone. apex at (cx, cy, cz + height).
+extern "C" LIBHGP_EXPORT void HGP_Mesh_Make_Cone(
+    const double& cx, const double& cy, const double& cz,
+    const double& radius, const double& height, const int& segments,
+    Vector3d1& vecs, Vector1i1& fi0, Vector1i1& fi1, Vector1i1& fi2);
+
+// ── CSG: Boolean Operations ──────────────────────────────────────────────────
+// All operations require closed, orientable, non-self-intersecting meshes.
+// Returns true on success.
+
+// Union: result = A ∪ B
+extern "C" LIBHGP_EXPORT bool HGP_Mesh_CSG_Union(
+    const Vector3d1& vecs_a, const Vector1i1& fi0_a, const Vector1i1& fi1_a, const Vector1i1& fi2_a,
+    const Vector3d1& vecs_b, const Vector1i1& fi0_b, const Vector1i1& fi1_b, const Vector1i1& fi2_b,
+    Vector3d1& vecs_out, Vector1i1& fi0_out, Vector1i1& fi1_out, Vector1i1& fi2_out);
+
+// Difference: result = A - B  (drill B into A)
+extern "C" LIBHGP_EXPORT bool HGP_Mesh_CSG_Difference(
+    const Vector3d1& vecs_a, const Vector1i1& fi0_a, const Vector1i1& fi1_a, const Vector1i1& fi2_a,
+    const Vector3d1& vecs_b, const Vector1i1& fi0_b, const Vector1i1& fi1_b, const Vector1i1& fi2_b,
+    Vector3d1& vecs_out, Vector1i1& fi0_out, Vector1i1& fi1_out, Vector1i1& fi2_out);
+
+// Intersection: result = A ∩ B
+extern "C" LIBHGP_EXPORT bool HGP_Mesh_CSG_Intersection(
+    const Vector3d1& vecs_a, const Vector1i1& fi0_a, const Vector1i1& fi1_a, const Vector1i1& fi2_a,
+    const Vector3d1& vecs_b, const Vector1i1& fi0_b, const Vector1i1& fi1_b, const Vector1i1& fi2_b,
+    Vector3d1& vecs_out, Vector1i1& fi0_out, Vector1i1& fi1_out, Vector1i1& fi2_out);
 
 #pragma endregion
 
+
+/////////////////////////////////////////////////////////////
+// liblgp utility wrappers (implemented in lgp_api.cpp)
+/////////////////////////////////////////////////////////////
+
+// Statistics / combinations / integer vectors
+
+// Compute sample standard deviation (Bessel corrected) for double array.
+// Equivalent to Functs::Variance on a std::vector<double>.
+extern "C" LIBHGP_EXPORT double LGP_Variance_Double(const double* data, int n);
+
+// Generate increasing integer sequence [minI, maxI].
+// out will be resized and filled inside the function.
+extern "C" LIBHGP_EXPORT void LGP_IncreaseVector(int minI, int maxI, Vector1i1 & out);
+
+// Generate a shuffled integer sequence [0, size-1].
+// out will be resized and filled inside the function.
+extern "C" LIBHGP_EXPORT void LGP_ShuffleVector(int size, Vector1i1 & out);
+
+// String / number conversions
+
+// Convert double to string with given precision p, write into out (null-terminated).
+// outSize is the size of the buffer, including space for the null terminator.
+extern "C" LIBHGP_EXPORT void LGP_Double2String(double value, int p, char* out, int outSize);
+
+// Parse C string to double.
+extern "C" LIBHGP_EXPORT double LGP_String2Double(const char* str);
+
+// Check whether str contains sub.
+extern "C" LIBHGP_EXPORT bool LGP_StringContain(const char* str, const char* sub);
+
+// Replace all occurrences of toReplace in source with replaceWith, write result to out.
+// outSize is the size of the buffer, including space for the null terminator.
+extern "C" LIBHGP_EXPORT void LGP_StringReplace(const char* source,
+												const char* toReplace,
+												const char* replaceWith,
+												char* out,
+												int outSize);
+
+// Windows-specific utilities
+
+// Get current working directory as null-terminated string.
+// outSize is the size of the buffer, including space for the null terminator.
+extern "C" LIBHGP_EXPORT void LGP_WinGetCurDirectory(char* out, int outSize);
+
+// Get current user name as null-terminated string.
+// outSize is the size of the buffer, including space for the null terminator.
+extern "C" LIBHGP_EXPORT void LGP_WinGetUserName(char* out, int outSize);
 
 /////////////////////////////////////////////////////////////
 //

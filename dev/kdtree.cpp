@@ -1,7 +1,7 @@
-//kd_tree.h  kd_tree的头文件
+﻿//kd_tree.h  kd_tree鐨勫ご鏂囦欢
 //#include "StdAfx.h"
 
-//头文件
+//澶存枃浠�
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,14 +26,14 @@
 #endif	/* use list node allocator */
 
 
-//超平面的结构体
-//包括一个属性的维数和每维坐标的最大和最小值构成的数组
+//瓒呭钩闈㈢殑缁撴瀯浣�
+//鍖呮嫭涓€涓�灞炴€х殑缁存暟鍜屾瘡缁村潗鏍囩殑鏈€澶у拰鏈€灏忓€兼瀯鎴愮殑鏁扮粍
 struct kdhyperrect {
 	int dim;
 	double *min, *max;              /* minimum/maximum coords */
 };
 
-//节点的结构体，也就是事例的结构体
+//鑺傜偣鐨勭粨鏋勪綋锛屼篃灏辨槸浜嬩緥鐨勭粨鏋勪綋
 struct kdnode {
 	double *pos;
 	int dir;
@@ -42,14 +42,14 @@ struct kdnode {
 	struct kdnode *left, *right;	/* negative/positive side */
 };
 
-//返回结果节点， 包括树的节点,距离值, 是一个单链表的形式
+//杩斿洖缁撴灉鑺傜偣锛� 鍖呮嫭鏍戠殑鑺傜偣,璺濈�诲€�, 鏄�涓€涓�鍗曢摼琛ㄧ殑褰㈠紡
 struct res_node {
 	struct kdnode *item;
 	double dist_sq;
 	struct res_node *next;
 };
 
-//树有几个属性，一是维数，一是树根节点，一是超平面，一是销毁data的函数
+//鏍戞湁鍑犱釜灞炴€э紝涓€鏄�缁存暟锛屼竴鏄�鏍戞牴鑺傜偣锛屼竴鏄�瓒呭钩闈�锛屼竴鏄�閿€姣乨ata鐨勫嚱鏁�
 struct kdtree {
 	int dim;
 	struct kdnode *root;
@@ -57,14 +57,14 @@ struct kdtree {
 	void (*destr)(void*);
 };
 
-//kdtree的返回结果，包括kdtree，这是一个双链表的形式
+//kdtree鐨勮繑鍥炵粨鏋滐紝鍖呮嫭kdtree锛岃繖鏄�涓€涓�鍙岄摼琛ㄧ殑褰㈠紡
 struct kdres {
 	struct kdtree *tree;
-	struct res_node *rlist, *riter;  //双链表?
+	struct res_node *rlist, *riter;  //鍙岄摼琛�?
 	int size;
 };
 
-//计算平方的宏定义,相当于函数
+//璁＄畻骞虫柟鐨勫畯瀹氫箟,鐩稿綋浜庡嚱鏁�
 #define SQ(x)			((x) * (x))
 
 
@@ -88,7 +88,7 @@ static void free_resnode(struct res_node*);
 #endif
 
 
-//创建一个kdtree
+//鍒涘缓涓€涓猭dtree
 struct kdtree *kd_create(int k)
 {
 	struct kdtree *tree;
@@ -105,7 +105,7 @@ struct kdtree *kd_create(int k)
 	return tree;
 }
 
-//释放掉kdtree
+//閲婃斁鎺塳dtree
 void kd_free(struct kdtree *tree)
 {
 	if(tree) {
@@ -114,34 +114,34 @@ void kd_free(struct kdtree *tree)
 	}
 }
 
-//清除掉超平面,是按节点递归地进行的
+//娓呴櫎鎺夎秴骞抽潰,鏄�鎸夎妭鐐归€掑綊鍦拌繘琛岀殑
 static void clear_rec(struct kdnode *node, void (*destr)(void*))
 {
-	if(!node) return;   //一个节点对应一个超平面
+	if(!node) return;   //涓€涓�鑺傜偣瀵瑰簲涓€涓�瓒呭钩闈�
 
-	//递归函数，递归地清除掉二叉树左分支的超平面和二叉树右分支的超平面
+	//閫掑綊鍑芥暟锛岄€掑綊鍦版竻闄ゆ帀浜屽弶鏍戝乏鍒嗘敮鐨勮秴骞抽潰鍜屼簩鍙夋爲鍙冲垎鏀�鐨勮秴骞抽潰
 	clear_rec(node->left, destr);
 	clear_rec(node->right, destr);
 	
-	//如果data清楚函数不为空,就释放掉data
+	//濡傛灉data娓呮�氬嚱鏁颁笉涓虹┖,灏遍噴鏀炬帀data
 	if(destr) 
 	{
 		destr(node->data);
 	}
-	//释放节点的坐标数组
+	//閲婃斁鑺傜偣鐨勫潗鏍囨暟缁�
 	free(node->pos);
-	//释放节点
+	//閲婃斁鑺傜偣
 	free(node);
 }
 
-//kdtree清除
+//kdtree娓呴櫎
 void kd_clear(struct kdtree *tree)
 {
-	//清除树中每个节点的超平面,释放树中的各个节点
+	//娓呴櫎鏍戜腑姣忎釜鑺傜偣鐨勮秴骞抽潰,閲婃斁鏍戜腑鐨勫悇涓�鑺傜偣
 	clear_rec(tree->root, tree->destr);
 	tree->root = 0;
 
-	//如果树的超平面指针不为空,对其进行释放
+	//濡傛灉鏍戠殑瓒呭钩闈㈡寚閽堜笉涓虹┖,瀵瑰叾杩涜�岄噴鏀�
 	if (tree->rect) 
 	{
 		hyperrect_free(tree->rect);
@@ -149,24 +149,24 @@ void kd_clear(struct kdtree *tree)
 	}
 }
 
-//数据销毁，用一个外来的函数来进行data的销毁
+//鏁版嵁閿€姣侊紝鐢ㄤ竴涓�澶栨潵鐨勫嚱鏁版潵杩涜�宒ata鐨勯攢姣�
 void kd_data_destructor(struct kdtree *tree, void (*destr)(void*))
 {
-	//用外来的函数来执行kdtree的销毁函数
+	//鐢ㄥ�栨潵鐨勫嚱鏁版潵鎵ц�宬dtree鐨勯攢姣佸嚱鏁�
 	tree->destr = destr;
 }
 
 
-//在一个树节点位置处插入超矩形
+//鍦ㄤ竴涓�鏍戣妭鐐逛綅缃�澶勬彃鍏ヨ秴鐭╁舰
 static int insert_rec(struct kdnode **nptr, const double *pos, void *data, int dir, int dim)
 {
 	int new_dir;
 	struct kdnode *node;
 
-	//如果这个节点是不存在的
+	//濡傛灉杩欎釜鑺傜偣鏄�涓嶅瓨鍦ㄧ殑
 	if(!*nptr) 
 	{
-		//分配一个结点
+		//鍒嗛厤涓€涓�缁撶偣
 		if(!(node = (kdnode *)malloc(sizeof *node))) 
 		{
 			return -1;
@@ -191,17 +191,17 @@ static int insert_rec(struct kdnode **nptr, const double *pos, void *data, int d
 	return insert_rec(&(*nptr)->right, pos, data, new_dir, dim);
 }
 
-//节点插入操作
-//参数为:要进行插入操作的kdtree,要插入的节点坐标,要插入的节点的数据
+//鑺傜偣鎻掑叆鎿嶄綔
+//鍙傛暟涓�:瑕佽繘琛屾彃鍏ユ搷浣滅殑kdtree,瑕佹彃鍏ョ殑鑺傜偣鍧愭爣,瑕佹彃鍏ョ殑鑺傜偣鐨勬暟鎹�
 int kd_insert(struct kdtree *tree, const double *pos, void *data)
 {
-	//插入超矩形
+	//鎻掑叆瓒呯煩褰�
 	if (insert_rec(&tree->root, pos, data, 0, tree->dim)) 
 	{
 		return -1;
 	}
-	//如果树还没有超矩形,就创建一个超矩形
-	//如果已经有了超矩形,就扩展原有的超矩形
+	//濡傛灉鏍戣繕娌℃湁瓒呯煩褰�,灏卞垱寤轰竴涓�瓒呯煩褰�
+	//濡傛灉宸茬粡鏈変簡瓒呯煩褰�,灏辨墿灞曞師鏈夌殑瓒呯煩褰�
 	if (tree->rect == 0) 
 	{
 		tree->rect = hyperrect_create(tree->dim, pos, pos);
@@ -214,17 +214,17 @@ int kd_insert(struct kdtree *tree, const double *pos, void *data)
 	return 0;
 }
 
-//插入float型坐标的节点
-//参数为:要进行插入操作的kdtree,要插入的节点坐标,要插入的节点的数据
-//将float型的坐标赋值给double型的缓冲区,经过这个类型转化后进行插入
-//本质上是一种类型转化
+//鎻掑叆float鍨嬪潗鏍囩殑鑺傜偣
+//鍙傛暟涓�:瑕佽繘琛屾彃鍏ユ搷浣滅殑kdtree,瑕佹彃鍏ョ殑鑺傜偣鍧愭爣,瑕佹彃鍏ョ殑鑺傜偣鐨勬暟鎹�
+//灏唂loat鍨嬬殑鍧愭爣璧嬪€肩粰double鍨嬬殑缂撳啿鍖�,缁忚繃杩欎釜绫诲瀷杞�鍖栧悗杩涜�屾彃鍏�
+//鏈�璐ㄤ笂鏄�涓€绉嶇被鍨嬭浆鍖�
 int kd_insertf(struct kdtree *tree, const float *pos, void *data)
 {
 	static double sbuf[16];
 	double *bptr, *buf = 0;
 	int res, dim = tree->dim;
 
-	//如果kdtree的维数大于16, 分配dim维double类型的数组
+	//濡傛灉kdtree鐨勭淮鏁板ぇ浜�16, 鍒嗛厤dim缁磀ouble绫诲瀷鐨勬暟缁�
 	if(dim > 16) 
 	{
 #ifndef NO_ALLOCA
@@ -237,31 +237,31 @@ int kd_insertf(struct kdtree *tree, const float *pos, void *data)
 				return -1;
 			}
 	} 
-	//如果kdtree的维数小于16, 直接将指针指向已分配的内存
+	//濡傛灉kdtree鐨勭淮鏁板皬浜�16, 鐩存帴灏嗘寚閽堟寚鍚戝凡鍒嗛厤鐨勫唴瀛�
 	else 
 	{
 		bptr = buf = sbuf;
 	}
 
-	//将要插入点的位置坐标赋值给分配的数组
+	//灏嗚�佹彃鍏ョ偣鐨勪綅缃�鍧愭爣璧嬪€肩粰鍒嗛厤鐨勬暟缁�
 	while(dim-- > 0) 
 	{
 		*bptr++ = *pos++;
 	}
 
-	//调用节点插入函数kd_insert
+	//璋冪敤鑺傜偣鎻掑叆鍑芥暟kd_insert
 	res = kd_insert(tree, buf, data);
 #ifndef NO_ALLOCA
 	if(tree->dim > 256)
 #else
 	if(tree->dim > 16)
 #endif
-        //释放缓存
+        //閲婃斁缂撳瓨
 		free(buf);
 	return res;
 }
 
-//给出三维坐标值的三维kdtree插入
+//缁欏嚭涓夌淮鍧愭爣鍊肩殑涓夌淮kdtree鎻掑叆
 int kd_insert3(struct kdtree *tree, double x, double y, double z, void *data)
 {
 	double buf[3];
@@ -271,7 +271,7 @@ int kd_insert3(struct kdtree *tree, double x, double y, double z, void *data)
 	return kd_insert(tree, buf, data);
 }
 
-//给出三维float型坐标值的三维kdtree插入
+//缁欏嚭涓夌淮float鍨嬪潗鏍囧€肩殑涓夌淮kdtree鎻掑叆
 int kd_insert3f(struct kdtree *tree, float x, float y, float z, void *data)
 {
 	double buf[3];
@@ -281,22 +281,22 @@ int kd_insert3f(struct kdtree *tree, float x, float y, float z, void *data)
 	return kd_insert(tree, buf, data);
 }
 
-//找到最近邻的点
-//参数为:树节点指针, 位置坐标, 阈值, 返回结果的节点, bool型排序,维度
+//鎵惧埌鏈€杩戦偦鐨勭偣
+//鍙傛暟涓�:鏍戣妭鐐规寚閽�, 浣嶇疆鍧愭爣, 闃堝€�, 杩斿洖缁撴灉鐨勮妭鐐�, bool鍨嬫帓搴�,缁村害
 static int find_nearest(struct kdnode *node, const double *pos, double range, struct res_node *list, int ordered, int dim)
 {
 	double dist_sq, dx;
 	int i, ret, added_res = 0;
 
-	if(!node) return 0;  //注意这个地方,当节点为空的时候,表明已经查找到最终的叶子结点,返回值为零
+	if(!node) return 0;  //娉ㄦ剰杩欎釜鍦版柟,褰撹妭鐐逛负绌虹殑鏃跺€�,琛ㄦ槑宸茬粡鏌ユ壘鍒版渶缁堢殑鍙跺瓙缁撶偣,杩斿洖鍊间负闆�
 
 	dist_sq = 0;
-	//计算两个节点间的平方和
+	//璁＄畻涓や釜鑺傜偣闂寸殑骞虫柟鍜�
 	for(i=0; i<dim; i++) 
 	{
 		dist_sq += SQ(node->pos[i] - pos[i]);
 	}
-	//如果距离在阈值范围内,就将其插入到返回结果链表中
+	//濡傛灉璺濈�诲湪闃堝€艰寖鍥村唴,灏卞皢鍏舵彃鍏ュ埌杩斿洖缁撴灉閾捐〃涓�
 	if(dist_sq <= SQ(range)) 
 	{		
 		if(rlist_insert(list, node, ordered ? dist_sq : -1.0) == -1) 
@@ -306,12 +306,12 @@ static int find_nearest(struct kdnode *node, const double *pos, double range, st
 		added_res = 1;
 	}
 
-	//在这个节点的划分方向上,求两者之间的差值
+	//鍦ㄨ繖涓�鑺傜偣鐨勫垝鍒嗘柟鍚戜笂,姹備袱鑰呬箣闂寸殑宸�鍊�
 	dx = pos[node->dir] - node->pos[node->dir];
 
-	//根据这个差值的符号, 选择进行递归查找的分支方向
+	//鏍规嵁杩欎釜宸�鍊肩殑绗﹀彿, 閫夋嫨杩涜�岄€掑綊鏌ユ壘鐨勫垎鏀�鏂瑰悜
 	ret = find_nearest(dx <= 0.0 ? node->left : node->right, pos, range, list, ordered, dim);
-	//如果返回的值大于等于零,表明在这个分支中有满足条件的节点,则返回结果的个数进行累加,并在节点的另一个方向进行查找最近的节点
+	//濡傛灉杩斿洖鐨勫€煎ぇ浜庣瓑浜庨浂,琛ㄦ槑鍦ㄨ繖涓�鍒嗘敮涓�鏈夋弧瓒虫潯浠剁殑鑺傜偣,鍒欒繑鍥炵粨鏋滅殑涓�鏁拌繘琛岀疮鍔�,骞跺湪鑺傜偣鐨勫彟涓€涓�鏂瑰悜杩涜�屾煡鎵炬渶杩戠殑鑺傜偣
 	if(ret >= 0 && fabs(dx) < range) 
 	{
 		added_res += ret;
@@ -327,7 +327,8 @@ static int find_nearest(struct kdnode *node, const double *pos, double range, st
 }
 
 
-//找到最近邻的n个节点
+//鎵惧埌鏈€杩戦偦鐨刵涓�鑺傜偣
+
 #if 0
 static int find_nearest_n(struct kdnode *node, const double *pos, double range, int num, struct rheap *heap, int dim)
 {
@@ -337,29 +338,29 @@ static int find_nearest_n(struct kdnode *node, const double *pos, double range, 
 	if(!node) return 0;
 	
 	/* if the photon is close enough, add it to the result heap */
-	//如果足够近就将其加入到结果堆中
+	//濡傛灉瓒冲�熻繎灏卞皢鍏跺姞鍏ュ埌缁撴灉鍫嗕腑
 	dist_sq = 0;
-	//计算两者间的欧式距离
+	//璁＄畻涓よ€呴棿鐨勬�у紡璺濈��
 	for(i=0; i<dim; i++) 
 	{
 		dist_sq += SQ(node->pos[i] - pos[i]);
 	}
-	//如果计算所得距离小于阈值
+	//濡傛灉璁＄畻鎵€寰楄窛绂诲皬浜庨槇鍊�
 	if(dist_sq <= range_sq) {
-	//如果堆的大小大于num,也就是大于总的要找的节点数
+	//濡傛灉鍫嗙殑澶у皬澶т簬num,涔熷氨鏄�澶т簬鎬荤殑瑕佹壘鐨勮妭鐐规暟
 		if(heap->size >= num)
 		{
 			/* get furthest element */
-			//得到最远的节点
+			//寰楀埌鏈€杩滅殑鑺傜偣
 			struct res_node *maxelem = rheap_get_max(heap);
 
 			/* and check if the new one is closer than that */
-			//测试这个节点是不是比最远的节点要近
+			//娴嬭瘯杩欎釜鑺傜偣鏄�涓嶆槸姣旀渶杩滅殑鑺傜偣瑕佽繎
 			if(maxelem->dist_sq > dist_sq) 
 			{
-			//如果是的话,就移除最远的节点
+			//濡傛灉鏄�鐨勮瘽,灏辩Щ闄ゆ渶杩滅殑鑺傜偣
 				rheap_remove_max(heap);
-				//并将此节点插入堆中
+				//骞跺皢姝よ妭鐐规彃鍏ュ爢涓�
 				if(rheap_insert(heap, node, dist_sq) == -1) 
 				{
 					return -1;
@@ -369,7 +370,7 @@ static int find_nearest_n(struct kdnode *node, const double *pos, double range, 
 				range_sq = dist_sq;
 			}
 		} 
-		//如果堆的大小小于num,直接将此节点插入堆中
+		//濡傛灉鍫嗙殑澶у皬灏忎簬num,鐩存帴灏嗘�よ妭鐐规彃鍏ュ爢涓�
 		else 
 		{
 			if(rheap_insert(heap, node, dist_sq) == -1) 
@@ -402,7 +403,7 @@ static void kd_nearest_i(struct kdnode *node, const double *pos, struct kdnode *
 	double *nearer_hyperrect_coord, *farther_hyperrect_coord;
 
 	/* Decide whether to go left or right in the tree */
-	//在二叉树中,决定向左走还是向右走
+	//鍦ㄤ簩鍙夋爲涓�,鍐冲畾鍚戝乏璧拌繕鏄�鍚戝彸璧�
 	dummy = pos[dir] - node->pos[dir];
 	if (dummy <= 0) 
 	{
@@ -458,7 +459,7 @@ static void kd_nearest_i(struct kdnode *node, const double *pos, struct kdnode *
 	}
 }
 
-//求kdtree中与点pos最近邻的值
+//姹俴dtree涓�涓庣偣pos鏈€杩戦偦鐨勫€�
 struct kdres *kd_nearest(struct kdtree *kd, const double *pos)
 {
 	struct kdhyperrect *rect;
@@ -467,12 +468,12 @@ struct kdres *kd_nearest(struct kdtree *kd, const double *pos)
 	double dist_sq;
 	int i;
 
-	//如果kd不存在,或者其超平面不存在的话,则就不会有结果
+	//濡傛灉kd涓嶅瓨鍦�,鎴栬€呭叾瓒呭钩闈�涓嶅瓨鍦ㄧ殑璇�,鍒欏氨涓嶄細鏈夌粨鏋�
 	if (!kd) return 0;
 	if (!kd->rect) return 0;
 
 	/* Allocate result set */
-	//为返回结果集合分配空间
+	//涓鸿繑鍥炵粨鏋滈泦鍚堝垎閰嶇┖闂�
 	if(!(rset = (kdres*)malloc(sizeof *rset))) 
 	{
 		return 0;
@@ -485,7 +486,7 @@ struct kdres *kd_nearest(struct kdtree *kd, const double *pos)
 	rset->tree = kd;
 
 	/* Duplicate the bounding hyperrectangle, we will work on the copy */
-	//复制边界超平面
+	//澶嶅埗杈圭晫瓒呭钩闈�
 	if (!(rect = hyperrect_duplicate(kd->rect))) 
 	{
 		kd_res_free(rset);
@@ -499,15 +500,15 @@ struct kdres *kd_nearest(struct kdtree *kd, const double *pos)
 		dist_sq += SQ(result->pos[i] - pos[i]);
 
 	/* Search for the nearest neighbour recursively */
-	//递归地查找最近邻的邻居
+	//閫掑綊鍦版煡鎵炬渶杩戦偦鐨勯偦灞�
 	kd_nearest_i(kd->root, pos, &result, &dist_sq, rect);
 
 	/* Free the copy of the hyperrect */
-	//释放超矩形
+	//閲婃斁瓒呯煩褰�
 	hyperrect_free(rect);
 
 	/* Store the result */
-	//存储结果
+	//瀛樺偍缁撴灉
 	if (result) 
 	{
 		if (rlist_insert(rset->rlist, result, -1.0) == -1) 
@@ -526,7 +527,7 @@ struct kdres *kd_nearest(struct kdtree *kd, const double *pos)
 	}
 }
 
-//kd_nearest的float特例
+//kd_nearest鐨刦loat鐗逛緥
 struct kdres *kd_nearestf(struct kdtree *tree, const float *pos)
 {
 	static double sbuf[16];
@@ -561,7 +562,7 @@ struct kdres *kd_nearestf(struct kdtree *tree, const float *pos)
 	return res;
 }
 
-//kd_nearest的三坐标特例
+//kd_nearest鐨勪笁鍧愭爣鐗逛緥
 struct kdres *kd_nearest3(struct kdtree *tree, double x, double y, double z)
 {
 	double pos[3];
@@ -571,7 +572,7 @@ struct kdres *kd_nearest3(struct kdtree *tree, double x, double y, double z)
 	return kd_nearest(tree, pos);
 }
 
-//kd_nearest的三坐标float特例
+//kd_nearest鐨勪笁鍧愭爣float鐗逛緥
 struct kdres *kd_nearest3f(struct kdtree *tree, float x, float y, float z)
 {
 	double pos[3];
@@ -607,7 +608,7 @@ static kdres *kd_nearest_n(struct kdtree *kd, const double *pos, int num)
 	return rset;
 }*/
 
-//找到满足距离小于range值的节点
+//鎵惧埌婊¤冻璺濈�诲皬浜巖ange鍊肩殑鑺傜偣
 struct kdres *kd_nearest_range(struct kdtree *kd, const double *pos, double range)
 {
 	int ret;
@@ -632,7 +633,7 @@ struct kdres *kd_nearest_range(struct kdtree *kd, const double *pos, double rang
 	return rset;
 }
 
-//kd_nearest_range的float特例
+//kd_nearest_range鐨刦loat鐗逛緥
 struct kdres *kd_nearest_rangef(struct kdtree *kd, const float *pos, float range)
 {
 	static double sbuf[16];
@@ -667,7 +668,7 @@ struct kdres *kd_nearest_rangef(struct kdtree *kd, const float *pos, float range
 	return res;
 }
 
-//kd_nearest_range的三坐标特例
+//kd_nearest_range鐨勪笁鍧愭爣鐗逛緥
 struct kdres *kd_nearest_range3(struct kdtree *tree, double x, double y, double z, double range)
 {
 	double buf[3];
@@ -677,7 +678,7 @@ struct kdres *kd_nearest_range3(struct kdtree *tree, double x, double y, double 
 	return kd_nearest_range(tree, buf, range);
 }
 
-//kd_nearest_range的三坐标float特例
+//kd_nearest_range鐨勪笁鍧愭爣float鐗逛緥
 struct kdres *kd_nearest_range3f(struct kdtree *tree, float x, float y, float z, float range)
 {
 	double buf[3];
@@ -687,7 +688,7 @@ struct kdres *kd_nearest_range3f(struct kdtree *tree, float x, float y, float z,
 	return kd_nearest_range(tree, buf, range);
 }
 
-//返回结果的释放
+//杩斿洖缁撴灉鐨勯噴鏀�
 void kd_res_free(struct kdres *rset)
 {
 	clear_results(rset);
@@ -695,32 +696,32 @@ void kd_res_free(struct kdres *rset)
 	free(rset);
 }
 
-//获取返回结果集合的大小
+//鑾峰彇杩斿洖缁撴灉闆嗗悎鐨勫ぇ灏�
 int kd_res_size(struct kdres *set)
 {
 	return (set->size);
 }
 
-//再次回到这个节点本身的位置
+//鍐嶆�″洖鍒拌繖涓�鑺傜偣鏈�韬�鐨勪綅缃�
 void kd_res_rewind(struct kdres *rset)
 {
 	rset->riter = rset->rlist->next;
 }
 
-//找到返回结果中的最终节点
+//鎵惧埌杩斿洖缁撴灉涓�鐨勬渶缁堣妭鐐�
 int kd_res_end(struct kdres *rset)
 {
 	return rset->riter == 0;
 }
 
-//返回结果列表中的下一个节点
+//杩斿洖缁撴灉鍒楄〃涓�鐨勪笅涓€涓�鑺傜偣
 int kd_res_next(struct kdres *rset)
 {
 	rset->riter = rset->riter->next;
 	return rset->riter != 0;
 }
 
-//将返回结果的节点的坐标和data抽取出来
+//灏嗚繑鍥炵粨鏋滅殑鑺傜偣鐨勫潗鏍囧拰data鎶藉彇鍑烘潵
 void *kd_res_item(struct kdres *rset, double *pos)
 {
 	if(rset->riter) {
@@ -732,7 +733,7 @@ void *kd_res_item(struct kdres *rset, double *pos)
 	return 0;
 }
 
-//将返回结果的节点的坐标和data抽取出来,坐标为float型的值
+//灏嗚繑鍥炵粨鏋滅殑鑺傜偣鐨勫潗鏍囧拰data鎶藉彇鍑烘潵,鍧愭爣涓篺loat鍨嬬殑鍊�
 void *kd_res_itemf(struct kdres *rset, float *pos)
 {
 	if(rset->riter) {
@@ -747,7 +748,7 @@ void *kd_res_itemf(struct kdres *rset, float *pos)
 	return 0;
 }
 
-//将返回结果的节点的坐标和data抽取出来,坐标具体形式给出
+//灏嗚繑鍥炵粨鏋滅殑鑺傜偣鐨勫潗鏍囧拰data鎶藉彇鍑烘潵,鍧愭爣鍏蜂綋褰㈠紡缁欏嚭
 void *kd_res_item3(struct kdres *rset, double *x, double *y, double *z)
 {
 	if(rset->riter) {
@@ -758,7 +759,7 @@ void *kd_res_item3(struct kdres *rset, double *x, double *y, double *z)
 	return 0;
 }
 
-//将返回结果的节点的坐标和data抽取出来,坐标为float型的值,坐标具体形式给出
+//灏嗚繑鍥炵粨鏋滅殑鑺傜偣鐨勫潗鏍囧拰data鎶藉彇鍑烘潵,鍧愭爣涓篺loat鍨嬬殑鍊�,鍧愭爣鍏蜂綋褰㈠紡缁欏嚭
 void *kd_res_item3f(struct kdres *rset, float *x, float *y, float *z)
 {
 	if(rset->riter) {
@@ -769,14 +770,14 @@ void *kd_res_item3f(struct kdres *rset, float *x, float *y, float *z)
 	return 0;
 }
 
-//获取data数据
+//鑾峰彇data鏁版嵁
 void *kd_res_item_data(struct kdres *set)
 {
 	return kd_res_item(set, 0);
 }
 
 /* ---- hyperrectangle helpers ---- */
-//创建超平面,包括三个参数:维度,每维的最小值和最大值数组
+//鍒涘缓瓒呭钩闈�,鍖呮嫭涓変釜鍙傛暟:缁村害,姣忕淮鐨勬渶灏忓€煎拰鏈€澶у€兼暟缁�
 static struct kdhyperrect* hyperrect_create(int dim, const double *min, const double *max)
 {
 	size_t size = dim * sizeof(double);
@@ -803,7 +804,7 @@ static struct kdhyperrect* hyperrect_create(int dim, const double *min, const do
 	return rect;
 }
 
-//释放超平面结构体
+//閲婃斁瓒呭钩闈㈢粨鏋勪綋
 static void hyperrect_free(struct kdhyperrect *rect)
 {
 	free(rect->min);
@@ -811,13 +812,13 @@ static void hyperrect_free(struct kdhyperrect *rect)
 	free(rect);
 }
 
-//赋值超平面结构体
+//璧嬪€艰秴骞抽潰缁撴瀯浣�
 static struct kdhyperrect* hyperrect_duplicate(const struct kdhyperrect *rect)
 {
 	return hyperrect_create(rect->dim, rect->min, rect->max);
 }
 
-//更新超平面结构体最大\最小值数组
+//鏇存柊瓒呭钩闈㈢粨鏋勪綋鏈€澶�\鏈€灏忓€兼暟缁�
 static void hyperrect_extend(struct kdhyperrect *rect, const double *pos)
 {
 	int i;
@@ -832,7 +833,7 @@ static void hyperrect_extend(struct kdhyperrect *rect, const double *pos)
 	}
 }
 
-//计算固定坐标点与超平面之间的距离
+//璁＄畻鍥哄畾鍧愭爣鐐逛笌瓒呭钩闈�涔嬮棿鐨勮窛绂�
 static double hyperrect_dist_sq(struct kdhyperrect *rect, const double *pos)
 {
 	int i;
@@ -862,7 +863,7 @@ static struct res_node *free_nodes;
 static pthread_mutex_t alloc_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
-//创建返回结果节点
+//鍒涘缓杩斿洖缁撴灉鑺傜偣
 static struct res_node *alloc_resnode(void)
 {
 	struct res_node *node;
@@ -886,7 +887,7 @@ static struct res_node *alloc_resnode(void)
 	return node;
 }
 
-//释放返回结果节点
+//閲婃斁杩斿洖缁撴灉鑺傜偣
 static void free_resnode(struct res_node *node)
 {
 #ifndef NO_PTHREADS
@@ -905,21 +906,21 @@ static void free_resnode(struct res_node *node)
 
 /* inserts the item. if dist_sq is >= 0, then do an ordered insert */
 /* TODO make the ordering code use heapsort */
-//函数参数: 返回结果节点指针,树节点指针,距离函数
-//将一个结果节点插入到返回结果的列表中
+//鍑芥暟鍙傛暟: 杩斿洖缁撴灉鑺傜偣鎸囬拡,鏍戣妭鐐规寚閽�,璺濈�诲嚱鏁�
+//灏嗕竴涓�缁撴灉鑺傜偣鎻掑叆鍒拌繑鍥炵粨鏋滅殑鍒楄〃涓�
 static int rlist_insert(struct res_node *list, struct kdnode *item, double dist_sq)
 {
 	struct res_node *rnode;
 
-	//创建一个返回结果的节点
+	//鍒涘缓涓€涓�杩斿洖缁撴灉鐨勮妭鐐�
 	if(!(rnode = (res_node*)alloc_resnode())) 
 	{
 		return -1;
 	}
-	rnode->item = item;           //对应的树节点
-	rnode->dist_sq = dist_sq;     //对应的距离值
+	rnode->item = item;           //瀵瑰簲鐨勬爲鑺傜偣
+	rnode->dist_sq = dist_sq;     //瀵瑰簲鐨勮窛绂诲€�
 
-	//当距离大于零的时候
+	//褰撹窛绂诲ぇ浜庨浂鐨勬椂鍊�
 	if(dist_sq >= 0.0) 
 	{
 		while(list->next && list->next->dist_sq < dist_sq) 
@@ -932,8 +933,8 @@ static int rlist_insert(struct res_node *list, struct kdnode *item, double dist_
 	return 0;
 }
 
-//清除返回结果的集合
-//本质上是个双链表中单链表的清理
+//娓呴櫎杩斿洖缁撴灉鐨勯泦鍚�
+//鏈�璐ㄤ笂鏄�涓�鍙岄摼琛ㄤ腑鍗曢摼琛ㄧ殑娓呯悊
 static void clear_results(struct kdres *rset)
 {
 	struct res_node *tmp, *node = rset->rlist->next;

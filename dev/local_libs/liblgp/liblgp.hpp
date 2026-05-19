@@ -137,6 +137,32 @@ namespace liblgp {
         Vector1i1 face_id_1;
         Vector1i1 face_id_2;
     };
+    //new
+    struct HGPMesh {
+    Vector3d1 verts;       
+    Vector1i1 face_id_0;   
+    Vector1i1 face_id_1;
+    Vector1i1 face_id_2;
+
+    std::string ToOBJString() const {
+        std::ostringstream oss;
+        for (auto& v : verts)
+            oss << "v " << v[0] << " " << v[1] << " " << v[2] << "\n";
+        for (int i = 0; i < face_id_0.size(); i++)
+            oss << "f " << face_id_0[i]+1 << " "
+                        << face_id_1[i]+1 << " "
+                        << face_id_2[i]+1 << "\n";
+        return oss.str();
+    }
+
+    void SaveOBJ(const std::string& path) const {
+        std::ofstream f(path);
+        f << ToOBJString();
+    }
+
+    static HGPMesh LoadOBJ(const std::string& path);
+};
+//new-end
 
     struct TimeClock
     {
@@ -4322,6 +4348,16 @@ namespace liblgp {
             output_c_2 = v[2];
         }
     };
+
+    inline HGPMesh HGPMesh::LoadOBJ(const std::string& path) {
+        HGPMesh mesh;
+        Functs::LoadObj3d(path.c_str(),
+                        mesh.verts,
+                        mesh.face_id_0,
+                        mesh.face_id_1,
+                        mesh.face_id_2);
+        return mesh;
+    }
 
     typedef Functs FF;
     #define DS FF::DoubleString
