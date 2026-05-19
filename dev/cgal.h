@@ -200,6 +200,7 @@ public:
 			B.add_vertex_to_facet(tris[i + 2]);
 			B.end_facet();
 		}
+		 B.end_surface(); //add
 	}
 };
 
@@ -261,5 +262,23 @@ bool OutsidePointInsideTriangle(Poly_facet_iterator& face, Vector3d p);
 bool Intersection(Halfedge_handle& hh, int nb, Vector3d inside, Vector3d outside, Halfedge_handle& handle, Vector3d& intersection);
 
 Vector3d RelatedFaceNormal(Polyhedron_3& polyhedron, Tree& tree, Vector3d1& normals, Vector3d source);
+
+/********************************************************/
+// CSG Exact Kernel Types (for Boolean Operations)
+// Use Exact_predicates_exact_constructions_kernel (EK) to ensure numerical
+// robustness during corefinement. Vertices are converted K<->EK at the
+// function boundary (O(n) overhead, acceptable for geometry objects).
+/********************************************************/
+
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+
+typedef CGAL::Exact_predicates_exact_constructions_kernel  EK;
+typedef CGAL::Surface_mesh<EK::Point_3>                    EK_Mesh;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 #endif
